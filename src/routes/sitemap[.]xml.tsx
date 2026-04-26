@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const SITE = "https://rawl.app";
 
-export const Route = createFileRoute("/sitemap[.]xml")({
+export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
