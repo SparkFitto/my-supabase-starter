@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReadTranslationIdRouteImport } from './routes/read.$translationId'
+import { Route as JobJobIdRouteImport } from './routes/job.$jobId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -29,44 +32,93 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReadTranslationIdRoute = ReadTranslationIdRouteImport.update({
+  id: '/read/$translationId',
+  path: '/read/$translationId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobJobIdRoute = JobJobIdRouteImport.update({
+  id: '/job/$jobId',
+  path: '/job/$jobId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/job/$jobId': typeof JobJobIdRoute
+  '/read/$translationId': typeof ReadTranslationIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/job/$jobId': typeof JobJobIdRoute
+  '/read/$translationId': typeof ReadTranslationIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/job/$jobId': typeof JobJobIdRoute
+  '/read/$translationId': typeof ReadTranslationIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/reset-password' | '/signin' | '/signup'
+  fullPaths:
+    | '/'
+    | '/profile'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/job/$jobId'
+    | '/read/$translationId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/reset-password' | '/signin' | '/signup'
-  id: '__root__' | '/' | '/reset-password' | '/signin' | '/signup'
+  to:
+    | '/'
+    | '/profile'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/job/$jobId'
+    | '/read/$translationId'
+  id:
+    | '__root__'
+    | '/'
+    | '/profile'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/job/$jobId'
+    | '/read/$translationId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  JobJobIdRoute: typeof JobJobIdRoute
+  ReadTranslationIdRoute: typeof ReadTranslationIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -92,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -99,14 +158,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/read/$translationId': {
+      id: '/read/$translationId'
+      path: '/read/$translationId'
+      fullPath: '/read/$translationId'
+      preLoaderRoute: typeof ReadTranslationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/job/$jobId': {
+      id: '/job/$jobId'
+      path: '/job/$jobId'
+      fullPath: '/job/$jobId'
+      preLoaderRoute: typeof JobJobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  JobJobIdRoute: JobJobIdRoute,
+  ReadTranslationIdRoute: ReadTranslationIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
