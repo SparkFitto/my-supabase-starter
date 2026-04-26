@@ -1,13 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Star, Calendar, Tag, Heart, ChevronDown } from "lucide-react";
+import { Star, Calendar, Tag, Heart, ChevronDown, BookOpen, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { typeLabel, formatDate, TARGET_LANGUAGES } from "@/lib/constants";
 import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
 
 const SITE = "https://rawl.app";
 
@@ -104,6 +106,34 @@ function SeriesPage() {
 
   const visible = showAll ? chapters : chapters?.slice(0, 20);
 
+  const { data: glossary, refetch: refetchGlossary } = useQuery({
+    queryKey: ["glossary", series.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("series_glossary")
+        .select("id, original_term, translated_term, target_language")
+        .eq("series_id", series.id)
+        .eq("approved", true)
+        .order("original_term");
+      return data ?? [];
+    },
+  });
+
+  const [orig, setOrig] = useState("");
+  const [trans, setTrans] = useState("");
+  const [lang, setLang] = useState("en");
+
+  const submitGlossary = async () => {
+    if (!user) { toast.error("Sign in to suggest a term"); return; }
+    if (!orig.trim() || !trans.trim()) { toast.error("Fill both fields"); return; }
+    const { error } = await supabase.from("series_glossary").insert({
+      series_id: series.id, original_term: orig.trim(), translated_term: trans.trim(),
+      target_language: lang, suggested_by: user.id,
+    });
+    if (error) toast.error(error.message);
+    else { toast.success("Submitted for review"); setOrig(""); setTrans(""); refetchGlossary(); }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -178,6 +208,34 @@ function SeriesPage() {
                 Show all {chapters.length} <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             )}
+          </section>
+
+          <section className="mt-12">
+            <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold"><BookOpen className="h-5 w-5" />Glossary</h2>
+            {glossary && glossary.length > 0 ? (
+              <div className="grid gap-2 rounded-lg border border-border bg-card p-4 sm:grid-cols-2">
+                {glossary.map((g) => (
+                  <div key={g.id} className="flex items-center justify-between gap-2 text-sm">
+                    <span><span className="font-medium">{g.original_term}</span> → <span className="text-primary">{g.translated_term}</span></span>
+                    <Badge variant="outline" className="font-mono text-xs">{g.target_language.toUpperCase()}</Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No approved glossary terms yet.</p>
+            )}
+            <div className="mt-4 rounded-lg border border-border bg-card p-4">
+              <p className="mb-3 text-sm font-medium">Suggest a term</p>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Input placeholder="Original term" value={orig} onChange={(e) => setOrig(e.target.value)} />
+                <Input placeholder="Translation" value={trans} onChange={(e) => setTrans(e.target.value)} />
+                <select value={lang} onChange={(e) => setLang(e.target.value)} className="rounded-md border border-input bg-transparent px-3 text-sm">
+                  {TARGET_LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.code.toUpperCase()}</option>)}
+                </select>
+                <Button onClick={submitGlossary}><Plus className="mr-1 h-4 w-4" />Submit</Button>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Suggestions are reviewed by admins before appearing publicly.</p>
+            </div>
           </section>
         </div>
       </div>
