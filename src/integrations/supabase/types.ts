@@ -14,16 +14,377 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chapters: {
+        Row: {
+          chapter_number: string
+          created_at: string
+          id: string
+          mangadex_chapter_id: string | null
+          raw_download_url: string | null
+          release_date: string | null
+          series_id: string
+          volume_number: string | null
+        }
+        Insert: {
+          chapter_number: string
+          created_at?: string
+          id?: string
+          mangadex_chapter_id?: string | null
+          raw_download_url?: string | null
+          release_date?: string | null
+          series_id: string
+          volume_number?: string | null
+        }
+        Update: {
+          chapter_number?: string
+          created_at?: string
+          id?: string
+          mangadex_chapter_id?: string | null
+          raw_download_url?: string | null
+          release_date?: string | null
+          series_id?: string
+          volume_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          added_at: string
+          notify_on_release: boolean
+          series_id: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          notify_on_release?: boolean
+          series_id: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          notify_on_release?: boolean
+          series_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          current_step: string
+          device_id: string | null
+          error_message: string | null
+          id: string
+          ip_address: string | null
+          progress: number
+          raw_file_url: string | null
+          result_translation_id: string | null
+          source_language: string | null
+          status: string
+          target_language: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          current_step?: string
+          device_id?: string | null
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          progress?: number
+          raw_file_url?: string | null
+          result_translation_id?: string | null
+          source_language?: string | null
+          status?: string
+          target_language: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          current_step?: string
+          device_id?: string | null
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          progress?: number
+          raw_file_url?: string | null
+          result_translation_id?: string | null
+          source_language?: string | null
+          status?: string
+          target_language?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_result_translation_id_fkey"
+            columns: ["result_translation_id"]
+            isOneToOne: false
+            referencedRelation: "translations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      series: {
+        Row: {
+          age_rating: string | null
+          alt_titles: string[] | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          follow_count: number
+          genres: string[] | null
+          id: string
+          mangadex_id: string | null
+          rating: number | null
+          release_year: number | null
+          slug: string
+          source_language: string
+          status: string
+          tags: string[] | null
+          title: string
+          type: string
+        }
+        Insert: {
+          age_rating?: string | null
+          alt_titles?: string[] | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          follow_count?: number
+          genres?: string[] | null
+          id?: string
+          mangadex_id?: string | null
+          rating?: number | null
+          release_year?: number | null
+          slug: string
+          source_language: string
+          status?: string
+          tags?: string[] | null
+          title: string
+          type?: string
+        }
+        Update: {
+          age_rating?: string | null
+          alt_titles?: string[] | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          follow_count?: number
+          genres?: string[] | null
+          id?: string
+          mangadex_id?: string | null
+          rating?: number | null
+          release_year?: number | null
+          slug?: string
+          source_language?: string
+          status?: string
+          tags?: string[] | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      series_glossary: {
+        Row: {
+          approved: boolean
+          created_at: string
+          id: string
+          original_term: string
+          series_id: string
+          suggested_by: string | null
+          target_language: string
+          translated_term: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          original_term: string
+          series_id: string
+          suggested_by?: string | null
+          target_language: string
+          translated_term: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          original_term?: string
+          series_id?: string
+          suggested_by?: string | null
+          target_language?: string
+          translated_term?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_glossary_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      translations: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          id: string
+          image_urls: string[] | null
+          page_count: number
+          published: boolean
+          read_count: number
+          status: string
+          target_language: string
+          translated_by: string | null
+          translator_username: string | null
+          upvotes: number
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          page_count?: number
+          published?: boolean
+          read_count?: number
+          status?: string
+          target_language: string
+          translated_by?: string | null
+          translator_username?: string | null
+          upvotes?: number
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          image_urls?: string[] | null
+          page_count?: number
+          published?: boolean
+          read_count?: number
+          status?: string
+          target_language?: string
+          translated_by?: string | null
+          translator_username?: string | null
+          upvotes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "translations_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          chapters_translated_total: number
+          created_at: string
+          id: string
+          notify_on_release: boolean
+          paddle_customer_id: string | null
+          plan: string
+          preferred_reading_mode: string | null
+          preferred_target_language: string | null
+          username: string | null
+          weekly_chapters_used: number
+          weekly_reset_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          chapters_translated_total?: number
+          created_at?: string
+          id: string
+          notify_on_release?: boolean
+          paddle_customer_id?: string | null
+          plan?: string
+          preferred_reading_mode?: string | null
+          preferred_target_language?: string | null
+          username?: string | null
+          weekly_chapters_used?: number
+          weekly_reset_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          chapters_translated_total?: number
+          created_at?: string
+          id?: string
+          notify_on_release?: boolean
+          paddle_customer_id?: string | null
+          plan?: string
+          preferred_reading_mode?: string | null
+          preferred_target_language?: string | null
+          username?: string | null
+          weekly_chapters_used?: number
+          weekly_reset_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +511,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
