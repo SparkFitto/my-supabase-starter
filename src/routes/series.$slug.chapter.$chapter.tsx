@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TARGET_LANGUAGES, typeLabel } from "@/lib/constants";
 import { useAuth } from "@/lib/auth";
-import { getOrCreateDeviceId } from "@/lib/device-id";
+import { getDeviceId } from "@/lib/device-id";
 
 const SITE = "https://rawl.app";
 
@@ -81,7 +81,7 @@ function ChapterPage() {
           chapter_id: chapter.id,
           target_language: target,
           source_language: series.source_language,
-          device_id: getOrCreateDeviceId(),
+          device_id: getDeviceId(),
           status: "queued",
           progress: 0,
           current_step: "Queued",
