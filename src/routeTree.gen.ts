@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -21,6 +22,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 import { Route as ReadTranslationIdRouteImport } from './routes/read.$translationId'
 import { Route as JobJobIdRouteImport } from './routes/job.$jobId'
+import { Route as AdminGlossaryRouteImport } from './routes/admin.glossary'
+import { Route as TranslateSlugChapterLangRouteImport } from './routes/translate.$slug.$chapter.$lang'
 import { Route as SeriesSlugChapterChapterRouteImport } from './routes/series.$slug.chapter.$chapter'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -36,6 +39,11 @@ const SignupRoute = SignupRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -83,6 +91,17 @@ const JobJobIdRoute = JobJobIdRouteImport.update({
   path: '/job/$jobId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminGlossaryRoute = AdminGlossaryRouteImport.update({
+  id: '/admin/glossary',
+  path: '/admin/glossary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TranslateSlugChapterLangRoute =
+  TranslateSlugChapterLangRouteImport.update({
+    id: '/translate/$slug/$chapter/$lang',
+    path: '/translate/$slug/$chapter/$lang',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SeriesSlugChapterChapterRoute =
   SeriesSlugChapterChapterRouteImport.update({
     id: '/chapter/$chapter',
@@ -97,13 +116,16 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
+  '/translate/$slug/$chapter/$lang': typeof TranslateSlugChapterLangRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -112,13 +134,16 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
+  '/translate/$slug/$chapter/$lang': typeof TranslateSlugChapterLangRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -128,13 +153,16 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
+  '/translate/$slug/$chapter/$lang': typeof TranslateSlugChapterLangRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -145,13 +173,16 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/reset-password'
+    | '/robots.txt'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/admin/glossary'
     | '/job/$jobId'
     | '/read/$translationId'
     | '/series/$slug'
     | '/series/$slug/chapter/$chapter'
+    | '/translate/$slug/$chapter/$lang'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -160,13 +191,16 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/reset-password'
+    | '/robots.txt'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/admin/glossary'
     | '/job/$jobId'
     | '/read/$translationId'
     | '/series/$slug'
     | '/series/$slug/chapter/$chapter'
+    | '/translate/$slug/$chapter/$lang'
   id:
     | '__root__'
     | '/'
@@ -175,13 +209,16 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/reset-password'
+    | '/robots.txt'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/admin/glossary'
     | '/job/$jobId'
     | '/read/$translationId'
     | '/series/$slug'
     | '/series/$slug/chapter/$chapter'
+    | '/translate/$slug/$chapter/$lang'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -191,12 +228,15 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminGlossaryRoute: typeof AdminGlossaryRoute
   JobJobIdRoute: typeof JobJobIdRoute
   ReadTranslationIdRoute: typeof ReadTranslationIdRoute
   SeriesSlugRoute: typeof SeriesSlugRouteWithChildren
+  TranslateSlugChapterLangRoute: typeof TranslateSlugChapterLangRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -220,6 +260,13 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -285,6 +332,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobJobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/glossary': {
+      id: '/admin/glossary'
+      path: '/admin/glossary'
+      fullPath: '/admin/glossary'
+      preLoaderRoute: typeof AdminGlossaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/translate/$slug/$chapter/$lang': {
+      id: '/translate/$slug/$chapter/$lang'
+      path: '/translate/$slug/$chapter/$lang'
+      fullPath: '/translate/$slug/$chapter/$lang'
+      preLoaderRoute: typeof TranslateSlugChapterLangRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/series/$slug/chapter/$chapter': {
       id: '/series/$slug/chapter/$chapter'
       path: '/chapter/$chapter'
@@ -314,12 +375,15 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminGlossaryRoute: AdminGlossaryRoute,
   JobJobIdRoute: JobJobIdRoute,
   ReadTranslationIdRoute: ReadTranslationIdRoute,
   SeriesSlugRoute: SeriesSlugRouteWithChildren,
+  TranslateSlugChapterLangRoute: TranslateSlugChapterLangRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
