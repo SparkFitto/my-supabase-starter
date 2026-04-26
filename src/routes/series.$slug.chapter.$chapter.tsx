@@ -67,7 +67,8 @@ function ChapterPage() {
   const [translating, setTranslating] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const existing = chapter.translations?.filter((t) => t.published) ?? [];
+  type Trans = { id: string; target_language: string; published: boolean; page_count: number; upvotes: number; translator_username: string | null };
+  const existing = ((chapter.translations ?? []) as Trans[]).filter((t) => t.published);
   const myExisting = existing.find((t) => t.target_language === target);
 
   const startTranslation = async () => {

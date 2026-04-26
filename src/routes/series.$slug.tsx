@@ -135,7 +135,7 @@ function SeriesPage() {
               </div>
               {series.genres && series.genres.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {series.genres.map((g) => <Badge key={g} variant="outline" className="font-normal"><Tag className="mr-1 h-3 w-3" />{g}</Badge>)}
+                  {series.genres.map((g: string) => <Badge key={g} variant="outline" className="font-normal"><Tag className="mr-1 h-3 w-3" />{g}</Badge>)}
                 </div>
               )}
               {series.description && <p className="mt-4 text-sm text-foreground/80">{series.description}</p>}
