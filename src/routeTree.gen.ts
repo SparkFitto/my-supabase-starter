@@ -9,38 +9,254 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as CatalogueRouteImport } from './routes/catalogue'
+import { Route as BillboardRouteImport } from './routes/billboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
+import { Route as ReadTranslationIdRouteImport } from './routes/read.$translationId'
+import { Route as JobJobIdRouteImport } from './routes/job.$jobId'
+import { Route as SeriesSlugChapterChapterRouteImport } from './routes/series.$slug.chapter.$chapter'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogueRoute = CatalogueRouteImport.update({
+  id: '/catalogue',
+  path: '/catalogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillboardRoute = BillboardRouteImport.update({
+  id: '/billboard',
+  path: '/billboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SeriesSlugRoute = SeriesSlugRouteImport.update({
+  id: '/series/$slug',
+  path: '/series/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReadTranslationIdRoute = ReadTranslationIdRouteImport.update({
+  id: '/read/$translationId',
+  path: '/read/$translationId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobJobIdRoute = JobJobIdRouteImport.update({
+  id: '/job/$jobId',
+  path: '/job/$jobId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeriesSlugChapterChapterRoute =
+  SeriesSlugChapterChapterRouteImport.update({
+    id: '/chapter/$chapter',
+    path: '/chapter/$chapter',
+    getParentRoute: () => SeriesSlugRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/billboard': typeof BillboardRoute
+  '/catalogue': typeof CatalogueRoute
+  '/pricing': typeof PricingRoute
+  '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/job/$jobId': typeof JobJobIdRoute
+  '/read/$translationId': typeof ReadTranslationIdRoute
+  '/series/$slug': typeof SeriesSlugRouteWithChildren
+  '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/billboard': typeof BillboardRoute
+  '/catalogue': typeof CatalogueRoute
+  '/pricing': typeof PricingRoute
+  '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/job/$jobId': typeof JobJobIdRoute
+  '/read/$translationId': typeof ReadTranslationIdRoute
+  '/series/$slug': typeof SeriesSlugRouteWithChildren
+  '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/billboard': typeof BillboardRoute
+  '/catalogue': typeof CatalogueRoute
+  '/pricing': typeof PricingRoute
+  '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/job/$jobId': typeof JobJobIdRoute
+  '/read/$translationId': typeof ReadTranslationIdRoute
+  '/series/$slug': typeof SeriesSlugRouteWithChildren
+  '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/billboard'
+    | '/catalogue'
+    | '/pricing'
+    | '/profile'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/sitemap.xml'
+    | '/job/$jobId'
+    | '/read/$translationId'
+    | '/series/$slug'
+    | '/series/$slug/chapter/$chapter'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/billboard'
+    | '/catalogue'
+    | '/pricing'
+    | '/profile'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/sitemap.xml'
+    | '/job/$jobId'
+    | '/read/$translationId'
+    | '/series/$slug'
+    | '/series/$slug/chapter/$chapter'
+  id:
+    | '__root__'
+    | '/'
+    | '/billboard'
+    | '/catalogue'
+    | '/pricing'
+    | '/profile'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/sitemap.xml'
+    | '/job/$jobId'
+    | '/read/$translationId'
+    | '/series/$slug'
+    | '/series/$slug/chapter/$chapter'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BillboardRoute: typeof BillboardRoute
+  CatalogueRoute: typeof CatalogueRoute
+  PricingRoute: typeof PricingRoute
+  ProfileRoute: typeof ProfileRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  JobJobIdRoute: typeof JobJobIdRoute
+  ReadTranslationIdRoute: typeof ReadTranslationIdRoute
+  SeriesSlugRoute: typeof SeriesSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalogue': {
+      id: '/catalogue'
+      path: '/catalogue'
+      fullPath: '/catalogue'
+      preLoaderRoute: typeof CatalogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billboard': {
+      id: '/billboard'
+      path: '/billboard'
+      fullPath: '/billboard'
+      preLoaderRoute: typeof BillboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +264,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/series/$slug': {
+      id: '/series/$slug'
+      path: '/series/$slug'
+      fullPath: '/series/$slug'
+      preLoaderRoute: typeof SeriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/read/$translationId': {
+      id: '/read/$translationId'
+      path: '/read/$translationId'
+      fullPath: '/read/$translationId'
+      preLoaderRoute: typeof ReadTranslationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/job/$jobId': {
+      id: '/job/$jobId'
+      path: '/job/$jobId'
+      fullPath: '/job/$jobId'
+      preLoaderRoute: typeof JobJobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/series/$slug/chapter/$chapter': {
+      id: '/series/$slug/chapter/$chapter'
+      path: '/chapter/$chapter'
+      fullPath: '/series/$slug/chapter/$chapter'
+      preLoaderRoute: typeof SeriesSlugChapterChapterRouteImport
+      parentRoute: typeof SeriesSlugRoute
+    }
   }
 }
 
+interface SeriesSlugRouteChildren {
+  SeriesSlugChapterChapterRoute: typeof SeriesSlugChapterChapterRoute
+}
+
+const SeriesSlugRouteChildren: SeriesSlugRouteChildren = {
+  SeriesSlugChapterChapterRoute: SeriesSlugChapterChapterRoute,
+}
+
+const SeriesSlugRouteWithChildren = SeriesSlugRoute._addFileChildren(
+  SeriesSlugRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BillboardRoute: BillboardRoute,
+  CatalogueRoute: CatalogueRoute,
+  PricingRoute: PricingRoute,
+  ProfileRoute: ProfileRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  JobJobIdRoute: JobJobIdRoute,
+  ReadTranslationIdRoute: ReadTranslationIdRoute,
+  SeriesSlugRoute: SeriesSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
