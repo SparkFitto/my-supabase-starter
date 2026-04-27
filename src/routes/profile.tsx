@@ -67,7 +67,7 @@ function ProfilePage() {
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-10">
         <div>
           <h1 className="text-3xl font-bold">@{profile.username ?? "you"}</h1>
-          <p className="text-sm text-muted-foreground">{user?.email}</p>
+          <p className="text-xs uppercase tracking-wide text-primary font-bold mt-1">{profile.plan}</p>
         </div>
 
         <Card>
