@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
@@ -26,6 +27,11 @@ import { Route as AdminGlossaryRouteImport } from './routes/admin.glossary'
 import { Route as TranslateSlugChapterLangRouteImport } from './routes/translate.$slug.$chapter.$lang'
 import { Route as SeriesSlugChapterChapterRouteImport } from './routes/series.$slug.chapter.$chapter'
 
+const TranslateRoute = TranslateRouteImport.update({
+  id: '/translate',
+  path: '/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -98,9 +104,9 @@ const AdminGlossaryRoute = AdminGlossaryRouteImport.update({
 } as any)
 const TranslateSlugChapterLangRoute =
   TranslateSlugChapterLangRouteImport.update({
-    id: '/translate/$slug/$chapter/$lang',
-    path: '/translate/$slug/$chapter/$lang',
-    getParentRoute: () => rootRouteImport,
+    id: '/$slug/$chapter/$lang',
+    path: '/$slug/$chapter/$lang',
+    getParentRoute: () => TranslateRoute,
   } as any)
 const SeriesSlugChapterChapterRoute =
   SeriesSlugChapterChapterRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/translate': typeof TranslateRouteWithChildren
   '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/translate': typeof TranslateRouteWithChildren
   '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/translate': typeof TranslateRouteWithChildren
   '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/translate'
     | '/admin/glossary'
     | '/job/$jobId'
     | '/read/$translationId'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/translate'
     | '/admin/glossary'
     | '/job/$jobId'
     | '/read/$translationId'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/translate'
     | '/admin/glossary'
     | '/job/$jobId'
     | '/read/$translationId'
@@ -232,15 +244,22 @@ export interface RootRouteChildren {
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TranslateRoute: typeof TranslateRouteWithChildren
   AdminGlossaryRoute: typeof AdminGlossaryRoute
   JobJobIdRoute: typeof JobJobIdRoute
   ReadTranslationIdRoute: typeof ReadTranslationIdRoute
   SeriesSlugRoute: typeof SeriesSlugRouteWithChildren
-  TranslateSlugChapterLangRoute: typeof TranslateSlugChapterLangRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/translate': {
+      id: '/translate'
+      path: '/translate'
+      fullPath: '/translate'
+      preLoaderRoute: typeof TranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -341,10 +360,10 @@ declare module '@tanstack/react-router' {
     }
     '/translate/$slug/$chapter/$lang': {
       id: '/translate/$slug/$chapter/$lang'
-      path: '/translate/$slug/$chapter/$lang'
+      path: '/$slug/$chapter/$lang'
       fullPath: '/translate/$slug/$chapter/$lang'
       preLoaderRoute: typeof TranslateSlugChapterLangRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof TranslateRoute
     }
     '/series/$slug/chapter/$chapter': {
       id: '/series/$slug/chapter/$chapter'
@@ -355,6 +374,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface TranslateRouteChildren {
+  TranslateSlugChapterLangRoute: typeof TranslateSlugChapterLangRoute
+}
+
+const TranslateRouteChildren: TranslateRouteChildren = {
+  TranslateSlugChapterLangRoute: TranslateSlugChapterLangRoute,
+}
+
+const TranslateRouteWithChildren = TranslateRoute._addFileChildren(
+  TranslateRouteChildren,
+)
 
 interface SeriesSlugRouteChildren {
   SeriesSlugChapterChapterRoute: typeof SeriesSlugChapterChapterRoute
@@ -379,11 +410,11 @@ const rootRouteChildren: RootRouteChildren = {
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TranslateRoute: TranslateRouteWithChildren,
   AdminGlossaryRoute: AdminGlossaryRoute,
   JobJobIdRoute: JobJobIdRoute,
   ReadTranslationIdRoute: ReadTranslationIdRoute,
   SeriesSlugRoute: SeriesSlugRouteWithChildren,
-  TranslateSlugChapterLangRoute: TranslateSlugChapterLangRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
