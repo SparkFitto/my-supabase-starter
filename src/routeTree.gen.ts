@@ -9,23 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpdatesRouteImport } from './routes/updates'
+import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MessagesRouteImport } from './routes/messages'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as HistoryRouteImport } from './routes/history'
+import { Route as FriendsRouteImport } from './routes/friends'
+import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
+import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as BillboardRouteImport } from './routes/billboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 import { Route as ReadTranslationIdRouteImport } from './routes/read.$translationId'
+import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
 import { Route as JobJobIdRouteImport } from './routes/job.$jobId'
 import { Route as AdminGlossaryRouteImport } from './routes/admin.glossary'
 import { Route as TranslateSlugChapterLangRouteImport } from './routes/translate.$slug.$chapter.$lang'
 import { Route as SeriesSlugChapterChapterRouteImport } from './routes/series.$slug.chapter.$chapter'
 
+const UpdatesRoute = UpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TranslateRoute = TranslateRouteImport.update({
+  id: '/translate',
+  path: '/translate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -39,6 +60,11 @@ const SignupRoute = SignupRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
@@ -61,9 +87,44 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FriendsRoute = FriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CatalogueRoute = CatalogueRouteImport.update({
   id: '/catalogue',
   path: '/catalogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookmarksRoute = BookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BillboardRoute = BillboardRouteImport.update({
@@ -86,6 +147,11 @@ const ReadTranslationIdRoute = ReadTranslationIdRouteImport.update({
   path: '/read/$translationId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
+  id: '/$username',
+  path: '/$username',
+  getParentRoute: () => ProfileRoute,
+} as any)
 const JobJobIdRoute = JobJobIdRouteImport.update({
   id: '/job/$jobId',
   path: '/job/$jobId',
@@ -98,9 +164,9 @@ const AdminGlossaryRoute = AdminGlossaryRouteImport.update({
 } as any)
 const TranslateSlugChapterLangRoute =
   TranslateSlugChapterLangRouteImport.update({
-    id: '/translate/$slug/$chapter/$lang',
-    path: '/translate/$slug/$chapter/$lang',
-    getParentRoute: () => rootRouteImport,
+    id: '/$slug/$chapter/$lang',
+    path: '/$slug/$chapter/$lang',
+    getParentRoute: () => TranslateRoute,
   } as any)
 const SeriesSlugChapterChapterRoute =
   SeriesSlugChapterChapterRouteImport.update({
@@ -112,16 +178,27 @@ const SeriesSlugChapterChapterRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/billboard': typeof BillboardRoute
+  '/bookmarks': typeof BookmarksRoute
   '/catalogue': typeof CatalogueRoute
+  '/favorites': typeof FavoritesRoute
+  '/friends': typeof FriendsRoute
+  '/history': typeof HistoryRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/messages': typeof MessagesRoute
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
-  '/profile': typeof ProfileRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/settings': typeof SettingsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/translate': typeof TranslateRouteWithChildren
+  '/updates': typeof UpdatesRoute
   '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
+  '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
@@ -130,16 +207,27 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/billboard': typeof BillboardRoute
+  '/bookmarks': typeof BookmarksRoute
   '/catalogue': typeof CatalogueRoute
+  '/favorites': typeof FavoritesRoute
+  '/friends': typeof FriendsRoute
+  '/history': typeof HistoryRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/messages': typeof MessagesRoute
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
-  '/profile': typeof ProfileRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/settings': typeof SettingsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/translate': typeof TranslateRouteWithChildren
+  '/updates': typeof UpdatesRoute
   '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
+  '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
@@ -149,16 +237,27 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/billboard': typeof BillboardRoute
+  '/bookmarks': typeof BookmarksRoute
   '/catalogue': typeof CatalogueRoute
+  '/favorites': typeof FavoritesRoute
+  '/friends': typeof FriendsRoute
+  '/history': typeof HistoryRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/messages': typeof MessagesRoute
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
-  '/profile': typeof ProfileRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/settings': typeof SettingsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/translate': typeof TranslateRouteWithChildren
+  '/updates': typeof UpdatesRoute
   '/admin/glossary': typeof AdminGlossaryRoute
   '/job/$jobId': typeof JobJobIdRoute
+  '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
@@ -169,16 +268,27 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/billboard'
+    | '/bookmarks'
     | '/catalogue'
+    | '/favorites'
+    | '/friends'
+    | '/history'
+    | '/leaderboard'
+    | '/messages'
+    | '/notifications'
     | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
+    | '/settings'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/translate'
+    | '/updates'
     | '/admin/glossary'
     | '/job/$jobId'
+    | '/profile/$username'
     | '/read/$translationId'
     | '/series/$slug'
     | '/series/$slug/chapter/$chapter'
@@ -187,16 +297,27 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/billboard'
+    | '/bookmarks'
     | '/catalogue'
+    | '/favorites'
+    | '/friends'
+    | '/history'
+    | '/leaderboard'
+    | '/messages'
+    | '/notifications'
     | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
+    | '/settings'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/translate'
+    | '/updates'
     | '/admin/glossary'
     | '/job/$jobId'
+    | '/profile/$username'
     | '/read/$translationId'
     | '/series/$slug'
     | '/series/$slug/chapter/$chapter'
@@ -205,16 +326,27 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/billboard'
+    | '/bookmarks'
     | '/catalogue'
+    | '/favorites'
+    | '/friends'
+    | '/history'
+    | '/leaderboard'
+    | '/messages'
+    | '/notifications'
     | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
+    | '/settings'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/translate'
+    | '/updates'
     | '/admin/glossary'
     | '/job/$jobId'
+    | '/profile/$username'
     | '/read/$translationId'
     | '/series/$slug'
     | '/series/$slug/chapter/$chapter'
@@ -224,23 +356,46 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BillboardRoute: typeof BillboardRoute
+  BookmarksRoute: typeof BookmarksRoute
   CatalogueRoute: typeof CatalogueRoute
+  FavoritesRoute: typeof FavoritesRoute
+  FriendsRoute: typeof FriendsRoute
+  HistoryRoute: typeof HistoryRoute
+  LeaderboardRoute: typeof LeaderboardRoute
+  MessagesRoute: typeof MessagesRoute
+  NotificationsRoute: typeof NotificationsRoute
   PricingRoute: typeof PricingRoute
-  ProfileRoute: typeof ProfileRoute
+  ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SettingsRoute: typeof SettingsRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TranslateRoute: typeof TranslateRouteWithChildren
+  UpdatesRoute: typeof UpdatesRoute
   AdminGlossaryRoute: typeof AdminGlossaryRoute
   JobJobIdRoute: typeof JobJobIdRoute
   ReadTranslationIdRoute: typeof ReadTranslationIdRoute
   SeriesSlugRoute: typeof SeriesSlugRouteWithChildren
-  TranslateSlugChapterLangRoute: typeof TranslateSlugChapterLangRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/updates': {
+      id: '/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof UpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/translate': {
+      id: '/translate'
+      path: '/translate'
+      fullPath: '/translate'
+      preLoaderRoute: typeof TranslateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -260,6 +415,13 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/robots.txt': {
@@ -290,11 +452,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/friends': {
+      id: '/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof FriendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/catalogue': {
       id: '/catalogue'
       path: '/catalogue'
       fullPath: '/catalogue'
       preLoaderRoute: typeof CatalogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookmarks': {
+      id: '/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/billboard': {
@@ -325,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReadTranslationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/$username': {
+      id: '/profile/$username'
+      path: '/$username'
+      fullPath: '/profile/$username'
+      preLoaderRoute: typeof ProfileUsernameRouteImport
+      parentRoute: typeof ProfileRoute
+    }
     '/job/$jobId': {
       id: '/job/$jobId'
       path: '/job/$jobId'
@@ -341,10 +559,10 @@ declare module '@tanstack/react-router' {
     }
     '/translate/$slug/$chapter/$lang': {
       id: '/translate/$slug/$chapter/$lang'
-      path: '/translate/$slug/$chapter/$lang'
+      path: '/$slug/$chapter/$lang'
       fullPath: '/translate/$slug/$chapter/$lang'
       preLoaderRoute: typeof TranslateSlugChapterLangRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof TranslateRoute
     }
     '/series/$slug/chapter/$chapter': {
       id: '/series/$slug/chapter/$chapter'
@@ -355,6 +573,29 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface ProfileRouteChildren {
+  ProfileUsernameRoute: typeof ProfileUsernameRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileUsernameRoute: ProfileUsernameRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
+
+interface TranslateRouteChildren {
+  TranslateSlugChapterLangRoute: typeof TranslateSlugChapterLangRoute
+}
+
+const TranslateRouteChildren: TranslateRouteChildren = {
+  TranslateSlugChapterLangRoute: TranslateSlugChapterLangRoute,
+}
+
+const TranslateRouteWithChildren = TranslateRoute._addFileChildren(
+  TranslateRouteChildren,
+)
 
 interface SeriesSlugRouteChildren {
   SeriesSlugChapterChapterRoute: typeof SeriesSlugChapterChapterRoute
@@ -371,19 +612,28 @@ const SeriesSlugRouteWithChildren = SeriesSlugRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BillboardRoute: BillboardRoute,
+  BookmarksRoute: BookmarksRoute,
   CatalogueRoute: CatalogueRoute,
+  FavoritesRoute: FavoritesRoute,
+  FriendsRoute: FriendsRoute,
+  HistoryRoute: HistoryRoute,
+  LeaderboardRoute: LeaderboardRoute,
+  MessagesRoute: MessagesRoute,
+  NotificationsRoute: NotificationsRoute,
   PricingRoute: PricingRoute,
-  ProfileRoute: ProfileRoute,
+  ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SettingsRoute: SettingsRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TranslateRoute: TranslateRouteWithChildren,
+  UpdatesRoute: UpdatesRoute,
   AdminGlossaryRoute: AdminGlossaryRoute,
   JobJobIdRoute: JobJobIdRoute,
   ReadTranslationIdRoute: ReadTranslationIdRoute,
   SeriesSlugRoute: SeriesSlugRouteWithChildren,
-  TranslateSlugChapterLangRoute: TranslateSlugChapterLangRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

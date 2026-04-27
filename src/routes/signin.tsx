@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -31,8 +32,13 @@ function SignInPage() {
     setLoading(true);
     const { error } = await signIn(email, password);
     setLoading(false);
-    if (error) setErr(error.message);
-    else nav({ to: "/" });
+    if (error) {
+      setErr(error.message);
+      toast.error("Sign in failed", { description: error.message });
+    } else {
+      toast.success("Welcome back!");
+      nav({ to: "/" });
+    }
   };
 
   return (

@@ -55,6 +55,57 @@ export type Database = {
           },
         ]
       }
+      comment_votes: {
+        Row: {
+          comment_id: string
+          comment_type: string
+          created_at: string
+          id: string
+          user_id: string
+          vote_type: string
+        }
+        Insert: {
+          comment_id: string
+          comment_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+          vote_type: string
+        }
+        Update: {
+          comment_id?: string
+          comment_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+          vote_type?: string
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           added_at: string
@@ -83,6 +134,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      friendships: {
+        Row: {
+          accepted_at: string | null
+          addressee_id: string
+          created_at: string
+          id: string
+          is_highlighted: boolean
+          requester_id: string
+          status: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          addressee_id: string
+          created_at?: string
+          id?: string
+          is_highlighted?: boolean
+          requester_id: string
+          status?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          addressee_id?: string
+          created_at?: string
+          id?: string
+          is_highlighted?: boolean
+          requester_id?: string
+          status?: string
+        }
+        Relationships: []
       }
       jobs: {
         Row: {
@@ -150,6 +231,184 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profile_comments: {
+        Row: {
+          author_user_id: string
+          content: string
+          created_at: string
+          id: string
+          is_pinned: boolean
+          profile_user_id: string
+        }
+        Insert: {
+          author_user_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          profile_user_id: string
+        }
+        Update: {
+          author_user_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          profile_user_id?: string
+        }
+        Relationships: []
+      }
+      reading_history: {
+        Row: {
+          chapter_number: string | null
+          id: string
+          read_at: string
+          series_id: string
+          translation_id: string | null
+          user_id: string
+        }
+        Insert: {
+          chapter_number?: string | null
+          id?: string
+          read_at?: string
+          series_id: string
+          translation_id?: string | null
+          user_id: string
+        }
+        Update: {
+          chapter_number?: string | null
+          id?: string
+          read_at?: string
+          series_id?: string
+          translation_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_history_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_history_translation_id_fkey"
+            columns: ["translation_id"]
+            isOneToOne: false
+            referencedRelation: "translations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reading_lists: {
+        Row: {
+          added_at: string
+          current_chapter: string | null
+          id: string
+          is_private: boolean
+          series_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          current_chapter?: string | null
+          id?: string
+          is_private?: boolean
+          series_id: string
+          status: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          current_chapter?: string | null
+          id?: string
+          is_private?: boolean
+          series_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_lists_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       series: {
         Row: {
           age_rating: string | null
@@ -210,6 +469,51 @@ export type Database = {
         }
         Relationships: []
       }
+      series_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_pinned: boolean
+          parent_id: string | null
+          series_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          parent_id?: string | null
+          series_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          parent_id?: string | null
+          series_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "series_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "series_comments_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       series_glossary: {
         Row: {
           approved: boolean
@@ -250,6 +554,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      site_updates: {
+        Row: {
+          body: string
+          created_by: string | null
+          id: string
+          published_at: string
+          title: string
+          type: string
+        }
+        Insert: {
+          body: string
+          created_by?: string | null
+          id?: string
+          published_at?: string
+          title: string
+          type?: string
+        }
+        Update: {
+          body?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string
+          title?: string
+          type?: string
+        }
+        Relationships: []
       }
       translations: {
         Row: {
@@ -306,10 +637,20 @@ export type Database = {
       }
       user_profiles: {
         Row: {
+          age: number | null
           avatar_url: string | null
+          bio: string | null
           chapters_translated_total: number
+          country: string | null
           created_at: string
+          daily_downvotes_used: number
+          downvotes_reset_at: string
+          friends_are_private: boolean
+          history_is_private: boolean
           id: string
+          last_login_date: string | null
+          last_seen: string | null
+          login_streak: number
           notify_on_release: boolean
           paddle_customer_id: string | null
           plan: string
@@ -320,10 +661,20 @@ export type Database = {
           weekly_reset_at: string
         }
         Insert: {
+          age?: number | null
           avatar_url?: string | null
+          bio?: string | null
           chapters_translated_total?: number
+          country?: string | null
           created_at?: string
+          daily_downvotes_used?: number
+          downvotes_reset_at?: string
+          friends_are_private?: boolean
+          history_is_private?: boolean
           id: string
+          last_login_date?: string | null
+          last_seen?: string | null
+          login_streak?: number
           notify_on_release?: boolean
           paddle_customer_id?: string | null
           plan?: string
@@ -334,10 +685,20 @@ export type Database = {
           weekly_reset_at?: string
         }
         Update: {
+          age?: number | null
           avatar_url?: string | null
+          bio?: string | null
           chapters_translated_total?: number
+          country?: string | null
           created_at?: string
+          daily_downvotes_used?: number
+          downvotes_reset_at?: string
+          friends_are_private?: boolean
+          history_is_private?: boolean
           id?: string
+          last_login_date?: string | null
+          last_seen?: string | null
+          login_streak?: number
           notify_on_release?: boolean
           paddle_customer_id?: string | null
           plan?: string
