@@ -1,10 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Construction } from "lucide-react";
-
-export const Route = createFileRoute("/_coming-soon")({
-  component: () => null,
-});
 
 export function ComingSoon({ title, description }: { title: string; description?: string }) {
   return (
