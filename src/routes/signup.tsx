@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -30,13 +31,23 @@ function SignUpPage() {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErr(null);
+    if (!username.trim()) {
+      const msg = "Username is required";
+      setErr(msg);
+      toast.error(msg);
+      return;
+    }
     setLoading(true);
     const { error } = await signUp(email, password, username);
     setLoading(false);
-    if (error) setErr(error.message);
-    else {
+    if (error) {
+      setErr(error.message);
+      toast.error("Sign up failed", { description: error.message });
+    } else {
       setOk(true);
-      setTimeout(() => nav({ to: "/" }), 2000);
+      toast.success("Account created!", { description: "Welcome to RAWL." });
+      // Redirect immediately — Supabase email confirmation flow lands them back at /
+      nav({ to: "/" });
     }
   };
 
