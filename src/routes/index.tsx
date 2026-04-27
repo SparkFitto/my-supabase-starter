@@ -1,44 +1,92 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { Upload, Search, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
-import { StatusBadge } from "@/components/StatusBadge";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TARGET_LANGUAGES, SOURCE_LANGUAGES, validateFile, timeAgo, typeLabel } from "@/lib/constants";
+import { useAuth } from "@/lib/auth";
+import {
+  CompactSeriesCard,
+  ChapterCard,
+  GridSeriesCard,
+  HorizontalRow,
+} from "@/components/SeriesCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "RAWL — Read any manga. In any language. Instantly." },
+      { name: "description", content: "Discover, read, and translate manga, manhwa, and manhua. Join a community of readers and translators." },
+      { property: "og:title", content: "RAWL — AI manga translation platform" },
+      { property: "og:description", content: "Discover, read, and translate manga, manhwa, and manhua." },
+    ],
+  }),
   component: HomePage,
 });
 
+function SectionHeader({ title, href, dot }: { title: string; href?: string; dot?: boolean }) {
+  return (
+    <div className="flex items-center justify-between mb-3 px-1">
+      <div className="flex items-center gap-2">
+        {dot && <span className="h-2 w-2 rounded-full bg-success pulse-dot" />}
+        <h2 className="text-base md:text-lg font-bold">{title}</h2>
+      </div>
+      {href && (
+        <Link to={href as any} className="text-xs text-primary hover:underline flex items-center gap-1">
+          See all <ArrowRight className="h-3 w-3" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function RowSkeleton() {
+  return (
+    <div className="flex gap-3 overflow-hidden">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="shrink-0 w-[125px]">
+          <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+          <Skeleton className="h-3 w-3/4 mt-2" />
+          <Skeleton className="h-2 w-1/2 mt-1" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function HomePage() {
-  const [file, setFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
-  const [from, setFrom] = useState("auto");
-  const [to, setTo] = useState("en");
-  const [search, setSearch] = useState("");
-  const [dragOver, setDragOver] = useState(false);
+  const { user } = useAuth();
 
-  const { data: latest } = useQuery({
-    queryKey: ["latest-chapters"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("chapters")
-        .select("id, chapter_number, release_date, series:series(slug, title, cover_url, type), translations(target_language, published)")
-        .order("release_date", { ascending: false })
-        .limit(6);
-      return data ?? [];
-    },
-  });
-
-  const { data: popular } = useQuery({
-    queryKey: ["popular-series"],
+  const { data: popular, isLoading: popLoading } = useQuery({
+    queryKey: ["home-popular-series"],
     queryFn: async () => {
       const { data } = await supabase
         .from("series")
         .select("id, slug, title, cover_url, type, follow_count, rating")
+        .order("follow_count", { ascending: false })
+        .limit(15);
+      return data ?? [];
+    },
+  });
+
+  const { data: latest, isLoading: latestLoading } = useQuery({
+    queryKey: ["home-latest-chapters"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("chapters")
+        .select("id, chapter_number, release_date, series:series(id, slug, title, cover_url, type), translations(target_language, published)")
+        .order("release_date", { ascending: false })
+        .limit(15);
+      return (data ?? []).filter((c: any) => c.series);
+    },
+  });
+
+  const { data: ongoing, isLoading: ongoingLoading } = useQuery({
+    queryKey: ["home-most-popular-ongoing"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("series")
+        .select("id, slug, title, cover_url, type, follow_count, rating, genres")
         .eq("status", "ongoing")
         .order("follow_count", { ascending: false })
         .limit(6);
@@ -46,192 +94,140 @@ function HomePage() {
     },
   });
 
-  const { data: searchResults } = useQuery({
-    queryKey: ["series-search", search],
+  const { data: continueReading } = useQuery({
+    queryKey: ["home-continue-reading", user?.id],
+    enabled: !!user,
     queryFn: async () => {
-      if (search.trim().length < 2) return [];
       const { data } = await supabase
-        .from("series")
-        .select("slug, title, cover_url, type")
-        .ilike("title", `%${search}%`)
-        .limit(6);
-      return data ?? [];
+        .from("reading_history")
+        .select("series_id, chapter_number, read_at, series:series(id, slug, title, cover_url, type)")
+        .eq("user_id", user!.id)
+        .order("read_at", { ascending: false })
+        .limit(30);
+      // Dedupe by series, keep latest entry per series
+      const seen = new Set<string>();
+      const out: any[] = [];
+      for (const r of data ?? []) {
+        if (!r.series || seen.has((r as any).series_id)) continue;
+        seen.add((r as any).series_id);
+        out.push(r);
+        if (out.length >= 12) break;
+      }
+      return out;
     },
-    enabled: search.trim().length >= 2,
   });
 
-  const handleFile = (f: File) => {
-    const err = validateFile(f);
-    if (err) { setFileError(err); setFile(null); return; }
-    setFileError(null);
-    setFile(f);
-  };
+  const { data: topTranslators } = useQuery({
+    queryKey: ["home-top-translators"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("user_profiles")
+        .select("id, username, avatar_url, chapters_translated_total")
+        .order("chapters_translated_total", { ascending: false })
+        .limit(5);
+      return data ?? [];
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
-      <main className="mx-auto max-w-5xl px-4 pt-12 pb-24">
-        {/* Hero */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-glow-teal">
-            Read any manga.<br />In any language. <span className="text-primary">Instantly.</span>
-          </h1>
-          <p className="mt-5 text-lg text-muted-foreground">
-            Upload a raw chapter — AI translates it in seconds.
-          </p>
-        </div>
-
-        {/* Dropzone */}
-        <label
-          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={(e) => {
-            e.preventDefault(); setDragOver(false);
-            const f = e.dataTransfer.files?.[0];
-            if (f) handleFile(f);
-          }}
-          className={`block cursor-pointer rounded-2xl border-2 border-dashed transition-all ${
-            dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-          } ${file ? "border-primary bg-primary/5" : ""} p-12 text-center`}
-        >
-          <input
-            type="file"
-            accept=".jpg,.jpeg,.png,.zip,.cbz,.pdf"
-            className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
-          />
-          <Upload className="mx-auto mb-4 h-10 w-10 text-primary" />
-          {file ? (
-            <>
-              <p className="font-semibold text-foreground">{file.name}</p>
-              <p className="text-sm text-muted-foreground mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB · ready to translate</p>
-            </>
-          ) : (
-            <>
-              <p className="text-lg font-semibold">Drop your file here</p>
-              <p className="text-sm text-muted-foreground mt-1">or click to browse</p>
-              <p className="text-xs text-muted-foreground mt-3">Supports: JPG · PNG · ZIP · CBZ · PDF</p>
-            </>
+      <main className="mx-auto max-w-7xl px-4 py-6 space-y-10 pb-20">
+        {/* Popular Right Now */}
+        <section>
+          <SectionHeader title="Popular Right Now" href="/catalogue" />
+          {popLoading ? <RowSkeleton /> : (
+            <HorizontalRow>
+              {popular?.map((s: any) => (
+                <CompactSeriesCard key={s.id} series={s} />
+              ))}
+            </HorizontalRow>
           )}
-        </label>
-        {fileError && <p className="text-destructive text-sm mt-2 text-center">{fileError}</p>}
+        </section>
 
-        {/* Language row */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <Select value={from} onValueChange={setFrom}>
-            <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {SOURCE_LANGUAGES.map((l) => (
-                <SelectItem key={l.code} value={l.code}>{l.label}</SelectItem>
+        {/* New Releases */}
+        <section>
+          <SectionHeader title="New Releases" href="/billboard" dot />
+          {latestLoading ? <RowSkeleton /> : (
+            <HorizontalRow>
+              {latest?.map((c: any) => (
+                <ChapterCard
+                  key={c.id}
+                  series={c.series}
+                  chapter_number={c.chapter_number}
+                  release_date={c.release_date}
+                  hasPublishedTranslation={c.translations?.some((t: any) => t.published)}
+                />
               ))}
-            </SelectContent>
-          </Select>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
-          <Select value={to} onValueChange={setTo}>
-            <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {TARGET_LANGUAGES.map((l) => (
-                <SelectItem key={l.code} value={l.code}>{l.flag} {l.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button disabled={!file} className="font-semibold">
-            <Sparkles className="h-4 w-4" /> Translate Now
-          </Button>
-        </div>
+            </HorizontalRow>
+          )}
+        </section>
 
-        {/* Search */}
-        <div className="mt-12 max-w-xl mx-auto relative">
-          <p className="text-sm text-muted-foreground mb-2 text-center">Or search for a series →</p>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search manga, manhwa, manhua..."
-              className="w-full pl-10 pr-4 h-11 rounded-lg bg-card border border-border focus:border-primary outline-none transition-colors"
-            />
-          </div>
-          {searchResults && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 rounded-lg border border-border bg-card overflow-hidden z-10">
-              {searchResults.map((s) => (
-                <Link
-                  key={s.slug}
-                  to="/series/$slug"
-                  params={{ slug: s.slug }}
-                  className="flex items-center gap-3 px-4 py-2 hover:bg-secondary transition-colors"
-                  onClick={() => setSearch("")}
-                >
-                  <img src={s.cover_url ?? ""} alt="" className="h-10 w-7 object-cover rounded" />
-                  <div>
-                    <div className="font-medium text-sm">{s.title}</div>
-                    <div className="text-xs text-muted-foreground">{typeLabel(s.type)}</div>
-                  </div>
-                </Link>
+        {/* Continue Reading (logged in only) */}
+        {user && continueReading && continueReading.length > 0 && (
+          <section>
+            <SectionHeader title="Continue Reading" href="/history" />
+            <HorizontalRow>
+              {continueReading.map((r: any) => (
+                <CompactSeriesCard
+                  key={r.series_id}
+                  series={r.series}
+                  subtitle={r.chapter_number ? `Ch. ${r.chapter_number}` : undefined}
+                />
+              ))}
+            </HorizontalRow>
+          </section>
+        )}
+
+        {/* Most Popular Ongoing — grid */}
+        <section>
+          <SectionHeader title="Most Popular Ongoing" href="/catalogue" />
+          {ongoingLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i}>
+                  <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+                  <Skeleton className="h-3 w-3/4 mt-2" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {ongoing?.map((s: any) => (
+                <GridSeriesCard
+                  key={s.id}
+                  series={s}
+                  genre={s.genres?.[0] ?? null}
+                />
               ))}
             </div>
           )}
-        </div>
-
-        {/* Just Released */}
-        <section className="mt-16">
-          <div className="flex items-center gap-2 mb-5">
-            <span className="h-2 w-2 rounded-full bg-success pulse-dot" />
-            <h2 className="text-xl font-bold">Just Released</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {latest?.map((c: any) => {
-              const hasEn = c.translations?.some((t: any) => t.target_language === "en" && t.published);
-              return (
-                <Link
-                  key={c.id}
-                  to="/translate/$slug/$chapter/$lang"
-                  params={{ slug: c.series.slug, chapter: c.chapter_number, lang: "english" }}
-                  className="group rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
-                >
-                  <div className="aspect-[3/4] overflow-hidden bg-secondary">
-                    <img src={c.series.cover_url} alt={c.series.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
-                  </div>
-                  <div className="p-3">
-                    <div className="font-semibold text-sm truncate">{c.series.title}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">Chapter {c.chapter_number}</div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-muted-foreground">{timeAgo(c.release_date)}</span>
-                      <StatusBadge status={hasEn ? "translated" : "new"} />
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
         </section>
 
-        {/* Popular */}
-        <section className="mt-16">
-          <h2 className="text-xl font-bold mb-5">Most Popular Ongoing</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {popular?.map((s: any) => (
+        {/* Top Translators teaser */}
+        <section>
+          <SectionHeader title="Top Translators This Week" href="/leaderboard" />
+          <div className="rounded-xl border border-border bg-card divide-y divide-border">
+            {topTranslators?.map((u: any, i: number) => (
               <Link
-                key={s.id}
-                to="/series/$slug"
-                params={{ slug: s.slug }}
-                className="group rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
+                key={u.id}
+                to="/profile/$username"
+                params={{ username: u.username ?? "" }}
+                className="flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/50 transition-colors"
               >
-                <div className="aspect-[3/4] overflow-hidden bg-secondary relative">
-                  <img src={s.cover_url} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
-                  {s.rating && (
-                    <span className="absolute bottom-2 left-2 bg-success text-background text-xs font-bold px-1.5 py-0.5 rounded">
-                      {s.rating}
-                    </span>
-                  )}
+                <span className={`text-sm font-bold w-6 text-center ${i === 0 ? "text-warning" : i === 1 ? "text-muted-foreground" : i === 2 ? "text-purple-accent" : "text-muted-foreground"}`}>
+                  #{i + 1}
+                </span>
+                <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold overflow-hidden">
+                  {u.avatar_url ? <img src={u.avatar_url} alt="" className="h-full w-full object-cover" /> : (u.username ?? "?").slice(0, 2).toUpperCase()}
                 </div>
-                <div className="p-3">
-                  <div className="font-semibold text-sm truncate">{s.title}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{typeLabel(s.type)}</div>
-                </div>
+                <span className="text-sm font-medium flex-1 truncate">@{u.username}</span>
+                <span className="text-xs text-muted-foreground">{u.chapters_translated_total} translations</span>
               </Link>
             ))}
+            {(!topTranslators || topTranslators.length === 0) && (
+              <div className="px-4 py-6 text-center text-sm text-muted-foreground">No translators yet — be the first!</div>
+            )}
           </div>
         </section>
       </main>
