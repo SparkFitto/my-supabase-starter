@@ -110,13 +110,9 @@ function ProfilePage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center justify-between rounded-md border border-border p-4">
-              <div>
-                <Label>Email me on new chapters</Label>
-                <p className="text-xs text-muted-foreground">For series in your favorites</p>
-              </div>
-              <Switch checked={notify} onCheckedChange={setNotify} />
-            </div>
+            <p className="text-xs text-muted-foreground">
+              New-chapter alerts are delivered through your <Link to="/notifications" className="text-primary hover:underline">notifications page</Link> for any series you favorite.
+            </p>
             {msg && <p className={`text-sm ${msg === "Saved!" ? "text-success" : "text-destructive"}`}>{msg}</p>}
             <div className="flex justify-between">
               <Button variant="ghost" onClick={() => signOut().then(() => nav({ to: "/" }))}>Sign out</Button>
