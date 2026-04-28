@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TARGET_LANGUAGES } from "@/lib/constants";
@@ -22,7 +22,7 @@ function ProfilePage() {
   const [username, setUsername] = useState("");
   const [lang, setLang] = useState("en");
   const [mode, setMode] = useState("long_strip");
-  const [notify, setNotify] = useState(true);
+  
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ function ProfilePage() {
       setUsername(profile.username ?? "");
       setLang(profile.preferred_target_language ?? "en");
       setMode(profile.preferred_reading_mode ?? "long_strip");
-      setNotify(profile.notify_on_release);
+      
     }
   }, [profile]);
 
