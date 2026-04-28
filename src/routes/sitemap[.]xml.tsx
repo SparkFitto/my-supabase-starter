@@ -13,7 +13,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           .select("chapter_number, release_date, series:series(slug)")
           .limit(10000);
 
-        const staticUrls = ["", "/billboard", "/catalogue", "/pricing"].map(
+        const staticUrls = ["", "/billboard", "/catalogue", "/leaderboard", "/updates"].map(
           (p) => `<url><loc>${SITE}${p}</loc><changefreq>daily</changefreq></url>`,
         );
         const seriesUrls = (series ?? []).map(
