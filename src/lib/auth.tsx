@@ -58,7 +58,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .select("*")
       .eq("id", uid)
       .maybeSingle();
-    setProfile((data as Profile | null) ?? null);
+    const p = (data as Profile | null) ?? null;
+    setProfile(p);
+    // Hard redirect banned users (except when already on /banned)
+    if (
+      p?.banned_at &&
+      typeof window !== "undefined" &&
+      !window.location.pathname.startsWith("/banned")
+    ) {
+      window.location.href = "/banned";
+    }
   };
 
   // Update last_seen + login_streak (best-effort, non-blocking)

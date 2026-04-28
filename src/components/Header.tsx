@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -60,6 +61,21 @@ export function Header() {
         .eq("user_id", user!.id)
         .eq("read", false);
       return count ?? 0;
+    },
+  });
+
+  // Admin role check
+  const { data: isAdmin = false } = useQuery({
+    queryKey: ["is-admin", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user!.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      return !!data;
     },
   });
 
@@ -127,6 +143,7 @@ export function Header() {
                   plan={profile?.plan ?? "free"}
                   avatarUrl={profile?.avatar_url}
                   unreadCount={unreadCount}
+                  isAdmin={isAdmin}
                   onSignOut={handleSignOut}
                   onClose={() => setMenuOpen(false)}
                 />
@@ -145,6 +162,7 @@ export function Header() {
           username={profile?.username}
           avatarUrl={profile?.avatar_url}
           isLoggedIn={!!user}
+          isAdmin={isAdmin}
           onClose={() => setDrawerOpen(false)}
           onSignOut={handleSignOut}
         />
@@ -158,6 +176,7 @@ function AvatarDropdown({
   plan,
   avatarUrl,
   unreadCount,
+  isAdmin,
   onSignOut,
   onClose,
 }: {
@@ -165,6 +184,7 @@ function AvatarDropdown({
   plan: string;
   avatarUrl?: string | null;
   unreadCount: number;
+  isAdmin: boolean;
   onSignOut: () => void;
   onClose: () => void;
 }) {
@@ -177,6 +197,7 @@ function AvatarDropdown({
     { icon: History, label: "Reading History", to: "/history" },
     { icon: UserIcon, label: "My Profile", to: "/profile" },
     { icon: Settings, label: "Settings", to: "/settings" },
+    ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", to: "/admin" as const }] : []),
   ] as const;
 
   return (
@@ -224,12 +245,14 @@ function Drawer({
   username,
   avatarUrl,
   isLoggedIn,
+  isAdmin,
   onClose,
   onSignOut,
 }: {
   username: string | null | undefined;
   avatarUrl: string | null | undefined;
   isLoggedIn: boolean;
+  isAdmin: boolean;
   onClose: () => void;
   onSignOut: () => void;
 }) {
@@ -298,6 +321,11 @@ function Drawer({
               <Link to="/settings" onClick={onClose} className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary">
                 <Settings className="h-4 w-4" /> Settings
               </Link>
+              {isAdmin && (
+                <Link to="/admin" onClick={onClose} className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary">
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Admin
+                </Link>
+              )}
               <button onClick={onSignOut} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-destructive hover:bg-secondary">
                 <LogOut className="h-4 w-4" /> Sign Out
               </button>
