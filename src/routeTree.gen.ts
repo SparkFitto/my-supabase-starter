@@ -27,11 +27,18 @@ import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as BillboardRouteImport } from './routes/billboard'
+import { Route as BannedRouteImport } from './routes/banned'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 import { Route as ReadTranslationIdRouteImport } from './routes/read.$translationId'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
 import { Route as JobJobIdRouteImport } from './routes/job.$jobId'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminUpdatesRouteImport } from './routes/admin.updates'
+import { Route as AdminSeriesRouteImport } from './routes/admin.series'
+import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminGlossaryRouteImport } from './routes/admin.glossary'
 import { Route as TranslateSlugChapterLangRouteImport } from './routes/translate.$slug.$chapter.$lang'
 import { Route as SeriesSlugChapterChapterRouteImport } from './routes/series.$slug.chapter.$chapter'
@@ -126,10 +133,25 @@ const BillboardRoute = BillboardRouteImport.update({
   path: '/billboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BannedRoute = BannedRouteImport.update({
+  id: '/banned',
+  path: '/banned',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const SeriesSlugRoute = SeriesSlugRouteImport.update({
   id: '/series/$slug',
@@ -151,10 +173,30 @@ const JobJobIdRoute = JobJobIdRouteImport.update({
   path: '/job/$jobId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUpdatesRoute = AdminUpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSeriesRoute = AdminSeriesRouteImport.update({
+  id: '/series',
+  path: '/series',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGlossaryRoute = AdminGlossaryRouteImport.update({
-  id: '/admin/glossary',
-  path: '/admin/glossary',
-  getParentRoute: () => rootRouteImport,
+  id: '/glossary',
+  path: '/glossary',
+  getParentRoute: () => AdminRoute,
 } as any)
 const TranslateSlugChapterLangRoute =
   TranslateSlugChapterLangRouteImport.update({
@@ -171,6 +213,8 @@ const SeriesSlugChapterChapterRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/banned': typeof BannedRoute
   '/billboard': typeof BillboardRoute
   '/bookmarks': typeof BookmarksRoute
   '/catalogue': typeof CatalogueRoute
@@ -190,15 +234,21 @@ export interface FileRoutesByFullPath {
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
   '/admin/glossary': typeof AdminGlossaryRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/series': typeof AdminSeriesRoute
+  '/admin/updates': typeof AdminUpdatesRoute
+  '/admin/users': typeof AdminUsersRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
   '/translate/$slug/$chapter/$lang': typeof TranslateSlugChapterLangRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/banned': typeof BannedRoute
   '/billboard': typeof BillboardRoute
   '/bookmarks': typeof BookmarksRoute
   '/catalogue': typeof CatalogueRoute
@@ -218,16 +268,23 @@ export interface FileRoutesByTo {
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
   '/admin/glossary': typeof AdminGlossaryRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/series': typeof AdminSeriesRoute
+  '/admin/updates': typeof AdminUpdatesRoute
+  '/admin/users': typeof AdminUsersRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
+  '/admin': typeof AdminIndexRoute
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
   '/translate/$slug/$chapter/$lang': typeof TranslateSlugChapterLangRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/banned': typeof BannedRoute
   '/billboard': typeof BillboardRoute
   '/bookmarks': typeof BookmarksRoute
   '/catalogue': typeof CatalogueRoute
@@ -247,10 +304,15 @@ export interface FileRoutesById {
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
   '/admin/glossary': typeof AdminGlossaryRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/series': typeof AdminSeriesRoute
+  '/admin/updates': typeof AdminUpdatesRoute
+  '/admin/users': typeof AdminUsersRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
   '/series/$slug': typeof SeriesSlugRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
   '/series/$slug/chapter/$chapter': typeof SeriesSlugChapterChapterRoute
   '/translate/$slug/$chapter/$lang': typeof TranslateSlugChapterLangRoute
 }
@@ -258,6 +320,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/banned'
     | '/billboard'
     | '/bookmarks'
     | '/catalogue'
@@ -277,15 +341,21 @@ export interface FileRouteTypes {
     | '/translate'
     | '/updates'
     | '/admin/glossary'
+    | '/admin/reports'
+    | '/admin/series'
+    | '/admin/updates'
+    | '/admin/users'
     | '/job/$jobId'
     | '/profile/$username'
     | '/read/$translationId'
     | '/series/$slug'
+    | '/admin/'
     | '/series/$slug/chapter/$chapter'
     | '/translate/$slug/$chapter/$lang'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/banned'
     | '/billboard'
     | '/bookmarks'
     | '/catalogue'
@@ -305,15 +375,22 @@ export interface FileRouteTypes {
     | '/translate'
     | '/updates'
     | '/admin/glossary'
+    | '/admin/reports'
+    | '/admin/series'
+    | '/admin/updates'
+    | '/admin/users'
     | '/job/$jobId'
     | '/profile/$username'
     | '/read/$translationId'
     | '/series/$slug'
+    | '/admin'
     | '/series/$slug/chapter/$chapter'
     | '/translate/$slug/$chapter/$lang'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/banned'
     | '/billboard'
     | '/bookmarks'
     | '/catalogue'
@@ -333,16 +410,23 @@ export interface FileRouteTypes {
     | '/translate'
     | '/updates'
     | '/admin/glossary'
+    | '/admin/reports'
+    | '/admin/series'
+    | '/admin/updates'
+    | '/admin/users'
     | '/job/$jobId'
     | '/profile/$username'
     | '/read/$translationId'
     | '/series/$slug'
+    | '/admin/'
     | '/series/$slug/chapter/$chapter'
     | '/translate/$slug/$chapter/$lang'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  BannedRoute: typeof BannedRoute
   BillboardRoute: typeof BillboardRoute
   BookmarksRoute: typeof BookmarksRoute
   CatalogueRoute: typeof CatalogueRoute
@@ -361,7 +445,6 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TranslateRoute: typeof TranslateRouteWithChildren
   UpdatesRoute: typeof UpdatesRoute
-  AdminGlossaryRoute: typeof AdminGlossaryRoute
   JobJobIdRoute: typeof JobJobIdRoute
   ReadTranslationIdRoute: typeof ReadTranslationIdRoute
   SeriesSlugRoute: typeof SeriesSlugRouteWithChildren
@@ -495,12 +578,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BillboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/banned': {
+      id: '/banned'
+      path: '/banned'
+      fullPath: '/banned'
+      preLoaderRoute: typeof BannedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/series/$slug': {
       id: '/series/$slug'
@@ -530,12 +634,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobJobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/updates': {
+      id: '/admin/updates'
+      path: '/updates'
+      fullPath: '/admin/updates'
+      preLoaderRoute: typeof AdminUpdatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/series': {
+      id: '/admin/series'
+      path: '/series'
+      fullPath: '/admin/series'
+      preLoaderRoute: typeof AdminSeriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/glossary': {
       id: '/admin/glossary'
-      path: '/admin/glossary'
+      path: '/glossary'
       fullPath: '/admin/glossary'
       preLoaderRoute: typeof AdminGlossaryRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/translate/$slug/$chapter/$lang': {
       id: '/translate/$slug/$chapter/$lang'
@@ -553,6 +685,26 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminGlossaryRoute: typeof AdminGlossaryRoute
+  AdminReportsRoute: typeof AdminReportsRoute
+  AdminSeriesRoute: typeof AdminSeriesRoute
+  AdminUpdatesRoute: typeof AdminUpdatesRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminGlossaryRoute: AdminGlossaryRoute,
+  AdminReportsRoute: AdminReportsRoute,
+  AdminSeriesRoute: AdminSeriesRoute,
+  AdminUpdatesRoute: AdminUpdatesRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ProfileRouteChildren {
   ProfileUsernameRoute: typeof ProfileUsernameRoute
@@ -591,6 +743,8 @@ const SeriesSlugRouteWithChildren = SeriesSlugRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  BannedRoute: BannedRoute,
   BillboardRoute: BillboardRoute,
   BookmarksRoute: BookmarksRoute,
   CatalogueRoute: CatalogueRoute,
@@ -609,7 +763,6 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TranslateRoute: TranslateRouteWithChildren,
   UpdatesRoute: UpdatesRoute,
-  AdminGlossaryRoute: AdminGlossaryRoute,
   JobJobIdRoute: JobJobIdRoute,
   ReadTranslationIdRoute: ReadTranslationIdRoute,
   SeriesSlugRoute: SeriesSlugRouteWithChildren,
