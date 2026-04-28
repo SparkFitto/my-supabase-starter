@@ -21,6 +21,9 @@ export interface Profile {
   login_streak?: number;
   history_is_private?: boolean;
   friends_are_private?: boolean;
+  reading_is_private?: boolean;
+  banner_url?: string | null;
+  banned_at?: string | null;
 }
 
 interface SignUpResult {
