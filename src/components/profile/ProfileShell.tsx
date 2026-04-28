@@ -68,9 +68,10 @@ export function ProfileShell({
       });
       if (upErr) throw upErr;
       const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
+      const update: Record<string, string> = { [column]: pub.publicUrl };
       const { error: updErr } = await supabase
         .from("user_profiles")
-        .update({ [column]: pub.publicUrl })
+        .update(update as never)
         .eq("id", profile.id);
       if (updErr) throw updErr;
       toast.success(`${column === "banner_url" ? "Banner" : "Avatar"} updated`);
