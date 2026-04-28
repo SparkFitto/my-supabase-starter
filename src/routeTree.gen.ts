@@ -18,7 +18,6 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
@@ -80,11 +79,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -186,7 +180,6 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
-  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -215,7 +208,6 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
-  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -245,7 +237,6 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
-  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -276,7 +267,6 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/messages'
     | '/notifications'
-    | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -305,7 +295,6 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/messages'
     | '/notifications'
-    | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -334,7 +323,6 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/messages'
     | '/notifications'
-    | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -364,7 +352,6 @@ export interface RootRouteChildren {
   LeaderboardRoute: typeof LeaderboardRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
-  PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -443,13 +430,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -620,7 +600,6 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardRoute: LeaderboardRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
-  PricingRoute: PricingRoute,
   ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
