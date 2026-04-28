@@ -67,12 +67,12 @@ export const Route = createFileRoute("/series/$slug")({
   ),
 });
 
-const READING_STATUSES = [
-  { value: "reading", label: "Reading" },
-  { value: "completed", label: "Completed" },
-  { value: "on_hold", label: "On hold" },
-  { value: "dropped", label: "Dropped" },
-  { value: "plan_to_read", label: "Plan to read" },
+const READING_STATUSES: Array<{ value: string; label: string; classes: string }> = [
+  { value: "reading", label: "Reading", classes: "bg-primary text-primary-foreground hover:bg-primary/90 border-primary" },
+  { value: "completed", label: "Completed", classes: "bg-success text-background hover:bg-success/90 border-success" },
+  { value: "on_hold", label: "On hold", classes: "bg-warning text-background hover:bg-warning/90 border-warning" },
+  { value: "dropped", label: "Dropped", classes: "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-destructive" },
+  { value: "plan_to_read", label: "Plan to read", classes: "bg-purple-accent text-background hover:bg-purple-accent/90 border-purple-accent" },
 ];
 
 function SeriesPage() {
@@ -182,9 +182,11 @@ function SeriesPage() {
     else { toast.success("Submitted for review"); setOrig(""); setTrans(""); refetchGlossary(); }
   };
 
-  const currentBookmarkLabel = bookmark
-    ? READING_STATUSES.find((s) => s.value === bookmark.status)?.label ?? "Bookmarked"
-    : "Bookmark";
+  const currentStatus = bookmark ? READING_STATUSES.find((s) => s.value === bookmark.status) : null;
+  const currentBookmarkLabel = currentStatus?.label ?? "Bookmark";
+  const bookmarkButtonClasses = currentStatus
+    ? `${currentStatus.classes} border`
+    : "";
 
   return (
     <div className="min-h-screen bg-background">
