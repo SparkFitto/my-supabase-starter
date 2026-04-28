@@ -239,15 +239,18 @@ function SeriesPage() {
                   </Button>
                   {showBookmarkMenu && (
                     <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-md border border-border bg-popover p-1 shadow-lg">
-                      {READING_STATUSES.map((s) => (
-                        <button
-                          key={s.value}
-                          onClick={() => setBookmark(s.value)}
-                          className={`block w-full rounded px-3 py-1.5 text-left text-sm hover:bg-muted ${bookmark?.status === s.value ? "bg-muted font-medium" : ""}`}
-                        >
-                          {s.label}
-                        </button>
-                      ))}
+                      {READING_STATUSES.map((s) => {
+                        const active = bookmark?.status === s.value;
+                        return (
+                          <button
+                            key={s.value}
+                            onClick={() => setBookmark(s.value)}
+                            className={`mb-1 block w-full rounded px-3 py-1.5 text-left text-sm font-medium border transition-colors ${active ? s.classes : `border-transparent hover:${s.classes}`}`}
+                          >
+                            {s.label}
+                          </button>
+                        );
+                      })}
                       {bookmark && (
                         <>
                           <div className="my-1 border-t border-border" />
