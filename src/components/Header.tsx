@@ -49,11 +49,10 @@ export function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
 
-  // Unread notifications count (poll + realtime would be nice; for this batch we just query)
-  const { data: unreadCount = 0 } = useQuery({
+  // Unread notifications count — realtime via subscription, plus initial fetch
+  const { data: unreadCount = 0, refetch: refetchUnread } = useQuery({
     queryKey: ["notifications-unread", user?.id],
     enabled: !!user,
-    refetchInterval: 30_000,
     queryFn: async () => {
       const { count } = await supabase
         .from("notifications")
@@ -63,6 +62,19 @@ export function Header() {
       return count ?? 0;
     },
   });
+
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel(`header-notif:${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+        () => refetchUnread(),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id, refetchUnread]);
 
   const handleSignOut = async () => {
     await signOut();
