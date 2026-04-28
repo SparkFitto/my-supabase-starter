@@ -73,12 +73,9 @@ function ProfilePage() {
         <Card>
           <CardHeader><CardTitle>Plan & usage</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center justify-between rounded-md bg-muted p-4">
-              <div>
-                <p className="font-mono text-xs uppercase text-muted-foreground">Current plan</p>
-                <p className="text-lg font-semibold capitalize">{profile.plan}</p>
-              </div>
-              <Button asChild variant="outline"><Link to="/pricing">Upgrade</Link></Button>
+            <div className="rounded-md bg-muted p-4">
+              <p className="font-mono text-xs uppercase text-muted-foreground">Current plan</p>
+              <p className="text-lg font-semibold capitalize">{profile.plan}</p>
             </div>
             <p className="text-sm text-muted-foreground">
               <span className="font-mono text-foreground">{used}</span> / {cap === Infinity ? "∞" : cap} chapters this week ·
