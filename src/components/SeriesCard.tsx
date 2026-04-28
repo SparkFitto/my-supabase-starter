@@ -11,8 +11,9 @@ interface SeriesLike {
 }
 
 /**
- * Compact horizontal-row card. ~125x170 cover.
- * Used in Popular / New Releases / Continue Reading rows.
+ * Horizontal mini card: small cover on LEFT, title + meta on RIGHT.
+ * Used in homepage rails (Popular, New Releases, Continue Reading).
+ * Compact, ~260px wide, 80px tall.
  */
 export function CompactSeriesCard({
   series,
@@ -23,32 +24,24 @@ export function CompactSeriesCard({
   series: SeriesLike;
   subtitle?: string;
   badge?: React.ReactNode;
-  progress?: number; // 0..1
+  progress?: number;
 }) {
   return (
     <Link
       to="/series/$slug"
       params={{ slug: series.slug }}
-      className="group flex shrink-0 flex-col w-[125px] snap-start"
+      className="group flex shrink-0 items-center gap-3 w-[260px] snap-start rounded-lg border border-border bg-card/40 p-2 hover:border-primary/50 hover:bg-card transition-colors"
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-secondary border border-border group-hover:border-primary/50 transition-colors">
+      <div className="relative h-[80px] w-[60px] shrink-0 overflow-hidden rounded-md bg-secondary">
         {series.cover_url ? (
           <img
             src={series.cover_url}
             alt={series.title}
             loading="lazy"
-            className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center text-muted-foreground text-xs">No cover</div>
-        )}
-        {series.rating != null && (
-          <span className="absolute bottom-1.5 left-1.5 bg-success text-background text-[10px] font-bold px-1.5 py-0.5 rounded">
-            ★ {Number(series.rating).toFixed(1)}
-          </span>
-        )}
-        {badge && (
-          <div className="absolute top-1.5 right-1.5">{badge}</div>
+          <div className="h-full w-full flex items-center justify-center text-muted-foreground text-[10px]">No cover</div>
         )}
         {progress != null && (
           <div className="absolute bottom-0 inset-x-0 h-1 bg-black/40">
@@ -56,42 +49,46 @@ export function CompactSeriesCard({
           </div>
         )}
       </div>
-      <div className="mt-2 px-0.5">
-        <div className="text-xs font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{series.title}</div>
-        {subtitle && <div className="text-[11px] text-muted-foreground mt-0.5 truncate">{subtitle}</div>}
-        {series.type && !subtitle && <div className="text-[11px] text-muted-foreground mt-0.5">{typeLabel(series.type)}</div>}
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{series.title}</div>
+        {subtitle && <div className="text-[11px] text-muted-foreground mt-1 truncate">{subtitle}</div>}
+        {!subtitle && series.type && (
+          <div className="text-[11px] text-muted-foreground mt-1">{typeLabel(series.type)}</div>
+        )}
+        {series.rating != null && (
+          <div className="text-[11px] text-success mt-0.5 font-medium">★ {Number(series.rating).toFixed(1)}</div>
+        )}
       </div>
+      {badge && <div>{badge}</div>}
     </Link>
   );
 }
 
-/** Grid card for Most Popular Ongoing (slightly bigger, shows genre). */
+/** Horizontal grid card for "Most Popular Ongoing" — small cover left, info right. */
 export function GridSeriesCard({ series, genre }: { series: SeriesLike; genre?: string | null }) {
   return (
     <Link
       to="/series/$slug"
       params={{ slug: series.slug }}
-      className="group flex flex-col"
+      className="group flex items-center gap-3 rounded-lg border border-border bg-card/40 p-2.5 hover:border-primary/50 hover:bg-card transition-colors"
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-secondary border border-border group-hover:border-primary/50 transition-colors">
+      <div className="relative h-[90px] w-[68px] shrink-0 overflow-hidden rounded-md bg-secondary">
         {series.cover_url && (
-          <img src={series.cover_url} alt={series.title} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
-        )}
-        {series.rating != null && (
-          <span className="absolute bottom-2 left-2 bg-success text-background text-xs font-bold px-1.5 py-0.5 rounded">
-            ★ {Number(series.rating).toFixed(1)}
-          </span>
+          <img src={series.cover_url} alt={series.title} loading="lazy" className="h-full w-full object-cover" />
         )}
       </div>
-      <div className="mt-2">
+      <div className="min-w-0 flex-1">
         <div className="text-sm font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{series.title}</div>
-        {genre && <div className="text-xs text-muted-foreground mt-0.5 truncate">{genre}</div>}
+        {genre && <div className="text-xs text-muted-foreground mt-1 truncate">{genre}</div>}
+        {series.rating != null && (
+          <div className="text-[11px] text-success mt-0.5 font-medium">★ {Number(series.rating).toFixed(1)}</div>
+        )}
       </div>
     </Link>
   );
 }
 
-/** Tiny chapter card (latest releases) — shows series cover, ch number, time, status. */
+/** Horizontal chapter card (latest releases) — cover left, ch info right. */
 export function ChapterCard({
   series,
   chapter_number,
@@ -107,21 +104,21 @@ export function ChapterCard({
     <Link
       to="/series/$slug"
       params={{ slug: series.slug }}
-      className="group flex shrink-0 flex-col w-[125px] snap-start"
+      className="group flex shrink-0 items-center gap-3 w-[260px] snap-start rounded-lg border border-border bg-card/40 p-2 hover:border-primary/50 hover:bg-card transition-colors"
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-secondary border border-border group-hover:border-primary/50 transition-colors">
+      <div className="relative h-[80px] w-[60px] shrink-0 overflow-hidden rounded-md bg-secondary">
         {series.cover_url && (
-          <img src={series.cover_url} alt={series.title} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+          <img src={series.cover_url} alt={series.title} loading="lazy" className="h-full w-full object-cover" />
         )}
-        <div className="absolute top-1.5 right-1.5">
+        <div className="absolute top-1 right-1 scale-75 origin-top-right">
           <StatusBadge status={hasPublishedTranslation ? "translated" : "new"} />
         </div>
       </div>
-      <div className="mt-2 px-0.5">
-        <div className="text-xs font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{series.title}</div>
-        <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center justify-between">
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{series.title}</div>
+        <div className="text-[11px] text-muted-foreground mt-1 flex items-center justify-between gap-2">
           <span>Ch. {chapter_number}</span>
-          {release_date && <span>{timeAgo(release_date)}</span>}
+          {release_date && <span className="truncate">{timeAgo(release_date)}</span>}
         </div>
       </div>
     </Link>
@@ -130,7 +127,7 @@ export function ChapterCard({
 
 export function HorizontalRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2 -mx-4 px-4">
+    <div className="flex gap-2 overflow-x-auto snap-x scrollbar-hide pb-2 -mx-4 px-4">
       {children}
     </div>
   );

@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TARGET_LANGUAGES } from "@/lib/constants";
@@ -22,7 +22,7 @@ function ProfilePage() {
   const [username, setUsername] = useState("");
   const [lang, setLang] = useState("en");
   const [mode, setMode] = useState("long_strip");
-  const [notify, setNotify] = useState(true);
+  
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ function ProfilePage() {
       setUsername(profile.username ?? "");
       setLang(profile.preferred_target_language ?? "en");
       setMode(profile.preferred_reading_mode ?? "long_strip");
-      setNotify(profile.notify_on_release);
+      
     }
   }, [profile]);
 
@@ -48,7 +48,7 @@ function ProfilePage() {
         username,
         preferred_target_language: lang,
         preferred_reading_mode: mode,
-        notify_on_release: notify,
+        
       })
       .eq("id", user.id);
     setSaving(false);
@@ -73,12 +73,9 @@ function ProfilePage() {
         <Card>
           <CardHeader><CardTitle>Plan & usage</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center justify-between rounded-md bg-muted p-4">
-              <div>
-                <p className="font-mono text-xs uppercase text-muted-foreground">Current plan</p>
-                <p className="text-lg font-semibold capitalize">{profile.plan}</p>
-              </div>
-              <Button asChild variant="outline"><Link to="/pricing">Upgrade</Link></Button>
+            <div className="rounded-md bg-muted p-4">
+              <p className="font-mono text-xs uppercase text-muted-foreground">Current plan</p>
+              <p className="text-lg font-semibold capitalize">{profile.plan}</p>
             </div>
             <p className="text-sm text-muted-foreground">
               <span className="font-mono text-foreground">{used}</span> / {cap === Infinity ? "∞" : cap} chapters this week ·
@@ -113,13 +110,9 @@ function ProfilePage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center justify-between rounded-md border border-border p-4">
-              <div>
-                <Label>Email me on new chapters</Label>
-                <p className="text-xs text-muted-foreground">For series in your favorites</p>
-              </div>
-              <Switch checked={notify} onCheckedChange={setNotify} />
-            </div>
+            <p className="text-xs text-muted-foreground">
+              New-chapter alerts are delivered through your <Link to="/notifications" className="text-primary hover:underline">notifications page</Link> for any series you favorite.
+            </p>
             {msg && <p className={`text-sm ${msg === "Saved!" ? "text-success" : "text-destructive"}`}>{msg}</p>}
             <div className="flex justify-between">
               <Button variant="ghost" onClick={() => signOut().then(() => nav({ to: "/" }))}>Sign out</Button>

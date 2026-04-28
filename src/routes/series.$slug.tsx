@@ -67,12 +67,12 @@ export const Route = createFileRoute("/series/$slug")({
   ),
 });
 
-const READING_STATUSES = [
-  { value: "reading", label: "Reading" },
-  { value: "completed", label: "Completed" },
-  { value: "on_hold", label: "On hold" },
-  { value: "dropped", label: "Dropped" },
-  { value: "plan_to_read", label: "Plan to read" },
+const READING_STATUSES: Array<{ value: string; label: string; classes: string }> = [
+  { value: "reading", label: "Reading", classes: "bg-primary text-primary-foreground hover:bg-primary/90 border-primary" },
+  { value: "completed", label: "Completed", classes: "bg-success text-background hover:bg-success/90 border-success" },
+  { value: "on_hold", label: "On hold", classes: "bg-warning text-background hover:bg-warning/90 border-warning" },
+  { value: "dropped", label: "Dropped", classes: "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-destructive" },
+  { value: "plan_to_read", label: "Plan to read", classes: "bg-purple-accent text-background hover:bg-purple-accent/90 border-purple-accent" },
 ];
 
 function SeriesPage() {
@@ -182,9 +182,11 @@ function SeriesPage() {
     else { toast.success("Submitted for review"); setOrig(""); setTrans(""); refetchGlossary(); }
   };
 
-  const currentBookmarkLabel = bookmark
-    ? READING_STATUSES.find((s) => s.value === bookmark.status)?.label ?? "Bookmarked"
-    : "Bookmark";
+  const currentStatus = bookmark ? READING_STATUSES.find((s) => s.value === bookmark.status) : null;
+  const currentBookmarkLabel = currentStatus?.label ?? "Bookmark";
+  const bookmarkButtonClasses = currentStatus
+    ? `${currentStatus.classes} border`
+    : "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -226,22 +228,29 @@ function SeriesPage() {
                   {fav ? "Following" : "Follow"}
                 </Button>
                 <div className="relative">
-                  <Button onClick={() => setShowBookmarkMenu((v) => !v)} variant={bookmark ? "secondary" : "outline"}>
+                  <Button
+                    onClick={() => setShowBookmarkMenu((v) => !v)}
+                    variant={currentStatus ? "default" : "outline"}
+                    className={bookmarkButtonClasses}
+                  >
                     <Bookmark className={`mr-2 h-4 w-4 ${bookmark ? "fill-current" : ""}`} />
                     {currentBookmarkLabel}
                     <ChevronDown className="ml-1 h-3 w-3" />
                   </Button>
                   {showBookmarkMenu && (
                     <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-md border border-border bg-popover p-1 shadow-lg">
-                      {READING_STATUSES.map((s) => (
-                        <button
-                          key={s.value}
-                          onClick={() => setBookmark(s.value)}
-                          className={`block w-full rounded px-3 py-1.5 text-left text-sm hover:bg-muted ${bookmark?.status === s.value ? "bg-muted font-medium" : ""}`}
-                        >
-                          {s.label}
-                        </button>
-                      ))}
+                      {READING_STATUSES.map((s) => {
+                        const active = bookmark?.status === s.value;
+                        return (
+                          <button
+                            key={s.value}
+                            onClick={() => setBookmark(s.value)}
+                            className={`mb-1 block w-full rounded px-3 py-1.5 text-left text-sm font-medium border transition-colors ${active ? s.classes : `border-transparent hover:${s.classes}`}`}
+                          >
+                            {s.label}
+                          </button>
+                        );
+                      })}
                       {bookmark && (
                         <>
                           <div className="my-1 border-t border-border" />
@@ -265,7 +274,6 @@ function SeriesPage() {
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="chapters">Chapters {chapters?.length ? `(${chapters.length})` : ""}</TabsTrigger>
               <TabsTrigger value="glossary">Glossary</TabsTrigger>
-              <TabsTrigger value="comments">Comments</TabsTrigger>
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
@@ -282,6 +290,11 @@ function SeriesPage() {
                   </div>
                 </div>
               )}
+
+              <div className="mt-10 border-t border-border pt-8">
+                <h3 className="mb-4 text-lg font-bold">Comments</h3>
+                <SeriesComments seriesId={series.id} />
+              </div>
             </TabsContent>
 
             <TabsContent value="chapters" className="mt-6">
@@ -341,10 +354,6 @@ function SeriesPage() {
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">Suggestions are reviewed by admins before appearing publicly.</p>
               </div>
-            </TabsContent>
-
-            <TabsContent value="comments" className="mt-6">
-              <SeriesComments seriesId={series.id} />
             </TabsContent>
           </Tabs>
         </div>

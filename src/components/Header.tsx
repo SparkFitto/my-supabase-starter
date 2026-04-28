@@ -239,7 +239,6 @@ function Drawer({
     { label: "Catalogue", to: "/catalogue" },
     { label: "Translate", to: "/translate", icon: Sparkles },
     { label: "Leaderboard", to: "/leaderboard" },
-    { label: "Pricing", to: "/pricing" },
     { label: "What's New", to: "/updates" },
   ] as const;
 
