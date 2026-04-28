@@ -1,25 +1,23 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Star, Calendar, Tag, Heart, ChevronDown, BookOpen, Plus } from "lucide-react";
+import { Star, Calendar, Tag, Heart, Bookmark, Share2, BookOpen, Plus, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { typeLabel, formatDate, TARGET_LANGUAGES } from "@/lib/constants";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
+import { SeriesComments } from "@/components/SeriesComments";
 
 const SITE = "https://rawl.app";
 
 export const Route = createFileRoute("/series/$slug")({
   loader: async ({ params }) => {
-    const { data } = await supabase
-      .from("series")
-      .select("*")
-      .eq("slug", params.slug)
-      .maybeSingle();
+    const { data } = await supabase.from("series").select("*").eq("slug", params.slug).maybeSingle();
     if (!data) throw notFound();
     return { series: data };
   },
@@ -69,10 +67,19 @@ export const Route = createFileRoute("/series/$slug")({
   ),
 });
 
+const READING_STATUSES = [
+  { value: "reading", label: "Reading" },
+  { value: "completed", label: "Completed" },
+  { value: "on_hold", label: "On hold" },
+  { value: "dropped", label: "Dropped" },
+  { value: "plan_to_read", label: "Plan to read" },
+];
+
 function SeriesPage() {
   const { series } = Route.useLoaderData();
   const { user } = useAuth();
   const [showAll, setShowAll] = useState(false);
+  const [showBookmarkMenu, setShowBookmarkMenu] = useState(false);
 
   const { data: chapters } = useQuery({
     queryKey: ["chapters", series.id],
@@ -97,11 +104,52 @@ function SeriesPage() {
     enabled: !!user,
   });
 
+  const { data: bookmark, refetch: refetchBookmark } = useQuery({
+    queryKey: ["bookmark", series.id, user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase.from("reading_lists").select("id, status").eq("user_id", user.id).eq("series_id", series.id).maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
   const toggleFav = async () => {
-    if (!user) return;
+    if (!user) { toast.error("Sign in to follow"); return; }
     if (fav) await supabase.from("favorites").delete().eq("user_id", user.id).eq("series_id", series.id);
     else await supabase.from("favorites").insert({ user_id: user.id, series_id: series.id });
     refetchFav();
+  };
+
+  const setBookmark = async (status: string) => {
+    if (!user) { toast.error("Sign in to bookmark"); return; }
+    if (bookmark) {
+      await supabase.from("reading_lists").update({ status, updated_at: new Date().toISOString() }).eq("id", bookmark.id);
+    } else {
+      await supabase.from("reading_lists").insert({ user_id: user.id, series_id: series.id, status });
+    }
+    setShowBookmarkMenu(false);
+    toast.success(`Marked as ${READING_STATUSES.find((s) => s.value === status)?.label}`);
+    refetchBookmark();
+  };
+
+  const removeBookmark = async () => {
+    if (!user || !bookmark) return;
+    await supabase.from("reading_lists").delete().eq("id", bookmark.id);
+    setShowBookmarkMenu(false);
+    toast.success("Removed from bookmarks");
+    refetchBookmark();
+  };
+
+  const share = async () => {
+    const url = `${typeof window !== "undefined" ? window.location.origin : SITE}/series/${series.slug}`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({ title: series.title, url }); return; } catch { /* user cancelled */ }
+    }
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard");
+    }
   };
 
   const visible = showAll ? chapters : chapters?.slice(0, 20);
@@ -134,6 +182,10 @@ function SeriesPage() {
     else { toast.success("Submitted for review"); setOrig(""); setTrans(""); refetchGlossary(); }
   };
 
+  const currentBookmarkLabel = bookmark
+    ? READING_STATUSES.find((s) => s.value === bookmark.status)?.label ?? "Bookmarked"
+    : "Bookmark";
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -144,16 +196,16 @@ function SeriesPage() {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
           </div>
         )}
-        <div className="mx-auto max-w-7xl px-4 pt-12 pb-8">
+        <div className="mx-auto max-w-7xl px-4 pt-8 pb-8">
           <div className="flex flex-col gap-6 md:flex-row">
-            <div className="w-48 shrink-0">
+            <div className="w-40 sm:w-48 shrink-0 mx-auto md:mx-0">
               {series.cover_url ? (
                 <img src={series.cover_url} alt={series.title} className="aspect-[2/3] w-full rounded-lg object-cover shadow-2xl" />
               ) : <div className="aspect-[2/3] w-full rounded-lg bg-muted" />}
             </div>
             <div className="flex-1">
               <Badge variant="secondary" className="mb-2 font-mono">{typeLabel(series.type)}</Badge>
-              <h1 className="text-3xl font-bold md:text-4xl">{series.title}</h1>
+              <h1 className="text-2xl font-bold sm:text-3xl md:text-4xl">{series.title}</h1>
               {series.alt_titles && series.alt_titles.length > 0 && (
                 <p className="mt-1 text-sm text-muted-foreground">{series.alt_titles.join(" · ")}</p>
               )}
@@ -168,75 +220,133 @@ function SeriesPage() {
                   {series.genres.map((g: string) => <Badge key={g} variant="outline" className="font-normal"><Tag className="mr-1 h-3 w-3" />{g}</Badge>)}
                 </div>
               )}
-              {series.description && <p className="mt-4 text-sm text-foreground/80">{series.description}</p>}
-              <div className="mt-6 flex gap-3">
-                <Button onClick={toggleFav} variant={fav ? "secondary" : "default"} disabled={!user}>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button onClick={toggleFav} variant={fav ? "secondary" : "default"}>
                   <Heart className={`mr-2 h-4 w-4 ${fav ? "fill-current" : ""}`} />
                   {fav ? "Following" : "Follow"}
+                </Button>
+                <div className="relative">
+                  <Button onClick={() => setShowBookmarkMenu((v) => !v)} variant={bookmark ? "secondary" : "outline"}>
+                    <Bookmark className={`mr-2 h-4 w-4 ${bookmark ? "fill-current" : ""}`} />
+                    {currentBookmarkLabel}
+                    <ChevronDown className="ml-1 h-3 w-3" />
+                  </Button>
+                  {showBookmarkMenu && (
+                    <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-md border border-border bg-popover p-1 shadow-lg">
+                      {READING_STATUSES.map((s) => (
+                        <button
+                          key={s.value}
+                          onClick={() => setBookmark(s.value)}
+                          className={`block w-full rounded px-3 py-1.5 text-left text-sm hover:bg-muted ${bookmark?.status === s.value ? "bg-muted font-medium" : ""}`}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                      {bookmark && (
+                        <>
+                          <div className="my-1 border-t border-border" />
+                          <button onClick={removeBookmark} className="block w-full rounded px-3 py-1.5 text-left text-sm text-destructive hover:bg-muted">
+                            Remove
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <Button onClick={share} variant="outline">
+                  <Share2 className="mr-2 h-4 w-4" />Share
                 </Button>
               </div>
             </div>
           </div>
 
-          <section className="mt-12">
-            <h2 className="mb-4 text-xl font-semibold">Chapters</h2>
-            <div className="rounded-lg border border-border">
-              {visible?.map((ch) => {
-                const langs = (ch.translations ?? []).filter((t) => t.published);
-                return (
-                  <div key={ch.id} className="flex items-center justify-between border-b border-border px-4 py-3 last:border-b-0">
-                    <Link to="/series/$slug/chapter/$chapter" params={{ slug: series.slug, chapter: ch.chapter_number }} className="flex-1 hover:text-primary">
-                      <p className="font-medium">Chapter {ch.chapter_number}</p>
-                      <p className="font-mono text-xs text-muted-foreground">{formatDate(ch.release_date)}</p>
-                    </Link>
-                    <div className="flex flex-wrap gap-1">
-                      {langs.length === 0 ? (
-                        <Badge variant="outline" className="font-mono text-xs">No translation</Badge>
-                      ) : langs.map((t) => (
-                        <Link key={t.id} to="/read/$translationId" params={{ translationId: t.id }} className="rounded bg-muted px-2 py-0.5 font-mono text-xs hover:bg-primary hover:text-primary-foreground">
-                          {t.target_language.toUpperCase()}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-              {!chapters?.length && <p className="p-6 text-center text-sm text-muted-foreground">No chapters yet — be the first to translate one!</p>}
-            </div>
-            {chapters && chapters.length > 20 && !showAll && (
-              <Button variant="outline" className="mt-4 w-full" onClick={() => setShowAll(true)}>
-                Show all {chapters.length} <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            )}
-          </section>
+          <Tabs defaultValue="description" className="mt-10">
+            <TabsList className="w-full justify-start overflow-x-auto">
+              <TabsTrigger value="description">Description</TabsTrigger>
+              <TabsTrigger value="chapters">Chapters {chapters?.length ? `(${chapters.length})` : ""}</TabsTrigger>
+              <TabsTrigger value="glossary">Glossary</TabsTrigger>
+              <TabsTrigger value="comments">Comments</TabsTrigger>
+            </TabsList>
 
-          <section className="mt-12">
-            <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold"><BookOpen className="h-5 w-5" />Glossary</h2>
-            {glossary && glossary.length > 0 ? (
-              <div className="grid gap-2 rounded-lg border border-border bg-card p-4 sm:grid-cols-2">
-                {glossary.map((g) => (
-                  <div key={g.id} className="flex items-center justify-between gap-2 text-sm">
-                    <span><span className="font-medium">{g.original_term}</span> → <span className="text-primary">{g.translated_term}</span></span>
-                    <Badge variant="outline" className="font-mono text-xs">{g.target_language.toUpperCase()}</Badge>
+            <TabsContent value="description" className="mt-6">
+              {series.description ? (
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">{series.description}</p>
+              ) : (
+                <p className="text-sm text-muted-foreground">No description yet.</p>
+              )}
+              {series.tags && series.tags.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="mb-2 text-sm font-semibold text-muted-foreground">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {series.tags.map((t: string) => <Badge key={t} variant="outline" className="font-normal">{t}</Badge>)}
                   </div>
-                ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="chapters" className="mt-6">
+              <div className="rounded-lg border border-border">
+                {visible?.map((ch) => {
+                  const langs = (ch.translations ?? []).filter((t) => t.published);
+                  return (
+                    <div key={ch.id} className="flex items-center justify-between gap-2 border-b border-border px-4 py-3 last:border-b-0">
+                      <Link to="/series/$slug/chapter/$chapter" params={{ slug: series.slug, chapter: ch.chapter_number }} className="flex-1 min-w-0 hover:text-primary">
+                        <p className="font-medium">Chapter {ch.chapter_number}</p>
+                        <p className="font-mono text-xs text-muted-foreground">{formatDate(ch.release_date)}</p>
+                      </Link>
+                      <div className="flex flex-wrap justify-end gap-1">
+                        {langs.length === 0 ? (
+                          <Badge variant="outline" className="font-mono text-xs">No translation</Badge>
+                        ) : langs.map((t) => (
+                          <Link key={t.id} to="/read/$translationId" params={{ translationId: t.id }} className="rounded bg-muted px-2 py-0.5 font-mono text-xs hover:bg-primary hover:text-primary-foreground">
+                            {t.target_language.toUpperCase()}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+                {!chapters?.length && <p className="p-6 text-center text-sm text-muted-foreground">No chapters yet — be the first to translate one!</p>}
               </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">No approved glossary terms yet.</p>
-            )}
-            <div className="mt-4 rounded-lg border border-border bg-card p-4">
-              <p className="mb-3 text-sm font-medium">Suggest a term</p>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <Input placeholder="Original term" value={orig} onChange={(e) => setOrig(e.target.value)} />
-                <Input placeholder="Translation" value={trans} onChange={(e) => setTrans(e.target.value)} />
-                <select value={lang} onChange={(e) => setLang(e.target.value)} className="rounded-md border border-input bg-transparent px-3 text-sm">
-                  {TARGET_LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.code.toUpperCase()}</option>)}
-                </select>
-                <Button onClick={submitGlossary}><Plus className="mr-1 h-4 w-4" />Submit</Button>
+              {chapters && chapters.length > 20 && !showAll && (
+                <Button variant="outline" className="mt-4 w-full" onClick={() => setShowAll(true)}>
+                  Show all {chapters.length} <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+            </TabsContent>
+
+            <TabsContent value="glossary" className="mt-6">
+              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold"><BookOpen className="h-4 w-4" />Approved terms</h3>
+              {glossary && glossary.length > 0 ? (
+                <div className="grid gap-2 rounded-lg border border-border bg-card p-4 sm:grid-cols-2">
+                  {glossary.map((g) => (
+                    <div key={g.id} className="flex items-center justify-between gap-2 text-sm">
+                      <span><span className="font-medium">{g.original_term}</span> → <span className="text-primary">{g.translated_term}</span></span>
+                      <Badge variant="outline" className="font-mono text-xs">{g.target_language.toUpperCase()}</Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No approved glossary terms yet.</p>
+              )}
+              <div className="mt-6 rounded-lg border border-border bg-card p-4">
+                <p className="mb-3 text-sm font-medium">Suggest a term</p>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Input placeholder="Original term" value={orig} onChange={(e) => setOrig(e.target.value)} />
+                  <Input placeholder="Translation" value={trans} onChange={(e) => setTrans(e.target.value)} />
+                  <select value={lang} onChange={(e) => setLang(e.target.value)} className="rounded-md border border-input bg-transparent px-3 text-sm">
+                    {TARGET_LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.code.toUpperCase()}</option>)}
+                  </select>
+                  <Button onClick={submitGlossary}><Plus className="mr-1 h-4 w-4" />Submit</Button>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">Suggestions are reviewed by admins before appearing publicly.</p>
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">Suggestions are reviewed by admins before appearing publicly.</p>
-            </div>
-          </section>
+            </TabsContent>
+
+            <TabsContent value="comments" className="mt-6">
+              <SeriesComments seriesId={series.id} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
