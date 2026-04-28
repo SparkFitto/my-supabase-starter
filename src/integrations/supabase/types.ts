@@ -409,6 +409,36 @@ export type Database = {
           },
         ]
       }
+      reports: {
+        Row: {
+          comment_id: string
+          comment_type: string
+          created_at: string
+          id: string
+          reason: string | null
+          reporter_id: string
+          resolved: boolean
+        }
+        Insert: {
+          comment_id: string
+          comment_type: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reporter_id: string
+          resolved?: boolean
+        }
+        Update: {
+          comment_id?: string
+          comment_type?: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reporter_id?: string
+          resolved?: boolean
+        }
+        Relationships: []
+      }
       series: {
         Row: {
           age_rating: string | null
@@ -416,6 +446,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          dmca_struck: boolean
           follow_count: number
           genres: string[] | null
           id: string
@@ -435,6 +466,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          dmca_struck?: boolean
           follow_count?: number
           genres?: string[] | null
           id?: string
@@ -454,6 +486,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          dmca_struck?: boolean
           follow_count?: number
           genres?: string[] | null
           id?: string
@@ -639,6 +672,8 @@ export type Database = {
         Row: {
           age: number | null
           avatar_url: string | null
+          banned_at: string | null
+          banner_url: string | null
           bio: string | null
           chapters_translated_total: number
           country: string | null
@@ -656,6 +691,7 @@ export type Database = {
           plan: string
           preferred_reading_mode: string | null
           preferred_target_language: string | null
+          reading_is_private: boolean
           username: string | null
           weekly_chapters_used: number
           weekly_reset_at: string
@@ -663,6 +699,8 @@ export type Database = {
         Insert: {
           age?: number | null
           avatar_url?: string | null
+          banned_at?: string | null
+          banner_url?: string | null
           bio?: string | null
           chapters_translated_total?: number
           country?: string | null
@@ -680,6 +718,7 @@ export type Database = {
           plan?: string
           preferred_reading_mode?: string | null
           preferred_target_language?: string | null
+          reading_is_private?: boolean
           username?: string | null
           weekly_chapters_used?: number
           weekly_reset_at?: string
@@ -687,6 +726,8 @@ export type Database = {
         Update: {
           age?: number | null
           avatar_url?: string | null
+          banned_at?: string | null
+          banner_url?: string | null
           bio?: string | null
           chapters_translated_total?: number
           country?: string | null
@@ -704,6 +745,7 @@ export type Database = {
           plan?: string
           preferred_reading_mode?: string | null
           preferred_target_language?: string | null
+          reading_is_private?: boolean
           username?: string | null
           weekly_chapters_used?: number
           weekly_reset_at?: string
