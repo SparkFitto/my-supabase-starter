@@ -274,7 +274,6 @@ function SeriesPage() {
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="chapters">Chapters {chapters?.length ? `(${chapters.length})` : ""}</TabsTrigger>
               <TabsTrigger value="glossary">Glossary</TabsTrigger>
-              <TabsTrigger value="comments">Comments</TabsTrigger>
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
@@ -291,6 +290,11 @@ function SeriesPage() {
                   </div>
                 </div>
               )}
+
+              <div className="mt-10 border-t border-border pt-8">
+                <h3 className="mb-4 text-lg font-bold">Comments</h3>
+                <SeriesComments seriesId={series.id} />
+              </div>
             </TabsContent>
 
             <TabsContent value="chapters" className="mt-6">
