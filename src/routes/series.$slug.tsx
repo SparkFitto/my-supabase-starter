@@ -355,10 +355,6 @@ function SeriesPage() {
                 <p className="mt-2 text-xs text-muted-foreground">Suggestions are reviewed by admins before appearing publicly.</p>
               </div>
             </TabsContent>
-
-            <TabsContent value="comments" className="mt-6">
-              <SeriesComments seriesId={series.id} />
-            </TabsContent>
           </Tabs>
         </div>
       </div>
