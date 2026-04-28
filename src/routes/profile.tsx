@@ -48,7 +48,7 @@ function ProfilePage() {
         username,
         preferred_target_language: lang,
         preferred_reading_mode: mode,
-        notify_on_release: notify,
+        
       })
       .eq("id", user.id);
     setSaving(false);
