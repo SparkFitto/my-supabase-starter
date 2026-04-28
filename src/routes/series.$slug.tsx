@@ -228,7 +228,11 @@ function SeriesPage() {
                   {fav ? "Following" : "Follow"}
                 </Button>
                 <div className="relative">
-                  <Button onClick={() => setShowBookmarkMenu((v) => !v)} variant={bookmark ? "secondary" : "outline"}>
+                  <Button
+                    onClick={() => setShowBookmarkMenu((v) => !v)}
+                    variant={currentStatus ? "default" : "outline"}
+                    className={bookmarkButtonClasses}
+                  >
                     <Bookmark className={`mr-2 h-4 w-4 ${bookmark ? "fill-current" : ""}`} />
                     {currentBookmarkLabel}
                     <ChevronDown className="ml-1 h-3 w-3" />
