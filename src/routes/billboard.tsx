@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Flame, Clock } from "lucide-react";
+import { Flame, Clock, Bookmark } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { typeLabel, timeAgo } from "@/lib/constants";
+import { useUserBookmarks, BOOKMARK_PILL } from "@/lib/use-bookmarks";
 
 export const Route = createFileRoute("/billboard")({
   head: () => ({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/billboard")({
 });
 
 function BillboardPage() {
+  const { data: bookmarkMap = {} } = useUserBookmarks();
   const { data: trending } = useQuery({
     queryKey: ["billboard-trending"],
     queryFn: async () => {
@@ -57,18 +59,27 @@ function BillboardPage() {
             <Flame className="h-5 w-5 text-warning" /> Trending series
           </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {trending?.map((s, i) => (
+            {trending?.map((s, i) => {
+              const bm = bookmarkMap[s.id];
+              const pill = bm ? BOOKMARK_PILL[bm] : null;
+              return (
               <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group relative">
                 <div className="relative overflow-hidden rounded-lg bg-muted aspect-[2/3]">
                   {s.cover_url ? (
                     <img src={s.cover_url} alt={s.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" loading="lazy" />
                   ) : <div className="h-full w-full bg-secondary" />}
                   <div className="absolute left-2 top-2 rounded bg-background/80 px-2 py-0.5 font-mono text-xs backdrop-blur">#{i + 1}</div>
+                  {pill && (
+                    <span className={`absolute right-2 top-2 z-10 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide shadow-md ${pill.classes}`}>
+                      <Bookmark className="h-3 w-3 fill-current" />{pill.label}
+                    </span>
+                  )}
                 </div>
                 <p className="mt-2 line-clamp-2 text-sm font-medium">{s.title}</p>
                 <p className="font-mono text-xs text-muted-foreground">{typeLabel(s.type)} · {s.follow_count.toLocaleString()} ★</p>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </section>
 
