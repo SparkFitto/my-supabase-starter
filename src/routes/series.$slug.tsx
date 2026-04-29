@@ -67,12 +67,12 @@ export const Route = createFileRoute("/series/$slug")({
   ),
 });
 
-const READING_STATUSES: Array<{ value: string; label: string; classes: string }> = [
-  { value: "reading", label: "Reading", classes: "bg-primary text-primary-foreground hover:bg-primary/90 border-primary" },
-  { value: "completed", label: "Completed", classes: "bg-success text-background hover:bg-success/90 border-success" },
-  { value: "on_hold", label: "On hold", classes: "bg-warning text-background hover:bg-warning/90 border-warning" },
-  { value: "dropped", label: "Dropped", classes: "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-destructive" },
-  { value: "plan_to_read", label: "Plan to read", classes: "bg-purple-accent text-background hover:bg-purple-accent/90 border-purple-accent" },
+const READING_STATUSES: Array<{ value: string; label: string; classes: string; hover: string }> = [
+  { value: "reading", label: "Reading", classes: "bg-primary text-primary-foreground border-primary", hover: "hover:bg-primary/15 hover:text-primary" },
+  { value: "completed", label: "Completed", classes: "bg-success text-background border-success", hover: "hover:bg-success/15 hover:text-success" },
+  { value: "on_hold", label: "On hold", classes: "bg-warning text-background border-warning", hover: "hover:bg-warning/15 hover:text-warning" },
+  { value: "dropped", label: "Dropped", classes: "bg-destructive text-destructive-foreground border-destructive", hover: "hover:bg-destructive/15 hover:text-destructive" },
+  { value: "plan_to_read", label: "Plan to read", classes: "bg-purple-accent text-background border-purple-accent", hover: "hover:bg-purple-accent/15 hover:text-purple-accent" },
 ];
 
 function SeriesPage() {
@@ -238,14 +238,18 @@ function SeriesPage() {
                     <ChevronDown className="ml-1 h-3 w-3" />
                   </Button>
                   {showBookmarkMenu && (
-                    <div className="absolute left-0 top-full z-20 mt-1 w-48 rounded-md border border-border bg-popover p-1 shadow-lg">
+                    <div className="absolute left-0 top-full z-20 mt-1 w-52 rounded-md border border-border bg-popover p-1 shadow-lg">
                       {READING_STATUSES.map((s) => {
                         const active = bookmark?.status === s.value;
                         return (
                           <button
                             key={s.value}
                             onClick={() => setBookmark(s.value)}
-                            className={`mb-1 block w-full rounded px-3 py-1.5 text-left text-sm font-medium border transition-colors ${active ? s.classes : `border-transparent hover:${s.classes}`}`}
+                            className={`mb-1 block w-full rounded px-3 py-1.5 text-left text-sm font-medium border transition-colors ${
+                              active
+                                ? s.classes
+                                : `border-transparent text-foreground ${s.hover}`
+                            }`}
                           >
                             {s.label}
                           </button>
@@ -254,7 +258,7 @@ function SeriesPage() {
                       {bookmark && (
                         <>
                           <div className="my-1 border-t border-border" />
-                          <button onClick={removeBookmark} className="block w-full rounded px-3 py-1.5 text-left text-sm text-destructive hover:bg-muted">
+                          <button onClick={removeBookmark} className="block w-full rounded px-3 py-1.5 text-left text-sm text-destructive hover:bg-destructive/10">
                             Remove
                           </button>
                         </>
