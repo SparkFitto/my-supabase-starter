@@ -37,7 +37,9 @@ function SignInPage() {
       toast.error("Sign in failed", { description: error.message });
     } else {
       toast.success("Welcome back!");
-      nav({ to: "/" });
+      // Hard navigate so providers reinitialize with the fresh session
+      if (typeof window !== "undefined") window.location.href = "/";
+      else nav({ to: "/" });
     }
   };
 

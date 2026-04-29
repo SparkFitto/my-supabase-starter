@@ -46,8 +46,9 @@ function SignUpPage() {
     } else {
       setOk(true);
       toast.success("Account created!", { description: "Welcome to RAWL." });
-      // Redirect immediately — Supabase email confirmation flow lands them back at /
-      nav({ to: "/" });
+      // Hard navigate so providers reinitialize with the fresh session
+      if (typeof window !== "undefined") window.location.href = "/";
+      else nav({ to: "/" });
     }
   };
 
