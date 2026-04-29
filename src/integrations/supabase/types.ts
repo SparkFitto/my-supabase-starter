@@ -17,6 +17,7 @@ export type Database = {
       chapters: {
         Row: {
           chapter_number: string
+          content: string | null
           created_at: string
           id: string
           mangadex_chapter_id: string | null
@@ -27,6 +28,7 @@ export type Database = {
         }
         Insert: {
           chapter_number: string
+          content?: string | null
           created_at?: string
           id?: string
           mangadex_chapter_id?: string | null
@@ -37,6 +39,7 @@ export type Database = {
         }
         Update: {
           chapter_number?: string
+          content?: string | null
           created_at?: string
           id?: string
           mangadex_chapter_id?: string | null

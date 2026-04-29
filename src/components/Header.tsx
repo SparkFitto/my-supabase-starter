@@ -263,6 +263,7 @@ function Drawer({
     { label: "Home", to: "/" },
     { label: "Billboard", to: "/billboard" },
     { label: "Catalogue", to: "/catalogue" },
+    { label: "Novels", to: "/novels" },
     { label: "Translate", to: "/translate", icon: Sparkles },
     { label: "Leaderboard", to: "/leaderboard" },
     { label: "What's New", to: "/updates" },
@@ -305,14 +306,7 @@ function Drawer({
             </Link>
           ))}
 
-          {/* Novels: greyed out */}
-          <div
-            title="Coming soon"
-            className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground/50 cursor-not-allowed"
-          >
-            <span>Novels</span>
-            <span className="ml-auto text-[10px] uppercase tracking-wide">Soon</span>
-          </div>
+
 
           <div className="my-2 border-t border-border" />
 

@@ -22,7 +22,7 @@ function ReaderPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("translations")
-        .select("id, target_language, image_urls, page_count, chapter:chapters(id, chapter_number, series:series(slug, title, type))")
+        .select("id, target_language, image_urls, page_count, chapter:chapters(id, chapter_number, content, series:series(slug, title, type))")
         .eq("id", translationId)
         .maybeSingle();
       return data;
@@ -30,8 +30,11 @@ function ReaderPage() {
   });
 
   const images = data?.image_urls ?? [];
-  const series = (data?.chapter as { series?: { slug: string; title: string; type: string } } | null)?.series;
-  const chapterNum = (data?.chapter as { chapter_number?: string } | null)?.chapter_number;
+  const chapter = data?.chapter as { chapter_number?: string; content?: string | null; series?: { slug: string; title: string; type: string } } | null;
+  const series = chapter?.series;
+  const chapterNum = chapter?.chapter_number;
+  const isNovel = series?.type === "novel";
+  const novelText = chapter?.content ?? "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,18 +49,35 @@ function ReaderPage() {
             ) : <div className="h-4 w-32 animate-pulse rounded bg-muted" />}
             <p className="font-mono text-xs text-muted-foreground">Chapter {chapterNum ?? "—"}</p>
           </div>
-          <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
-            <TabsList>
-              <TabsTrigger value="long_strip">Long strip</TabsTrigger>
-              <TabsTrigger value="single">Page</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {!isNovel && (
+            <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
+              <TabsList>
+                <TabsTrigger value="long_strip">Long strip</TabsTrigger>
+                <TabsTrigger value="single">Page</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
         </div>
       </div>
 
       <div className="mx-auto max-w-3xl px-2 py-6">
         {isLoading ? (
           <div className="flex h-96 items-center justify-center text-muted-foreground">Loading…</div>
+        ) : isNovel ? (
+          novelText ? (
+            <article className="prose prose-invert mx-auto max-w-2xl px-4 font-serif text-[17px] leading-8 text-foreground/90">
+              {novelText.split(/\n\s*\n/).map((para, i) => (
+                <p key={i} className="mb-5 whitespace-pre-wrap">{para}</p>
+              ))}
+            </article>
+          ) : (
+            <div className="flex h-96 items-center justify-center text-center text-muted-foreground px-4">
+              <div>
+                <p className="font-semibold">No text yet</p>
+                <p className="mt-1 text-sm">This novel chapter has no content available.</p>
+              </div>
+            </div>
+          )
         ) : mode === "long_strip" ? (
           <div className="flex flex-col gap-1">
             {images.map((src, i) => (
