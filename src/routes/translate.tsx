@@ -191,7 +191,7 @@ function TranslatePage() {
             <span className="h-2 w-2 rounded-full bg-success pulse-dot" />
             <h2 className="text-lg font-bold">Just Released</h2>
           </div>
-          <div className="flex gap-3 overflow-x-auto snap-x scrollbar-hide pb-3 -mx-4 px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {latest?.map((c: any) => {
               const hasEn = c.translations?.some((t: any) => t.target_language === "en" && t.published);
               const bm = c.series?.id ? bookmarkMap[c.series.id] : undefined;
@@ -201,11 +201,11 @@ function TranslatePage() {
                   key={c.id}
                   to="/series/$slug"
                   params={{ slug: c.series.slug }}
-                  className="group shrink-0 w-[160px] snap-start rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
+                  className="group rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
                 >
                   <div className="aspect-[3/4] overflow-hidden bg-secondary relative">
                     {pill && (
-                      <span className={`absolute top-1 left-1 z-10 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-md ${pill.classes}`}>
+                      <span className={`absolute top-1.5 right-1.5 z-10 inline-flex items-center gap-1 rounded-full px-2 py-[3px] text-[10px] font-semibold leading-none shadow-md whitespace-nowrap ${pill.classes}`}>
                         <Bookmark className="h-2.5 w-2.5 fill-current" />{pill.label}
                       </span>
                     )}
@@ -227,7 +227,7 @@ function TranslatePage() {
 
         <section className="mt-12">
           <h2 className="text-lg font-bold mb-4">Most Popular Ongoing</h2>
-          <div className="flex gap-3 overflow-x-auto snap-x scrollbar-hide pb-3 -mx-4 px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {popular?.map((s: any) => {
               const bm = bookmarkMap[s.id];
               const pill = bm ? BOOKMARK_PILL[bm] : null;
@@ -236,12 +236,12 @@ function TranslatePage() {
                 key={s.id}
                 to="/series/$slug"
                 params={{ slug: s.slug }}
-                className="group shrink-0 w-[160px] snap-start rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
+                className="group rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
               >
                 <div className="aspect-[3/4] overflow-hidden bg-secondary relative">
                   <img src={s.cover_url} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
                   {pill && (
-                    <span className={`absolute top-1 left-1 z-10 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-md ${pill.classes}`}>
+                    <span className={`absolute top-1.5 right-1.5 z-10 inline-flex items-center gap-1 rounded-full px-2 py-[3px] text-[10px] font-semibold leading-none shadow-md whitespace-nowrap ${pill.classes}`}>
                       <Bookmark className="h-2.5 w-2.5 fill-current" />{pill.label}
                     </span>
                   )}
