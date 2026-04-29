@@ -1,13 +1,31 @@
 import { Link } from "@tanstack/react-router";
+import { Bookmark } from "lucide-react";
 import { typeLabel, timeAgo } from "@/lib/constants";
 import { StatusBadge } from "@/components/StatusBadge";
+import { BOOKMARK_PILL, type BookmarkStatus } from "@/lib/use-bookmarks";
 
 interface SeriesLike {
+  id?: string;
   slug: string;
   title: string;
   cover_url?: string | null;
   type?: string | null;
   rating?: number | null;
+}
+
+/** Small pill that overlays the cover when the user has bookmarked this series. */
+function BookmarkPill({ status }: { status?: BookmarkStatus }) {
+  if (!status) return null;
+  const meta = BOOKMARK_PILL[status];
+  return (
+    <span
+      className={`absolute top-1 left-1 z-10 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-md ${meta.classes}`}
+      title={`In your list: ${meta.label}`}
+    >
+      <Bookmark className="h-2.5 w-2.5 fill-current" />
+      {meta.label}
+    </span>
+  );
 }
 
 /**
