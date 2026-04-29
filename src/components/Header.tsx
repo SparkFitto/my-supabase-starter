@@ -14,10 +14,7 @@ import {
   LogOut,
   Sparkles,
   ShieldCheck,
-  Sun,
-  Moon,
 } from "lucide-react";
-import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
