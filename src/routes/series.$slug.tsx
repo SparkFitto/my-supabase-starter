@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Star, Calendar, Tag, Heart, Bookmark, Share2, BookOpen, Plus, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -78,6 +78,7 @@ const READING_STATUSES: Array<{ value: string; label: string; classes: string; h
 function SeriesPage() {
   const { series } = Route.useLoaderData();
   const { user } = useAuth();
+  const qc = useQueryClient();
   const [showAll, setShowAll] = useState(false);
   const [showBookmarkMenu, setShowBookmarkMenu] = useState(false);
 
@@ -130,7 +131,8 @@ function SeriesPage() {
     }
     setShowBookmarkMenu(false);
     toast.success(`Marked as ${READING_STATUSES.find((s) => s.value === status)?.label}`);
-    refetchBookmark();
+    await refetchBookmark();
+    qc.invalidateQueries({ queryKey: ["user-bookmarks-map"] });
   };
 
   const removeBookmark = async () => {
@@ -138,7 +140,8 @@ function SeriesPage() {
     await supabase.from("reading_lists").delete().eq("id", bookmark.id);
     setShowBookmarkMenu(false);
     toast.success("Removed from bookmarks");
-    refetchBookmark();
+    await refetchBookmark();
+    qc.invalidateQueries({ queryKey: ["user-bookmarks-map"] });
   };
 
   const share = async () => {
