@@ -34,7 +34,6 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const nav = useNavigate();
-  const { theme, toggle: toggleTheme } = useTheme();
 
   // Close avatar dropdown on outside click
   useEffect(() => {
@@ -121,15 +120,8 @@ export function Header() {
             RAWL
           </Link>
 
-          {/* Right: theme toggle + avatar */}
+          {/* Right: avatar */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground transition"
-            >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
 
           {user ? (
             <div className="relative" ref={menuRef}>
