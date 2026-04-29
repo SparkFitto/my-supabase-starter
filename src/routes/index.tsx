@@ -10,6 +10,7 @@ import {
   GridSeriesCard,
   HorizontalRow,
 } from "@/components/SeriesCard";
+import { useUserBookmarks } from "@/lib/use-bookmarks";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/")({
@@ -56,6 +57,7 @@ function RowSkeleton() {
 
 function HomePage() {
   const { user } = useAuth();
+  const { data: bookmarkMap = {} } = useUserBookmarks();
 
   const { data: popular, isLoading: popLoading } = useQuery({
     queryKey: ["home-popular-series"],
