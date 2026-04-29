@@ -141,7 +141,7 @@ function HomePage() {
           {popLoading ? <RowSkeleton /> : (
             <HorizontalRow>
               {popular?.map((s: any) => (
-                <CompactSeriesCard key={s.id} series={s} />
+                <CompactSeriesCard key={s.id} series={s} bookmarkStatus={bookmarkMap[s.id]} />
               ))}
             </HorizontalRow>
           )}
@@ -159,6 +159,7 @@ function HomePage() {
                   chapter_number={c.chapter_number}
                   release_date={c.release_date}
                   hasPublishedTranslation={c.translations?.some((t: any) => t.published)}
+                  bookmarkStatus={bookmarkMap[c.series?.id]}
                 />
               ))}
             </HorizontalRow>
@@ -175,6 +176,7 @@ function HomePage() {
                   key={r.series_id}
                   series={r.series}
                   subtitle={r.chapter_number ? `Ch. ${r.chapter_number}` : undefined}
+                  bookmarkStatus={bookmarkMap[r.series_id]}
                 />
               ))}
             </HorizontalRow>
@@ -200,6 +202,7 @@ function HomePage() {
                   key={s.id}
                   series={s}
                   genre={s.genres?.[0] ?? null}
+                  bookmarkStatus={bookmarkMap[s.id]}
                 />
               ))}
             </div>
