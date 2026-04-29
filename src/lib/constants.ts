@@ -20,6 +20,7 @@ export const SERIES_TYPES = [
   { code: "manga", label: "Manga", flag: "🇯🇵", country: "Japanese" },
   { code: "manhwa", label: "Manhwa", flag: "🇰🇷", country: "Korean" },
   { code: "manhua", label: "Manhua", flag: "🇨🇳", country: "Chinese" },
+  { code: "novel", label: "Novel", flag: "📖", country: "Novel" },
 ] as const;
 
 export function languageLabel(code: string) {
