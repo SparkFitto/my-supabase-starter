@@ -38,11 +38,13 @@ export function CompactSeriesCard({
   subtitle,
   badge,
   progress,
+  bookmarkStatus,
 }: {
   series: SeriesLike;
   subtitle?: string;
   badge?: React.ReactNode;
   progress?: number;
+  bookmarkStatus?: BookmarkStatus;
 }) {
   return (
     <Link
@@ -51,6 +53,7 @@ export function CompactSeriesCard({
       className="group flex shrink-0 items-center gap-3 w-[260px] snap-start rounded-lg border border-border bg-card/40 p-2 hover:border-primary/50 hover:bg-card transition-colors"
     >
       <div className="relative h-[80px] w-[60px] shrink-0 overflow-hidden rounded-md bg-secondary">
+        <BookmarkPill status={bookmarkStatus} />
         {series.cover_url ? (
           <img
             src={series.cover_url}
@@ -83,7 +86,15 @@ export function CompactSeriesCard({
 }
 
 /** Horizontal grid card for "Most Popular Ongoing" — small cover left, info right. */
-export function GridSeriesCard({ series, genre }: { series: SeriesLike; genre?: string | null }) {
+export function GridSeriesCard({
+  series,
+  genre,
+  bookmarkStatus,
+}: {
+  series: SeriesLike;
+  genre?: string | null;
+  bookmarkStatus?: BookmarkStatus;
+}) {
   return (
     <Link
       to="/series/$slug"
@@ -91,6 +102,7 @@ export function GridSeriesCard({ series, genre }: { series: SeriesLike; genre?: 
       className="group flex items-center gap-3 rounded-lg border border-border bg-card/40 p-2.5 hover:border-primary/50 hover:bg-card transition-colors"
     >
       <div className="relative h-[90px] w-[68px] shrink-0 overflow-hidden rounded-md bg-secondary">
+        <BookmarkPill status={bookmarkStatus} />
         {series.cover_url && (
           <img src={series.cover_url} alt={series.title} loading="lazy" className="h-full w-full object-cover" />
         )}
@@ -112,11 +124,13 @@ export function ChapterCard({
   chapter_number,
   release_date,
   hasPublishedTranslation,
+  bookmarkStatus,
 }: {
   series: SeriesLike;
   chapter_number: string;
   release_date?: string | null;
   hasPublishedTranslation?: boolean;
+  bookmarkStatus?: BookmarkStatus;
 }) {
   return (
     <Link
@@ -125,6 +139,7 @@ export function ChapterCard({
       className="group flex shrink-0 items-center gap-3 w-[260px] snap-start rounded-lg border border-border bg-card/40 p-2 hover:border-primary/50 hover:bg-card transition-colors"
     >
       <div className="relative h-[80px] w-[60px] shrink-0 overflow-hidden rounded-md bg-secondary">
+        <BookmarkPill status={bookmarkStatus} />
         {series.cover_url && (
           <img src={series.cover_url} alt={series.title} loading="lazy" className="h-full w-full object-cover" />
         )}
