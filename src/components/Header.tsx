@@ -263,6 +263,7 @@ function Drawer({
     { label: "Home", to: "/" },
     { label: "Billboard", to: "/billboard" },
     { label: "Catalogue", to: "/catalogue" },
+    { label: "Novels", to: "/novels" },
     { label: "Translate", to: "/translate", icon: Sparkles },
     { label: "Leaderboard", to: "/leaderboard" },
     { label: "What's New", to: "/updates" },

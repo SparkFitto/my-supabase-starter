@@ -18,6 +18,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as NovelsRouteImport } from './routes/novels'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
@@ -86,6 +87,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NovelsRoute = NovelsRouteImport.update({
+  id: '/novels',
+  path: '/novels',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
+  '/novels': typeof NovelsRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
+  '/novels': typeof NovelsRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
+  '/novels': typeof NovelsRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/messages'
     | '/notifications'
+    | '/novels'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/messages'
     | '/notifications'
+    | '/novels'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/messages'
     | '/notifications'
+    | '/novels'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -436,6 +448,7 @@ export interface RootRouteChildren {
   LeaderboardRoute: typeof LeaderboardRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
+  NovelsRoute: typeof NovelsRoute
   ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -513,6 +526,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/novels': {
+      id: '/novels'
+      path: '/novels'
+      fullPath: '/novels'
+      preLoaderRoute: typeof NovelsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -754,6 +774,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardRoute: LeaderboardRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
+  NovelsRoute: NovelsRoute,
   ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
