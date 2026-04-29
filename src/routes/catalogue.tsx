@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SERIES_TYPES, typeLabel } from "@/lib/constants";
+import { useUserBookmarks, BOOKMARK_PILL } from "@/lib/use-bookmarks";
+import { Bookmark } from "lucide-react";
 
 const GENRES = ["Action","Adventure","Comedy","Drama","Fantasy","Romance","Sci-Fi","Slice of Life","Thriller","Horror","Mystery","Sports","Supernatural","Isekai","Cultivation"];
 const STATUSES = ["ongoing","completed","hiatus"];
@@ -27,6 +29,7 @@ export const Route = createFileRoute("/catalogue")({
 });
 
 function CataloguePage() {
+  const { data: bookmarkMap = {} } = useUserBookmarks();
   const [search, setSearch] = useState("");
   const [view, setView] = useState<"grid" | "dense">("grid");
   const [types, setTypes] = useState<string[]>([]);
@@ -144,9 +147,17 @@ function CataloguePage() {
           <div className={view === "grid"
             ? "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
             : "grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8"}>
-            {filtered.map((s) => (
+            {filtered.map((s) => {
+              const bm = bookmarkMap[s.id];
+              const pill = bm ? BOOKMARK_PILL[bm] : null;
+              return (
               <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group">
-                <div className="overflow-hidden rounded-lg bg-muted aspect-[2/3]">
+                <div className="relative overflow-hidden rounded-lg bg-muted aspect-[2/3]">
+                  {pill && (
+                    <span className={`absolute top-1 left-1 z-10 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide shadow-md ${pill.classes}`}>
+                      <Bookmark className="h-3 w-3 fill-current" />{pill.label}
+                    </span>
+                  )}
                   {s.cover_url ? (
                     <img src={s.cover_url} alt={s.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" loading="lazy" />
                   ) : <div className="h-full w-full bg-secondary" />}
@@ -154,7 +165,8 @@ function CataloguePage() {
                 <p className={`mt-2 line-clamp-2 ${view === "grid" ? "text-sm" : "text-xs"} font-medium`}>{s.title}</p>
                 {view === "grid" && <p className="font-mono text-xs text-muted-foreground">{typeLabel(s.type)}</p>}
               </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

@@ -14,7 +14,10 @@ import {
   LogOut,
   Sparkles,
   ShieldCheck,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -31,6 +34,7 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const nav = useNavigate();
+  const { theme, toggle: toggleTheme } = useTheme();
 
   // Close avatar dropdown on outside click
   useEffect(() => {
@@ -117,7 +121,16 @@ export function Header() {
             RAWL
           </Link>
 
-          {/* Right: avatar or sign-in */}
+          {/* Right: theme toggle + avatar */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground transition"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
           {user ? (
             <div className="relative" ref={menuRef}>
               <button
@@ -154,6 +167,7 @@ export function Header() {
               <Link to="/signin">Sign In</Link>
             </Button>
           )}
+          </div>
         </div>
       </header>
 

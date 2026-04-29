@@ -75,8 +75,40 @@
   --status-none: oklch(0.62 0.02 270);
 }
 
+/* Warm cream/paper light theme — easier on the eyes than pure white */
+.light {
+  --radius: 0.75rem;
+  --background: oklch(0.97 0.012 80);          /* #F7F3EC-ish cream */
+  --foreground: oklch(0.20 0.015 270);          /* deep slate text */
+  --card: oklch(0.99 0.008 80);
+  --card-foreground: oklch(0.20 0.015 270);
+  --popover: oklch(0.99 0.008 80);
+  --popover-foreground: oklch(0.20 0.015 270);
+  --primary: oklch(0.55 0.13 188);              /* deeper teal for contrast on cream */
+  --primary-foreground: oklch(0.99 0.005 80);
+  --secondary: oklch(0.93 0.012 80);
+  --secondary-foreground: oklch(0.20 0.015 270);
+  --muted: oklch(0.93 0.012 80);
+  --muted-foreground: oklch(0.45 0.02 270);
+  --accent: oklch(0.55 0.13 188);
+  --accent-foreground: oklch(0.99 0.005 80);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.99 0.005 80);
+  --border: oklch(0.20 0.015 270 / 0.12);
+  --input: oklch(0.20 0.015 270 / 0.10);
+  --ring: oklch(0.55 0.13 188 / 0.5);
+  --success: oklch(0.55 0.16 150);
+  --warning: oklch(0.60 0.15 75);
+  --purple-accent: oklch(0.50 0.18 305);
+  --status-new: oklch(0.50 0.18 305);
+  --status-translated: oklch(0.55 0.16 150);
+  --status-pending: oklch(0.60 0.15 75);
+  --status-none: oklch(0.45 0.02 270);
+}
+
 @layer base {
   html { color-scheme: dark; }
+  html.light { color-scheme: light; }
   * { border-color: var(--color-border); }
   body {
     background-color: var(--color-background);

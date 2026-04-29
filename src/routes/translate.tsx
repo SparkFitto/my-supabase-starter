@@ -8,6 +8,8 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TARGET_LANGUAGES, SOURCE_LANGUAGES, validateFile, timeAgo, typeLabel } from "@/lib/constants";
+import { useUserBookmarks, BOOKMARK_PILL } from "@/lib/use-bookmarks";
+import { Bookmark } from "lucide-react";
 
 export const Route = createFileRoute("/translate")({
   head: () => ({
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/translate")({
 });
 
 function TranslatePage() {
+  const { data: bookmarkMap = {} } = useUserBookmarks();
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [from, setFrom] = useState("auto");
@@ -188,24 +191,31 @@ function TranslatePage() {
             <span className="h-2 w-2 rounded-full bg-success pulse-dot" />
             <h2 className="text-lg font-bold">Just Released</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="flex gap-3 overflow-x-auto snap-x scrollbar-hide pb-3 -mx-4 px-4">
             {latest?.map((c: any) => {
               const hasEn = c.translations?.some((t: any) => t.target_language === "en" && t.published);
+              const bm = c.series?.id ? bookmarkMap[c.series.id] : undefined;
+              const pill = bm ? BOOKMARK_PILL[bm] : null;
               return (
                 <Link
                   key={c.id}
                   to="/series/$slug"
                   params={{ slug: c.series.slug }}
-                  className="group rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
+                  className="group shrink-0 w-[160px] snap-start rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
                 >
-                  <div className="aspect-[3/4] overflow-hidden bg-secondary">
+                  <div className="aspect-[3/4] overflow-hidden bg-secondary relative">
+                    {pill && (
+                      <span className={`absolute top-1 left-1 z-10 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-md ${pill.classes}`}>
+                        <Bookmark className="h-2.5 w-2.5 fill-current" />{pill.label}
+                      </span>
+                    )}
                     <img src={c.series.cover_url} alt={c.series.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
                   </div>
-                  <div className="p-3">
+                  <div className="p-2.5">
                     <div className="font-semibold text-sm truncate">{c.series.title}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">Chapter {c.chapter_number}</div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-muted-foreground">{timeAgo(c.release_date)}</span>
+                    <div className="flex items-center justify-between mt-1.5 gap-1">
+                      <span className="text-[10px] text-muted-foreground truncate">{timeAgo(c.release_date)}</span>
                       <StatusBadge status={hasEn ? "translated" : "new"} />
                     </div>
                   </div>
@@ -217,28 +227,37 @@ function TranslatePage() {
 
         <section className="mt-12">
           <h2 className="text-lg font-bold mb-4">Most Popular Ongoing</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {popular?.map((s: any) => (
+          <div className="flex gap-3 overflow-x-auto snap-x scrollbar-hide pb-3 -mx-4 px-4">
+            {popular?.map((s: any) => {
+              const bm = bookmarkMap[s.id];
+              const pill = bm ? BOOKMARK_PILL[bm] : null;
+              return (
               <Link
                 key={s.id}
                 to="/series/$slug"
                 params={{ slug: s.slug }}
-                className="group rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
+                className="group shrink-0 w-[160px] snap-start rounded-xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all"
               >
                 <div className="aspect-[3/4] overflow-hidden bg-secondary relative">
                   <img src={s.cover_url} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                  {pill && (
+                    <span className={`absolute top-1 left-1 z-10 flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide shadow-md ${pill.classes}`}>
+                      <Bookmark className="h-2.5 w-2.5 fill-current" />{pill.label}
+                    </span>
+                  )}
                   {s.rating && (
                     <span className="absolute bottom-2 left-2 bg-success text-background text-xs font-bold px-1.5 py-0.5 rounded">
                       {s.rating}
                     </span>
                   )}
                 </div>
-                <div className="p-3">
+                <div className="p-2.5">
                   <div className="font-semibold text-sm truncate">{s.title}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">{typeLabel(s.type)}</div>
                 </div>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </section>
       </main>
