@@ -53,8 +53,8 @@ function MarketplacePage() {
         </div>
         <Tabs value={tab} onValueChange={(v) => nav({ to: "/marketplace", search: { tab: v } as any })}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="lots"><Tag className="mr-1.5 h-4 w-4" />SELL — Lots</TabsTrigger>
-            <TabsTrigger value="requests"><ShoppingBag className="mr-1.5 h-4 w-4" />BUY — Requests</TabsTrigger>
+            <TabsTrigger value="lots"><ShoppingBag className="mr-1.5 h-4 w-4" />Buy</TabsTrigger>
+            <TabsTrigger value="requests"><Tag className="mr-1.5 h-4 w-4" />Sell</TabsTrigger>
           </TabsList>
           <TabsContent value="lots" className="mt-6">
             <LotsTab userId={user?.id ?? null} />
@@ -110,7 +110,7 @@ function LotsTab({ userId }: { userId: string | null }) {
                   <p className="truncate text-sm font-bold">{l.card.character_name}</p>
                 </div>
                 <p className="text-xs text-muted-foreground">@{l.seller?.username}</p>
-                <p className="mt-2 text-sm font-bold">{l.price_amount} <span className="text-xs">{l.price_rank}-shards</span></p>
+                <p className="mt-2 text-sm font-bold">Price: {l.price_amount} <span className="text-xs">{l.price_rank} card{l.price_amount === 1 ? "" : "s"}</span></p>
                 {l.seller_id === userId && (
                   <button onClick={() => remove(l.id)} className="mt-1 text-xs text-destructive hover:underline">
                     <Trash2 className="mr-0.5 inline h-3 w-3" />Remove
@@ -167,7 +167,7 @@ function CreateLotForm({ userId, onCreated }: { userId: string; onCreated: () =>
             placeholder="Amount"
           />
           <select value={priceRank} onChange={(e) => setPriceRank(e.target.value)} className="rounded border border-border bg-background px-2 py-1.5 text-sm">
-            {CARD_RANKS.map((r) => <option key={r} value={r}>{r}-shards</option>)}
+            {CARD_RANKS.map((r) => <option key={r} value={r}>{r} cards</option>)}
           </select>
           <Button size="sm" onClick={submit}>List</Button>
         </div>
@@ -218,7 +218,7 @@ function RequestsTab({ userId }: { userId: string | null }) {
                   <p className="truncate text-sm font-bold">{r.card.character_name}</p>
                 </div>
                 <p className="text-xs text-muted-foreground">@{r.buyer?.username}</p>
-                <p className="mt-2 text-sm">Offers: <span className="font-bold">{r.offer_amount} {r.offer_rank}-shards</span></p>
+                <p className="mt-2 text-sm">Offers: <span className="font-bold">{r.offer_amount} {r.offer_rank} card{r.offer_amount === 1 ? "" : "s"}</span></p>
                 {r.buyer_id === userId && (
                   <button onClick={() => remove(r.id)} className="mt-1 text-xs text-destructive hover:underline">
                     <Trash2 className="mr-0.5 inline h-3 w-3" />Cancel
@@ -276,7 +276,7 @@ function CreateRequestForm({ userId, onCreated }: { userId: string; onCreated: (
         <div className="flex gap-2">
           <input type="number" min={1} value={offerAmount} onChange={(e) => setOfferAmount(parseInt(e.target.value) || 1)} className="w-24 rounded border border-border bg-background px-2 py-1.5 text-sm" />
           <select value={offerRank} onChange={(e) => setOfferRank(e.target.value)} className="rounded border border-border bg-background px-2 py-1.5 text-sm">
-            {CARD_RANKS.map((r) => <option key={r} value={r}>{r}-shards</option>)}
+            {CARD_RANKS.map((r) => <option key={r} value={r}>{r} cards</option>)}
           </select>
           <Button size="sm" onClick={submit}>Post</Button>
         </div>

@@ -146,40 +146,39 @@ function PacksPage() {
 
         {/* IDLE — pack picker */}
         {openings.length === 0 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-border bg-card p-8 text-center">
-              <div className="mx-auto mb-4 flex h-32 w-24 items-center justify-center rounded-xl border-2 border-primary bg-gradient-to-br from-primary/30 to-purple-500/30 shadow-lg">
-                <Package className="h-12 w-12 text-primary" />
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="rounded-2xl border border-border bg-card p-3 sm:p-8 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-9 sm:h-32 sm:w-24 items-center justify-center rounded-lg sm:rounded-xl border-2 border-primary bg-gradient-to-br from-primary/30 to-purple-500/30 shadow-lg">
+                <Package className="h-5 w-5 sm:h-12 sm:w-12 text-primary" />
               </div>
-              <h2 className="mb-1 text-xl font-bold">Standard Pack</h2>
-              <p className="mb-4 text-sm text-muted-foreground">3 cards revealed. Choose 1 to keep.</p>
-              <Button size="lg" onClick={openSingle} disabled={!canAfford || busy}>
-                {busy && mode === "single" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5" />}
-                Open Pack — {SINGLE_COST} Ink
+              <h2 className="mb-1 text-sm sm:text-xl font-bold">Standard Pack</h2>
+              <p className="mb-3 sm:mb-4 text-[11px] sm:text-sm text-muted-foreground">3 cards. Choose 1.</p>
+              <Button size="sm" className="w-full sm:size-lg sm:w-auto" onClick={openSingle} disabled={!canAfford || busy}>
+                {busy && mode === "single" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Sparkles className="mr-1.5 h-4 w-4 sm:h-5 sm:w-5" />}
+                <span className="text-xs sm:text-sm">{SINGLE_COST} Ink</span>
               </Button>
             </div>
 
-            <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-card to-primary/5 p-8 text-center">
-              <div className="mx-auto mb-4 flex h-32 w-32 items-center justify-center rounded-xl border-2 border-primary bg-gradient-to-br from-primary/40 to-purple-500/40 shadow-lg">
+            <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-card to-primary/5 p-3 sm:p-8 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 sm:h-32 sm:w-32 items-center justify-center rounded-lg sm:rounded-xl border-2 border-primary bg-gradient-to-br from-primary/40 to-purple-500/40 shadow-lg">
                 <div className="flex flex-col items-center">
-                  <Package className="h-10 w-10 text-primary" />
-                  <span className="mt-1 text-xs font-bold text-primary">×10</span>
+                  <Package className="h-4 w-4 sm:h-10 sm:w-10 text-primary" />
+                  <span className="mt-0.5 text-[9px] sm:text-xs font-bold text-primary">×10</span>
                 </div>
               </div>
-              <h2 className="mb-1 text-xl font-bold">Mega Pack <span className="text-primary">×10</span></h2>
-              <p className="mb-2 text-sm text-muted-foreground">10 columns × 3 cards. Choose 1 from each column.</p>
-              <p className="mb-4 text-xs text-muted-foreground">Best value — pity counters tick across all 10.</p>
-              <Button size="lg" onClick={openTen} disabled={ink < TEN_COST || busy} className="bg-gradient-to-r from-primary to-purple-500">
-                {busy && mode === "ten" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5" />}
-                Open ×10 — {TEN_COST} Ink
+              <h2 className="mb-1 text-sm sm:text-xl font-bold">Mega Pack <span className="text-primary">×10</span></h2>
+              <p className="mb-3 sm:mb-4 text-[11px] sm:text-sm text-muted-foreground">10×3 cards. Best value.</p>
+              <Button size="sm" className="w-full sm:size-lg sm:w-auto bg-gradient-to-r from-primary to-purple-500" onClick={openTen} disabled={ink < TEN_COST || busy}>
+                {busy && mode === "ten" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Sparkles className="mr-1.5 h-4 w-4 sm:h-5 sm:w-5" />}
+                <span className="text-xs sm:text-sm">{TEN_COST} Ink</span>
               </Button>
-              {ink < TEN_COST && <p className="mt-2 text-xs text-destructive">Need {TEN_COST - ink} more Ink</p>}
+              {ink < TEN_COST && <p className="mt-1.5 text-[10px] sm:text-xs text-destructive">Need {TEN_COST - ink} more</p>}
             </div>
 
-            <div className="md:col-span-2 rounded-xl border border-border bg-card/50 p-4 text-center text-xs text-muted-foreground">
-              <strong className="text-foreground">Pity:</strong> S-tier guaranteed at 50 packs · X-tier at 150 packs
+            <div className="col-span-2 rounded-xl border border-border bg-card/50 p-3 text-center text-[10px] sm:text-xs text-muted-foreground">
+              <strong className="text-foreground">Pity:</strong> S at 50 · X at 150
               {profile && (
-                <span className="ml-2">· You're at <span className="text-foreground font-bold">{profile.s_pity_counter ?? 0}/50</span> S · <span className="text-foreground font-bold">{profile.x_pity_counter ?? 0}/150</span> X</span>
+                <span className="ml-1 sm:ml-2">· <span className="text-foreground font-bold">{profile.s_pity_counter ?? 0}/50</span> S · <span className="text-foreground font-bold">{profile.x_pity_counter ?? 0}/150</span> X</span>
               )}
             </div>
           </div>

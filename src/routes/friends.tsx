@@ -144,20 +144,20 @@ function FriendsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex flex-col h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-3xl px-4 py-6">
-        <h1 className="text-2xl font-bold mb-4">Friends</h1>
+      <main className="mx-auto w-full max-w-3xl flex flex-col flex-1 min-h-0 px-4 pt-6">
+        <h1 className="text-2xl font-bold mb-4 shrink-0">Friends</h1>
 
-        <Tabs defaultValue="friends">
-          <TabsList>
+        <Tabs defaultValue="friends" className="flex flex-col flex-1 min-h-0">
+          <TabsList className="shrink-0">
             <TabsTrigger value="friends">Friends ({accepted.length})</TabsTrigger>
             <TabsTrigger value="incoming">Incoming ({incoming.length})</TabsTrigger>
             <TabsTrigger value="outgoing">Outgoing ({outgoing.length})</TabsTrigger>
             <TabsTrigger value="find">Find</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="friends" className="mt-4 space-y-2">
+          <TabsContent value="friends" className="mt-4 space-y-2 overflow-y-auto flex-1 min-h-0 pb-4">
             {accepted.length === 0 ? (
               <p className="text-sm text-muted-foreground">No friends yet. Use the Find tab to connect with people.</p>
             ) : accepted.map((f) => {
@@ -174,7 +174,7 @@ function FriendsPage() {
             })}
           </TabsContent>
 
-          <TabsContent value="incoming" className="mt-4 space-y-2">
+          <TabsContent value="incoming" className="mt-4 space-y-2 overflow-y-auto flex-1 min-h-0 pb-4">
             {incoming.length === 0 ? (
               <p className="text-sm text-muted-foreground">No incoming requests.</p>
             ) : incoming.map((f) => {
@@ -188,7 +188,7 @@ function FriendsPage() {
             })}
           </TabsContent>
 
-          <TabsContent value="outgoing" className="mt-4 space-y-2">
+          <TabsContent value="outgoing" className="mt-4 space-y-2 overflow-y-auto flex-1 min-h-0 pb-4">
             {outgoing.length === 0 ? (
               <p className="text-sm text-muted-foreground">No outgoing requests.</p>
             ) : outgoing.map((f) => {
@@ -199,7 +199,7 @@ function FriendsPage() {
             })}
           </TabsContent>
 
-          <TabsContent value="find" className="mt-4">
+          <TabsContent value="find" className="mt-4 overflow-y-auto flex-1 min-h-0 pb-4">
             <div className="flex gap-2 mb-3">
               <Input
                 value={searchQ}

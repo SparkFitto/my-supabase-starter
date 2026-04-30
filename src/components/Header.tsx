@@ -121,8 +121,23 @@ export function Header() {
             RAWL
           </Link>
 
-          {/* Right: avatar */}
+          {/* Right: bell + avatar */}
           <div className="flex items-center gap-2">
+
+          {user && (
+            <Link
+              to="/notifications"
+              aria-label="Notifications"
+              className="relative flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary transition-colors"
+            >
+              <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground flex items-center justify-center">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </Link>
+          )}
 
           {user ? (
             <div className="relative" ref={menuRef}>
@@ -135,11 +150,6 @@ export function Header() {
                   <img src={profile.avatar_url} alt="" className="h-full w-full rounded-full object-cover" />
                 ) : (
                   initials(profile?.username)
-                )}
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground flex items-center justify-center">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
                 )}
               </button>
 

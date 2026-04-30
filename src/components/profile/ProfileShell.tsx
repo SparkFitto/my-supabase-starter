@@ -132,8 +132,8 @@ export function ProfileShell({
         )}
       </div>
 
-      {/* AVATAR + HEADER ROW */}
-      <div className="px-4 sm:px-6 -mt-[45px] flex items-end gap-4 flex-wrap">
+      {/* AVATAR + HEADER ROW — stacked on mobile, horizontal on sm+ */}
+      <div className="px-4 sm:px-6 -mt-[45px] flex flex-col items-center text-center sm:flex-row sm:items-end sm:text-left sm:gap-4">
         <div className="relative shrink-0">
           <div
             onClick={isOwn ? () => avatarInputRef.current?.click() : undefined}
@@ -150,7 +150,7 @@ export function ProfileShell({
               </div>
             )}
           </div>
-          {/* Live indicator: positioned OUTSIDE the avatar ring, bottom-right corner, with pulse when online */}
+          {/* Live indicator */}
           <span
             className={`pointer-events-none absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full border-[3px] border-background ${
               isOnline ? "bg-success" : "bg-muted-foreground"
@@ -178,9 +178,9 @@ export function ProfileShell({
           )}
         </div>
 
-        <div className="flex-1 min-w-0 mt-3 sm:mt-0 sm:mb-2 w-full sm:w-auto">
-          <div className="flex items-center gap-2 flex-wrap min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold truncate min-w-0">@{profile.username ?? "you"}</h1>
+        <div className="mt-3 sm:mt-0 sm:mb-2 sm:pl-2 flex-1 min-w-0 w-full">
+          <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold break-all sm:break-normal min-w-0">@{profile.username ?? "you"}</h1>
             <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-bold uppercase tracking-wide shrink-0">
               {profile.plan}
             </span>
@@ -190,7 +190,7 @@ export function ProfileShell({
           </p>
         </div>
 
-        {rightActions && <div className="mb-2 ml-auto">{rightActions}</div>}
+        {rightActions && <div className="mt-3 sm:mt-0 sm:mb-2 sm:ml-auto">{rightActions}</div>}
       </div>
 
       {/* TABS */}
@@ -256,26 +256,38 @@ export function ChaptersReadBar({ count }: { count: number }) {
     <div>
       <div className="relative h-2 rounded-full bg-secondary">
         <div className="absolute left-0 top-0 h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
-        <div className="absolute inset-0 flex justify-between items-center px-0">
-          {milestones.map((m) => {
-            const reached = count >= m;
-            const left = (m / max) * 100;
-            return (
-              <div
-                key={m}
-                style={{ left: `${left}%` }}
-                className="absolute -translate-x-1/2 flex flex-col items-center"
-              >
-                <span className={`block h-3 w-3 rounded-full border-2 ${reached ? "bg-primary border-primary" : "bg-background border-border"}`} />
-              </div>
-            );
-          })}
-        </div>
+        {milestones.map((m) => {
+          const reached = count >= m;
+          const left = (m / max) * 100;
+          return (
+            <span
+              key={m}
+              style={{ left: `${left}%` }}
+              className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+            >
+              <span className={`block h-3 w-3 rounded-full border-2 ${reached ? "bg-primary border-primary" : "bg-background border-border"}`} />
+            </span>
+          );
+        })}
       </div>
-      <div className="mt-4 flex justify-between text-[10px] text-muted-foreground font-mono">
-        {milestones.map((m) => (
-          <span key={m}>{m.toLocaleString()}</span>
-        ))}
+      <div className="relative mt-3 h-4 text-[10px] text-muted-foreground font-mono">
+        {milestones.map((m, i) => {
+          const left = (m / max) * 100;
+          const isLast = i === milestones.length - 1;
+          const isFirst = i === 0;
+          return (
+            <span
+              key={m}
+              className="absolute whitespace-nowrap"
+              style={{
+                left: `${left}%`,
+                transform: isFirst ? "translateX(0)" : isLast ? "translateX(-100%)" : "translateX(-50%)",
+              }}
+            >
+              {m.toLocaleString()}
+            </span>
+          );
+        })}
       </div>
       <p className="mt-2 text-sm font-semibold">{count.toLocaleString()} chapters read</p>
     </div>

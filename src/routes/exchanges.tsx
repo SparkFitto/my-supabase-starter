@@ -259,59 +259,137 @@ function HistoryTab({ userId }: { userId: string }) {
   );
 }
 
+const RANKS_ALL = ["ALL", "X", "S", "A", "B", "C", "D", "E", "F", "G"] as const;
+
 function SmeltTab({ userId }: { userId: string }) {
+  const qc = useQueryClient();
   const [selected, setSelected] = useState<string[]>([]);
+  const [filter, setFilter] = useState<(typeof RANKS_ALL)[number]>("ALL");
+  const [result, setResult] = useState<{ name: string; image: string; rank: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+
   const { data: cards = [] } = useQuery({
     queryKey: ["smelt-cards", userId],
     queryFn: async () => {
       const { data } = await supabase
         .from("user_cards")
         .select("id, quantity, card:cards!inner(id, name, character_name, image_url, rank)")
-        .eq("user_id", userId).gt("quantity", 1).eq("is_blocked", false);
+        .eq("user_id", userId).gt("quantity", 0).eq("is_blocked", false);
       return data ?? [];
     },
   });
 
-  const toggle = (id: string) => setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
+  const filtered = filter === "ALL" ? cards : cards.filter((c: any) => c.card.rank === filter);
 
-  const smelt = async () => {
-    if (selected.length === 0) return;
-    const { error } = await supabase.from("card_operations").insert({
-      user_id: userId, type: "smelt", input_card_ids: selected,
-    });
-    if (error) toast.error(error.message);
-    else { toast.success(`Upgraded ${selected.length} card${selected.length === 1 ? "" : "s"} into shards`); setSelected([]); }
+  // Build rank-set of selected cards to detect mixed ranks
+  const selectedCards = cards.filter((c: any) => selected.includes(c.id));
+  const selectedRanks = Array.from(new Set(selectedCards.map((c: any) => c.card.rank)));
+  const sameRank = selectedRanks.length <= 1;
+  const canUpgrade = selected.length === 3 && sameRank;
+
+  const toggle = (id: string) => setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : (s.length >= 3 ? s : [...s, id]));
+
+  const upgrade = async () => {
+    if (!canUpgrade || busy) return;
+    setBusy(true);
+    const { data, error } = await supabase.rpc("smelt_cards", { _user_card_ids: selected });
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    const row = (data as any)?.[0] ?? data;
+    if (row?.output_card_id) {
+      // fetch card details for result modal
+      const { data: card } = await supabase.from("cards").select("character_name, image_url, rank").eq("id", row.output_card_id).maybeSingle();
+      if (card) setResult({ name: card.character_name, image: card.image_url, rank: card.rank });
+    }
+    setSelected([]);
+    qc.invalidateQueries({ queryKey: ["smelt-cards", userId] });
+    qc.invalidateQueries({ queryKey: ["my-cards"] });
+    toast.success("Upgrade successful! 🔥");
   };
 
   return (
     <div>
-      <p className="mb-4 text-sm text-muted-foreground">Convert duplicate cards into rank-matching shards. Only duplicates (quantity &gt; 1) are eligible.</p>
-      {cards.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No duplicate cards available to upgrade.</p>
+      <p className="mb-3 text-sm text-muted-foreground">
+        Select <span className="font-bold text-foreground">3 cards of the same rank</span> from your collection to upgrade into 1 random card of the next higher rank.
+      </p>
+
+      {/* Selection counter / status */}
+      <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+        <span className="text-sm font-bold">Selected: {selected.length} / 3</span>
+        {selected.length > 0 && !sameRank && (
+          <span className="rounded bg-destructive/20 px-2 py-0.5 text-xs font-medium text-destructive">
+            Selected cards must all be the same rank
+          </span>
+        )}
+        {selected.length > 0 && (
+          <button onClick={() => setSelected([])} className="ml-auto text-xs text-muted-foreground hover:text-foreground">Clear</button>
+        )}
+      </div>
+
+      {/* Rank filter */}
+      <div className="mb-3 flex flex-wrap gap-1">
+        {RANKS_ALL.map((r) => (
+          <button key={r} onClick={() => setFilter(r)}
+            className={cn(
+              "rounded-md px-3 py-1 text-xs font-bold transition-colors",
+              filter === r ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-secondary/80",
+            )}>
+            {r}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No cards in this rank.</p>
       ) : (
-        <>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
-            {cards.map((c: any) => (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
+          {filtered.map((c: any) => {
+            const isSelected = selected.includes(c.id);
+            return (
               <button
                 key={c.id}
                 onClick={() => toggle(c.id)}
                 className={cn(
                   "relative aspect-[2/3] overflow-hidden rounded-md border-2 transition-all",
-                  selected.includes(c.id) ? "border-primary scale-95 opacity-60" : "border-transparent",
+                  isSelected ? "border-teal-400 ring-2 ring-teal-400/50" : "border-transparent",
                 )}
               >
                 <img src={c.card.image_url} alt={c.card.character_name} className="h-full w-full object-cover" />
                 <div className="absolute right-1 top-1 rounded bg-black/70 px-1 text-[10px] font-bold text-white">×{c.quantity}</div>
                 <div className="absolute left-1 top-1 rounded bg-primary px-1 text-[10px] font-bold text-primary-foreground">{c.card.rank}</div>
+                {isSelected && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-teal-400/30">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-400 text-black"><Check className="h-5 w-5" /></div>
+                  </div>
+                )}
               </button>
-            ))}
+            );
+          })}
+        </div>
+      )}
+
+      <div className="mt-4 flex justify-end">
+        <Button
+          onClick={upgrade}
+          disabled={!canUpgrade || busy}
+          className={cn(canUpgrade && "bg-success text-success-foreground hover:bg-success/90")}
+        >
+          <Flame className="mr-2 h-4 w-4" />
+          {busy ? "Upgrading…" : "Upgrade 🔥"}
+        </Button>
+      </div>
+
+      {/* Result modal */}
+      {result && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setResult(null)}>
+          <div className="rounded-2xl border border-border bg-card p-6 text-center max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <h3 className="mb-2 text-xl font-bold">🔥 Upgrade complete!</h3>
+            <p className="mb-4 text-sm text-muted-foreground">You received a new <span className="font-bold text-foreground">{result.rank}</span> card:</p>
+            <img src={result.image} alt={result.name} className="mx-auto mb-3 h-60 w-40 rounded-xl object-cover" />
+            <p className="mb-4 font-bold">{result.name}</p>
+            <Button onClick={() => setResult(null)} className="w-full">Awesome!</Button>
           </div>
-          <div className="mt-4 flex justify-end">
-            <Button onClick={smelt} disabled={selected.length === 0}>
-              <Flame className="mr-2 h-4 w-4" />Upgrade {selected.length} card{selected.length === 1 ? "" : "s"}
-            </Button>
-          </div>
-        </>
+        </div>
       )}
     </div>
   );

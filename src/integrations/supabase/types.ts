@@ -1395,6 +1395,13 @@ export type Database = {
           username: string
         }[]
       }
+      smelt_cards: {
+        Args: { _user_card_ids: string[] }
+        Returns: {
+          output_card_id: string
+          output_rank: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "pro"
