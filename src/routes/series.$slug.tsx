@@ -278,7 +278,10 @@ function SeriesPage() {
           </div>
 
           <Tabs defaultValue="description" className="mt-10">
-            <TabsList className="w-full justify-start overflow-x-auto">
+            <TabsList
+              className="w-full justify-start overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden touch-pan-x"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="chapters">Chapters {chapters?.length ? `(${chapters.length})` : ""}</TabsTrigger>
               <TabsTrigger value="cards">Cards</TabsTrigger>

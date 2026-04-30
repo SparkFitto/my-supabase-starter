@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { ProfileShell } from "@/components/profile/ProfileShell";
 import { ProfileTab } from "@/components/profile/ProfileTab";
 import { BookmarksList } from "@/components/profile/BookmarksList";
-import { SocialTab } from "@/components/profile/SocialTab";
+
 import { ShowcaseSection } from "@/components/profile/ShowcaseSection";
 
 export const Route = createFileRoute("/profile/$username")({
@@ -164,15 +164,6 @@ function PublicProfilePage() {
               userId={profile.id}
               isOwn={isOwn}
               readingIsPrivate={!!profile.reading_is_private}
-            />
-          )}
-          {tab === "social" && (
-            <SocialTab
-              profileId={profile.id}
-              username={profile.username ?? ""}
-              isOwn={isOwn}
-              viewerId={user?.id ?? null}
-              friendsArePrivate={!!profile.friends_are_private}
             />
           )}
         </ProfileShell>

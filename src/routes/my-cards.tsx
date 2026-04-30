@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Lock, Layers, BarChart3, History, Package } from "lucide-react";
+import { Search, Lock, Layers, History, Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Header } from "@/components/Header";
@@ -105,9 +105,6 @@ function MyCardsPage() {
             <Link to="/decks">
               <Layers className="mr-1.5 h-4 w-4" />Decks
             </Link>
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => alert("Overall progress modal coming in next iteration")}>
-            <BarChart3 className="mr-1.5 h-4 w-4" />Progress
           </Button>
           <Button size="sm" asChild>
             <Link to="/packs"><Package className="mr-1.5 h-4 w-4" />Open Packs</Link>

@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProfileShell } from "@/components/profile/ProfileShell";
 import { ProfileTab } from "@/components/profile/ProfileTab";
 import { BookmarksList } from "@/components/profile/BookmarksList";
-import { SocialTab } from "@/components/profile/SocialTab";
+
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Your profile — RAWL" }, { name: "robots", content: "noindex" }] }),
@@ -65,15 +65,6 @@ function ProfilePage() {
           )}
           {tab === "bookmarks" && (
             <BookmarksList userId={profile.id} isOwn readingIsPrivate={!!profile.reading_is_private} />
-          )}
-          {tab === "social" && (
-            <SocialTab
-              profileId={profile.id}
-              username={profile.username ?? ""}
-              isOwn
-              viewerId={user!.id}
-              friendsArePrivate={!!profile.friends_are_private}
-            />
           )}
         </ProfileShell>
       </main>

@@ -86,7 +86,6 @@ export function ProfileShell({
   const tabs = [
     { id: "profile", label: "Profile" },
     { id: "bookmarks", label: "Bookmarks" },
-    { id: "social", label: "Social" },
   ];
 
   return (
@@ -150,11 +149,20 @@ export function ProfileShell({
                 <Camera className="h-5 w-5 text-white" />
               </div>
             )}
-            <span
-              className={`absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-background ${isOnline ? "bg-success" : "bg-muted-foreground"}`}
-              title={lastSeenLabel(profile.last_seen)}
-            />
           </div>
+          {/* Live indicator: positioned OUTSIDE the avatar ring, bottom-right corner, with pulse when online */}
+          <span
+            className={`pointer-events-none absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full border-[3px] border-background ${
+              isOnline ? "bg-success" : "bg-muted-foreground"
+            }`}
+            title={lastSeenLabel(profile.last_seen)}
+          />
+          {isOnline && (
+            <span
+              className="pointer-events-none absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-success/60 animate-ping"
+              aria-hidden
+            />
+          )}
           {isOwn && (
             <input
               ref={avatarInputRef}

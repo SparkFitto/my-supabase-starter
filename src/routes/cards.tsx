@@ -97,11 +97,11 @@ function CardCatalogPage() {
           </select>
         </div>
 
-        {/* Grid */}
+        {/* Grid — fluid: each card takes a generous slice on phones (2 cols), more on larger */}
         {isLoading ? (
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-[168px] w-[120px] animate-pulse rounded-xl bg-secondary" />
+              <div key={i} className="aspect-[2/3] w-full animate-pulse rounded-xl bg-secondary" />
             ))}
           </div>
         ) : cards.length === 0 ? (
@@ -110,9 +110,9 @@ function CardCatalogPage() {
             <p>No cards found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 justify-items-center gap-3 sm:grid-cols-4 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {cards.map((c) => (
-              <CardDisplay key={c.id} card={c} onClick={() => setOpenCardId(c.id)} />
+              <FluidCard key={c.id} card={c} onClick={() => setOpenCardId(c.id)} />
             ))}
           </div>
         )}
@@ -127,4 +127,37 @@ function CardCatalogPage() {
       <CardDetailModal cardId={openCardId} onClose={() => setOpenCardId(null)} />
     </div>
   );
+}
+
+// Wrapper that lets a card fill its grid cell on mobile (instead of fixed 120px)
+function FluidCard({ card, onClick }: { card: CardData; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group relative aspect-[2/3] w-full overflow-hidden rounded-xl border-2 bg-secondary transition-transform hover:scale-[1.02] active:scale-[0.98]"
+      style={{ borderColor: rankBorderColor(card.rank) }}
+    >
+      <img src={card.image_url} alt={card.character_name} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      <div
+        className="absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white shadow-md"
+        style={{ background: rankBorderColor(card.rank), color: ["X","T","L","Q"].includes(card.rank) ? "#000" : "#fff" }}
+      >
+        {card.rank}
+      </div>
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/70 to-transparent px-2 py-1.5 text-left">
+        <div className="truncate text-xs font-bold text-white">{card.character_name}</div>
+        {card.series?.title && <div className="truncate text-[10px] text-white/60">{card.series.title}</div>}
+      </div>
+    </button>
+  );
+}
+
+function rankBorderColor(r: string) {
+  const map: Record<string, string> = {
+    X: "#2dd4bf", S: "#a855f7", A: "#b91c1c", B: "#ec4899", C: "#ca8a04",
+    D: "#57534e", E: "#78350f", F: "#3b82f6", G: "#16a34a",
+    T: "#facc15", H: "#fb7185", N: "#38bdf8", V: "#a78bfa", L: "#a3e635", K: "#e879f9", Q: "#fb923c",
+  };
+  return map[r] ?? "#666";
 }

@@ -11,6 +11,7 @@ import {
   Languages,
   Megaphone,
   Flag,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,13 +39,16 @@ export function AdminShell() {
     queryKey: ["admin-badge-counts"],
     enabled: isAdmin === true,
     queryFn: async () => {
-      const [glossary, reports] = await Promise.all([
+      const [glossary, reports, cards, suggestions] = await Promise.all([
         supabase.from("series_glossary").select("id", { count: "exact", head: true }).eq("approved", false),
         supabase.from("reports").select("id", { count: "exact", head: true }).eq("resolved", false),
+        supabase.from("cards").select("id", { count: "exact", head: true }).eq("is_approved", false),
+        supabase.from("card_image_suggestions").select("id", { count: "exact", head: true }),
       ]);
       return {
         glossary: glossary.count ?? 0,
         reports: reports.count ?? 0,
+        cards: (cards.count ?? 0) + (suggestions.count ?? 0),
       };
     },
     refetchInterval: 30000,
@@ -75,6 +79,7 @@ export function AdminShell() {
   const links = [
     { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
     { to: "/admin/series", label: "Series", icon: BookOpen },
+    { to: "/admin/cards", label: "Cards", icon: Sparkles, badge: counts?.cards },
     { to: "/admin/users", label: "Users", icon: UsersIcon },
     { to: "/admin/glossary", label: "Glossary", icon: Languages, badge: counts?.glossary },
     { to: "/admin/updates", label: "Updates", icon: Megaphone },
