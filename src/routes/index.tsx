@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/lib/auth";
@@ -12,6 +13,7 @@ import {
 } from "@/components/SeriesCard";
 import { useUserBookmarks } from "@/lib/use-bookmarks";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CardDetailModal } from "@/components/cards/CardDetailModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
