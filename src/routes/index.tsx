@@ -242,3 +242,107 @@ function HomePage() {
     </div>
   );
 }
+
+function HomeSearchBar() {
+  const nav = useNavigate();
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState(false);
+  const [openCardId, setOpenCardId] = useState<string | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  const enabled = q.trim().length >= 2;
+
+  const { data: results } = useQuery({
+    queryKey: ["home-search", q.trim()],
+    enabled,
+    queryFn: async () => {
+      const term = `%${q.trim()}%`;
+      const [series, users, cards] = await Promise.all([
+        supabase.from("series").select("id, slug, title, cover_url").ilike("title", term).limit(3),
+        supabase.from("user_profiles").select("id, username, avatar_url").ilike("username", term).limit(3),
+        supabase.from("cards").select("id, character_name, rank, image_url").eq("is_approved", true).ilike("character_name", term).limit(3),
+      ]);
+      return {
+        series: series.data ?? [],
+        users: users.data ?? [],
+        cards: cards.data ?? [],
+      };
+    },
+  });
+
+  const empty = enabled && results && results.series.length === 0 && results.users.length === 0 && results.cards.length === 0;
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <input
+          value={q}
+          onChange={(e) => { setQ(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          placeholder="Search titles, users, or cards…"
+          className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2.5 text-sm focus:border-primary focus:outline-none"
+        />
+      </div>
+
+      {open && enabled && (
+        <div className="absolute left-0 right-0 top-full mt-2 z-30 rounded-lg border border-border bg-popover shadow-xl max-h-[70vh] overflow-y-auto">
+          {empty && <div className="p-4 text-sm text-muted-foreground text-center">No results.</div>}
+
+          {results && results.series.length > 0 && (
+            <div className="p-2">
+              <div className="px-2 py-1 text-[10px] font-bold uppercase text-muted-foreground">Titles</div>
+              {results.series.map((s: any) => (
+                <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 px-2 py-2 rounded hover:bg-secondary">
+                  <div className="h-10 w-8 rounded bg-secondary overflow-hidden shrink-0">
+                    {s.cover_url && <img src={s.cover_url} alt="" className="h-full w-full object-cover" />}
+                  </div>
+                  <span className="text-sm truncate">{s.title}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {results && results.users.length > 0 && (
+            <div className="p-2 border-t border-border">
+              <div className="px-2 py-1 text-[10px] font-bold uppercase text-muted-foreground">Users</div>
+              {results.users.map((u: any) => (
+                <Link key={u.id} to="/profile/$username" params={{ username: u.username ?? "" }} onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 px-2 py-2 rounded hover:bg-secondary">
+                  <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
+                    {u.avatar_url ? <img src={u.avatar_url} alt="" className="h-full w-full object-cover" /> : (u.username ?? "?").slice(0, 2).toUpperCase()}
+                  </div>
+                  <span className="text-sm truncate">@{u.username}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {results && results.cards.length > 0 && (
+            <div className="p-2 border-t border-border">
+              <div className="px-2 py-1 text-[10px] font-bold uppercase text-muted-foreground">Cards</div>
+              {results.cards.map((c: any) => (
+                <button key={c.id} onClick={() => { setOpenCardId(c.id); setOpen(false); }}
+                  className="flex w-full items-center gap-3 px-2 py-2 rounded hover:bg-secondary text-left">
+                  <span className="rounded bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">{c.rank}</span>
+                  <span className="text-sm truncate flex-1">{c.character_name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <CardDetailModal cardId={openCardId} onClose={() => setOpenCardId(null)} />
+    </div>
+  );
+}
