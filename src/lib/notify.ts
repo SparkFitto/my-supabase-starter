@@ -12,7 +12,14 @@ export type NotificationType =
   | "deck_liked"
   | "comment_reply"
   | "friend_request"
-  | "friend_accepted";
+  | "friend_accepted"
+  | "guild_request"
+  | "guild_accepted"
+  | "guild_declined"
+  | "guild_kicked"
+  | "guild_war_started"
+  | "guild_war_ended"
+  | "guild_card_received";
 
 export async function notify(params: {
   user_id: string;

@@ -26,6 +26,7 @@ import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as GuildsRouteImport } from './routes/guilds'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as ExchangesRouteImport } from './routes/exchanges'
@@ -42,10 +43,12 @@ import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 import { Route as ReadTranslationIdRouteImport } from './routes/read.$translationId'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
 import { Route as JobJobIdRouteImport } from './routes/job.$jobId'
+import { Route as GuildsGuildIdRouteImport } from './routes/guilds.$guildId'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminUpdatesRouteImport } from './routes/admin.updates'
 import { Route as AdminSeriesRouteImport } from './routes/admin.series'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
+import { Route as AdminGuildsRouteImport } from './routes/admin.guilds'
 import { Route as AdminGlossaryRouteImport } from './routes/admin.glossary'
 import { Route as AdminCardsRouteImport } from './routes/admin.cards'
 import { Route as TranslateSlugChapterLangRouteImport } from './routes/translate.$slug.$chapter.$lang'
@@ -136,6 +139,11 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuildsRoute = GuildsRouteImport.update({
+  id: '/guilds',
+  path: '/guilds',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FriendsRoute = FriendsRouteImport.update({
   id: '/friends',
   path: '/friends',
@@ -216,6 +224,11 @@ const JobJobIdRoute = JobJobIdRouteImport.update({
   path: '/job/$jobId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuildsGuildIdRoute = GuildsGuildIdRouteImport.update({
+  id: '/$guildId',
+  path: '/$guildId',
+  getParentRoute: () => GuildsRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -234,6 +247,11 @@ const AdminSeriesRoute = AdminSeriesRouteImport.update({
 const AdminReportsRoute = AdminReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGuildsRoute = AdminGuildsRouteImport.update({
+  id: '/guilds',
+  path: '/guilds',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminGlossaryRoute = AdminGlossaryRouteImport.update({
@@ -271,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/exchanges': typeof ExchangesRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
+  '/guilds': typeof GuildsRouteWithChildren
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
   '/marketplace': typeof MarketplaceRoute
@@ -290,10 +309,12 @@ export interface FileRoutesByFullPath {
   '/updates': typeof UpdatesRoute
   '/admin/cards': typeof AdminCardsRoute
   '/admin/glossary': typeof AdminGlossaryRoute
+  '/admin/guilds': typeof AdminGuildsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
   '/admin/updates': typeof AdminUpdatesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/guilds/$guildId': typeof GuildsGuildIdRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
@@ -313,6 +334,7 @@ export interface FileRoutesByTo {
   '/exchanges': typeof ExchangesRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
+  '/guilds': typeof GuildsRouteWithChildren
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
   '/marketplace': typeof MarketplaceRoute
@@ -332,10 +354,12 @@ export interface FileRoutesByTo {
   '/updates': typeof UpdatesRoute
   '/admin/cards': typeof AdminCardsRoute
   '/admin/glossary': typeof AdminGlossaryRoute
+  '/admin/guilds': typeof AdminGuildsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
   '/admin/updates': typeof AdminUpdatesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/guilds/$guildId': typeof GuildsGuildIdRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
@@ -357,6 +381,7 @@ export interface FileRoutesById {
   '/exchanges': typeof ExchangesRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
+  '/guilds': typeof GuildsRouteWithChildren
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
   '/marketplace': typeof MarketplaceRoute
@@ -376,10 +401,12 @@ export interface FileRoutesById {
   '/updates': typeof UpdatesRoute
   '/admin/cards': typeof AdminCardsRoute
   '/admin/glossary': typeof AdminGlossaryRoute
+  '/admin/guilds': typeof AdminGuildsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
   '/admin/updates': typeof AdminUpdatesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/guilds/$guildId': typeof GuildsGuildIdRoute
   '/job/$jobId': typeof JobJobIdRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/read/$translationId': typeof ReadTranslationIdRoute
@@ -402,6 +429,7 @@ export interface FileRouteTypes {
     | '/exchanges'
     | '/favorites'
     | '/friends'
+    | '/guilds'
     | '/history'
     | '/leaderboard'
     | '/marketplace'
@@ -421,10 +449,12 @@ export interface FileRouteTypes {
     | '/updates'
     | '/admin/cards'
     | '/admin/glossary'
+    | '/admin/guilds'
     | '/admin/reports'
     | '/admin/series'
     | '/admin/updates'
     | '/admin/users'
+    | '/guilds/$guildId'
     | '/job/$jobId'
     | '/profile/$username'
     | '/read/$translationId'
@@ -444,6 +474,7 @@ export interface FileRouteTypes {
     | '/exchanges'
     | '/favorites'
     | '/friends'
+    | '/guilds'
     | '/history'
     | '/leaderboard'
     | '/marketplace'
@@ -463,10 +494,12 @@ export interface FileRouteTypes {
     | '/updates'
     | '/admin/cards'
     | '/admin/glossary'
+    | '/admin/guilds'
     | '/admin/reports'
     | '/admin/series'
     | '/admin/updates'
     | '/admin/users'
+    | '/guilds/$guildId'
     | '/job/$jobId'
     | '/profile/$username'
     | '/read/$translationId'
@@ -487,6 +520,7 @@ export interface FileRouteTypes {
     | '/exchanges'
     | '/favorites'
     | '/friends'
+    | '/guilds'
     | '/history'
     | '/leaderboard'
     | '/marketplace'
@@ -506,10 +540,12 @@ export interface FileRouteTypes {
     | '/updates'
     | '/admin/cards'
     | '/admin/glossary'
+    | '/admin/guilds'
     | '/admin/reports'
     | '/admin/series'
     | '/admin/updates'
     | '/admin/users'
+    | '/guilds/$guildId'
     | '/job/$jobId'
     | '/profile/$username'
     | '/read/$translationId'
@@ -531,6 +567,7 @@ export interface RootRouteChildren {
   ExchangesRoute: typeof ExchangesRoute
   FavoritesRoute: typeof FavoritesRoute
   FriendsRoute: typeof FriendsRoute
+  GuildsRoute: typeof GuildsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MarketplaceRoute: typeof MarketplaceRoute
@@ -674,6 +711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guilds': {
+      id: '/guilds'
+      path: '/guilds'
+      fullPath: '/guilds'
+      preLoaderRoute: typeof GuildsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/friends': {
       id: '/friends'
       path: '/friends'
@@ -786,6 +830,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobJobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guilds/$guildId': {
+      id: '/guilds/$guildId'
+      path: '/$guildId'
+      fullPath: '/guilds/$guildId'
+      preLoaderRoute: typeof GuildsGuildIdRouteImport
+      parentRoute: typeof GuildsRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -812,6 +863,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/admin/reports'
       preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/guilds': {
+      id: '/admin/guilds'
+      path: '/guilds'
+      fullPath: '/admin/guilds'
+      preLoaderRoute: typeof AdminGuildsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/glossary': {
@@ -848,6 +906,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminCardsRoute: typeof AdminCardsRoute
   AdminGlossaryRoute: typeof AdminGlossaryRoute
+  AdminGuildsRoute: typeof AdminGuildsRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSeriesRoute: typeof AdminSeriesRoute
   AdminUpdatesRoute: typeof AdminUpdatesRoute
@@ -858,6 +917,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCardsRoute: AdminCardsRoute,
   AdminGlossaryRoute: AdminGlossaryRoute,
+  AdminGuildsRoute: AdminGuildsRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSeriesRoute: AdminSeriesRoute,
   AdminUpdatesRoute: AdminUpdatesRoute,
@@ -866,6 +926,17 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface GuildsRouteChildren {
+  GuildsGuildIdRoute: typeof GuildsGuildIdRoute
+}
+
+const GuildsRouteChildren: GuildsRouteChildren = {
+  GuildsGuildIdRoute: GuildsGuildIdRoute,
+}
+
+const GuildsRouteWithChildren =
+  GuildsRoute._addFileChildren(GuildsRouteChildren)
 
 interface ProfileRouteChildren {
   ProfileUsernameRoute: typeof ProfileUsernameRoute
@@ -914,6 +985,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExchangesRoute: ExchangesRoute,
   FavoritesRoute: FavoritesRoute,
   FriendsRoute: FriendsRoute,
+  GuildsRoute: GuildsRouteWithChildren,
   HistoryRoute: HistoryRoute,
   LeaderboardRoute: LeaderboardRoute,
   MarketplaceRoute: MarketplaceRoute,
