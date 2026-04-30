@@ -218,7 +218,7 @@ function RequestsTab({ userId }: { userId: string | null }) {
                   <p className="truncate text-sm font-bold">{r.card.character_name}</p>
                 </div>
                 <p className="text-xs text-muted-foreground">@{r.buyer?.username}</p>
-                <p className="mt-2 text-sm">Offers: <span className="font-bold">{r.offer_amount} {r.offer_rank}-shards</span></p>
+                <p className="mt-2 text-sm">Offers: <span className="font-bold">{r.offer_amount} {r.offer_rank} card{r.offer_amount === 1 ? "" : "s"}</span></p>
                 {r.buyer_id === userId && (
                   <button onClick={() => remove(r.id)} className="mt-1 text-xs text-destructive hover:underline">
                     <Trash2 className="mr-0.5 inline h-3 w-3" />Cancel
