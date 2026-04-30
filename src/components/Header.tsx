@@ -14,6 +14,10 @@ import {
   LogOut,
   Sparkles,
   ShieldCheck,
+  Layers,
+  Package,
+  ArrowLeftRight,
+  Spade,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -144,6 +148,7 @@ export function Header() {
                   username={profile?.username ?? "you"}
                   plan={profile?.plan ?? "free"}
                   avatarUrl={profile?.avatar_url}
+                  inkBalance={profile?.ink_balance ?? 0}
                   unreadCount={unreadCount}
                   isAdmin={isAdmin}
                   onSignOut={handleSignOut}
@@ -178,6 +183,7 @@ function AvatarDropdown({
   username,
   plan,
   avatarUrl,
+  inkBalance,
   unreadCount,
   isAdmin,
   onSignOut,
@@ -186,6 +192,7 @@ function AvatarDropdown({
   username: string;
   plan: string;
   avatarUrl?: string | null;
+  inkBalance: number;
   unreadCount: number;
   isAdmin: boolean;
   onSignOut: () => void;
@@ -199,6 +206,10 @@ function AvatarDropdown({
     { icon: Bookmark, label: "Reading List", to: "/bookmarks" },
     { icon: History, label: "Reading History", to: "/history" },
     { icon: UserIcon, label: "My Profile", to: "/profile" },
+    { icon: Spade, label: "My Cards", to: "/my-cards" },
+    { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
+    { icon: Package, label: "Open Packs", to: "/packs" },
+    { icon: Layers, label: "Decks", to: "/decks" },
     { icon: Settings, label: "Settings", to: "/settings" },
     ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", to: "/admin" as const }] : []),
   ] as const;
@@ -211,7 +222,10 @@ function AvatarDropdown({
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold truncate">@{username}</div>
-          <div className="text-[10px] uppercase tracking-wide text-primary font-bold">{plan}</div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wide text-primary font-bold">{plan}</span>
+            <span className="text-[10px] text-muted-foreground">🖊️ {inkBalance} Ink</span>
+          </div>
         </div>
       </div>
       <div className="border-t border-border" />
@@ -264,6 +278,7 @@ function Drawer({
     { label: "Billboard", to: "/billboard" },
     { label: "Catalogue", to: "/catalogue" },
     { label: "Novels", to: "/novels" },
+    { label: "Card Catalog", to: "/cards", icon: Spade },
     { label: "Translate", to: "/translate", icon: Sparkles },
     { label: "Leaderboard", to: "/leaderboard" },
     { label: "What's New", to: "/updates" },

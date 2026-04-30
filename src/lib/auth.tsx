@@ -24,6 +24,13 @@ export interface Profile {
   reading_is_private?: boolean;
   banner_url?: string | null;
   banned_at?: string | null;
+  ink_balance?: number;
+  pages_balance?: number;
+  pack_counter?: number;
+  s_pity_counter?: number;
+  x_pity_counter?: number;
+  daily_ink_claimed_at?: string | null;
+  shard_balance?: Record<string, number>;
 }
 
 interface SignUpResult {
