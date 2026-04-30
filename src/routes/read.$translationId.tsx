@@ -24,7 +24,7 @@ function ReaderPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("translations")
-        .select("id, target_language, image_urls, page_count, chapter:chapters(id, chapter_number, content, series:series(slug, title, type))")
+        .select("id, target_language, image_urls, page_count, chapter:chapters(id, chapter_number, content, series_id, series:series(id, slug, title, type))")
         .eq("id", translationId)
         .maybeSingle();
       return data;
@@ -32,11 +32,12 @@ function ReaderPage() {
   });
 
   const images = data?.image_urls ?? [];
-  const chapter = data?.chapter as { chapter_number?: string; content?: string | null; series?: { slug: string; title: string; type: string } } | null;
+  const chapter = data?.chapter as { chapter_number?: string; content?: string | null; series_id?: string; series?: { id: string; slug: string; title: string; type: string } } | null;
   const series = chapter?.series;
   const chapterNum = chapter?.chapter_number;
   const isNovel = series?.type === "novel";
   const novelText = chapter?.content ?? "";
+  const seriesId = series?.id ?? chapter?.series_id ?? null;
 
   return (
     <div className="min-h-screen bg-background">
