@@ -14,6 +14,10 @@ import {
   LogOut,
   Sparkles,
   ShieldCheck,
+  Layers,
+  Package,
+  ArrowLeftRight,
+  Spade,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
