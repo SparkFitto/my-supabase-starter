@@ -14,6 +14,391 @@ export type Database = {
   }
   public: {
     Tables: {
+      card_comments: {
+        Row: {
+          card_id: string
+          content: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          content: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_comments_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_deck_likes: {
+        Row: {
+          created_at: string
+          deck_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deck_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deck_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_deck_likes_deck_id_fkey"
+            columns: ["deck_id"]
+            isOneToOne: false
+            referencedRelation: "card_decks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_decks: {
+        Row: {
+          card_ids: string[]
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          is_trade_deck: boolean
+          likes: number
+          name: string
+          updated_at: string
+          user_id: string
+          views: number
+        }
+        Insert: {
+          card_ids?: string[]
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          is_trade_deck?: boolean
+          likes?: number
+          name: string
+          updated_at?: string
+          user_id: string
+          views?: number
+        }
+        Update: {
+          card_ids?: string[]
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          is_trade_deck?: boolean
+          likes?: number
+          name?: string
+          updated_at?: string
+          user_id?: string
+          views?: number
+        }
+        Relationships: []
+      }
+      card_image_suggestions: {
+        Row: {
+          card_id: string
+          created_at: string
+          id: string
+          image_url: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          id?: string
+          image_url: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_image_suggestions_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_lots: {
+        Row: {
+          card_id: string
+          created_at: string
+          id: string
+          price_amount: number
+          price_rank: string
+          seller_id: string
+          status: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          id?: string
+          price_amount: number
+          price_rank: string
+          seller_id: string
+          status?: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          id?: string
+          price_amount?: number
+          price_rank?: string
+          seller_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_lots_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_operations: {
+        Row: {
+          created_at: string
+          id: string
+          ink_spent: number
+          input_card_ids: string[]
+          output_card_id: string | null
+          result: string | null
+          shards_spent: Json
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ink_spent?: number
+          input_card_ids?: string[]
+          output_card_id?: string | null
+          result?: string | null
+          shards_spent?: Json
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ink_spent?: number
+          input_card_ids?: string[]
+          output_card_id?: string | null
+          result?: string | null
+          shards_spent?: Json
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_operations_output_card_id_fkey"
+            columns: ["output_card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_requests: {
+        Row: {
+          buyer_id: string
+          card_id: string
+          created_at: string
+          id: string
+          offer_amount: number
+          offer_rank: string
+          status: string
+        }
+        Insert: {
+          buyer_id: string
+          card_id: string
+          created_at?: string
+          id?: string
+          offer_amount: number
+          offer_rank: string
+          status?: string
+        }
+        Update: {
+          buyer_id?: string
+          card_id?: string
+          created_at?: string
+          id?: string
+          offer_amount?: number
+          offer_rank?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_requests_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_trades: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          receiver_cards: Json
+          receiver_id: string
+          seen_at: string | null
+          sender_cards: Json
+          sender_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          receiver_cards?: Json
+          receiver_id: string
+          seen_at?: string | null
+          sender_cards?: Json
+          sender_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          receiver_cards?: Json
+          receiver_id?: string
+          seen_at?: string | null
+          sender_cards?: Json
+          sender_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      card_wishlist: {
+        Row: {
+          added_at: string
+          card_id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          card_id: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          card_id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_wishlist_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cards: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          character_name: string
+          created_at: string
+          event_type: string | null
+          id: string
+          image_url: string
+          is_animated: boolean
+          is_approved: boolean
+          is_limited: boolean
+          name: string
+          rank: string
+          series_id: string | null
+          submitted_by: string | null
+          tags: string[]
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          character_name: string
+          created_at?: string
+          event_type?: string | null
+          id?: string
+          image_url: string
+          is_animated?: boolean
+          is_approved?: boolean
+          is_limited?: boolean
+          name: string
+          rank: string
+          series_id?: string | null
+          submitted_by?: string | null
+          tags?: string[]
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          character_name?: string
+          created_at?: string
+          event_type?: string | null
+          id?: string
+          image_url?: string
+          is_animated?: boolean
+          is_approved?: boolean
+          is_limited?: boolean
+          name?: string
+          rank?: string
+          series_id?: string | null
+          submitted_by?: string | null
+          tags?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cards_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chapters: {
         Row: {
           chapter_number: string
@@ -106,6 +491,33 @@ export type Database = {
           last_message_at?: string
           user1_id?: string
           user2_id?: string
+        }
+        Relationships: []
+      }
+      daily_ink_log: {
+        Row: {
+          amount: number
+          created_at: string
+          date: string
+          id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          date?: string
+          id?: string
+          source: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          date?: string
+          id?: string
+          source?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -302,6 +714,41 @@ export type Database = {
         }
         Relationships: []
       }
+      pack_openings: {
+        Row: {
+          card_chosen: string | null
+          cards_shown: string[]
+          id: string
+          ink_spent: number
+          opened_at: string
+          user_id: string
+        }
+        Insert: {
+          card_chosen?: string | null
+          cards_shown?: string[]
+          id?: string
+          ink_spent?: number
+          opened_at?: string
+          user_id: string
+        }
+        Update: {
+          card_chosen?: string | null
+          cards_shown?: string[]
+          id?: string
+          ink_spent?: number
+          opened_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pack_openings_card_chosen_fkey"
+            columns: ["card_chosen"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_comments: {
         Row: {
           author_user_id: string
@@ -328,6 +775,45 @@ export type Database = {
           profile_user_id?: string
         }
         Relationships: []
+      }
+      reading_card_drops: {
+        Row: {
+          card_id: string
+          dropped_at: string
+          id: string
+          series_id: string | null
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          dropped_at?: string
+          id?: string
+          series_id?: string | null
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          dropped_at?: string
+          id?: string
+          series_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_card_drops_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_card_drops_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reading_history: {
         Row: {
@@ -591,6 +1077,32 @@ export type Database = {
           },
         ]
       }
+      showcase_cards: {
+        Row: {
+          position: number
+          user_card_id: string | null
+          user_id: string
+        }
+        Insert: {
+          position: number
+          user_card_id?: string | null
+          user_id: string
+        }
+        Update: {
+          position?: number
+          user_card_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "showcase_cards_user_card_id_fkey"
+            columns: ["user_card_id"]
+            isOneToOne: false
+            referencedRelation: "user_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_updates: {
         Row: {
           body: string
@@ -671,6 +1183,47 @@ export type Database = {
           },
         ]
       }
+      user_cards: {
+        Row: {
+          acquired_at: string
+          card_id: string
+          frame_level: number
+          id: string
+          is_blocked: boolean
+          is_trade_ready: boolean
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          acquired_at?: string
+          card_id: string
+          frame_level?: number
+          id?: string
+          is_blocked?: boolean
+          is_trade_ready?: boolean
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          acquired_at?: string
+          card_id?: string
+          frame_level?: number
+          id?: string
+          is_blocked?: boolean
+          is_trade_ready?: boolean
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_cards_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           age: number | null
@@ -682,22 +1235,29 @@ export type Database = {
           country: string | null
           created_at: string
           daily_downvotes_used: number
+          daily_ink_claimed_at: string | null
           downvotes_reset_at: string
           friends_are_private: boolean
           history_is_private: boolean
           id: string
+          ink_balance: number
           last_login_date: string | null
           last_seen: string | null
           login_streak: number
           notify_on_release: boolean
+          pack_counter: number
           paddle_customer_id: string | null
+          pages_balance: number
           plan: string
           preferred_reading_mode: string | null
           preferred_target_language: string | null
           reading_is_private: boolean
+          s_pity_counter: number
+          shard_balance: Json
           username: string | null
           weekly_chapters_used: number
           weekly_reset_at: string
+          x_pity_counter: number
         }
         Insert: {
           age?: number | null
@@ -709,22 +1269,29 @@ export type Database = {
           country?: string | null
           created_at?: string
           daily_downvotes_used?: number
+          daily_ink_claimed_at?: string | null
           downvotes_reset_at?: string
           friends_are_private?: boolean
           history_is_private?: boolean
           id: string
+          ink_balance?: number
           last_login_date?: string | null
           last_seen?: string | null
           login_streak?: number
           notify_on_release?: boolean
+          pack_counter?: number
           paddle_customer_id?: string | null
+          pages_balance?: number
           plan?: string
           preferred_reading_mode?: string | null
           preferred_target_language?: string | null
           reading_is_private?: boolean
+          s_pity_counter?: number
+          shard_balance?: Json
           username?: string | null
           weekly_chapters_used?: number
           weekly_reset_at?: string
+          x_pity_counter?: number
         }
         Update: {
           age?: number | null
@@ -736,22 +1303,29 @@ export type Database = {
           country?: string | null
           created_at?: string
           daily_downvotes_used?: number
+          daily_ink_claimed_at?: string | null
           downvotes_reset_at?: string
           friends_are_private?: boolean
           history_is_private?: boolean
           id?: string
+          ink_balance?: number
           last_login_date?: string | null
           last_seen?: string | null
           login_streak?: number
           notify_on_release?: boolean
+          pack_counter?: number
           paddle_customer_id?: string | null
+          pages_balance?: number
           plan?: string
           preferred_reading_mode?: string | null
           preferred_target_language?: string | null
           reading_is_private?: boolean
+          s_pity_counter?: number
+          shard_balance?: Json
           username?: string | null
           weekly_chapters_used?: number
           weekly_reset_at?: string
+          x_pity_counter?: number
         }
         Relationships: []
       }
@@ -781,6 +1355,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_trade: { Args: { _trade_id: string }; Returns: undefined }
+      award_ink: { Args: { _amount: number; _source: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -788,9 +1364,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      open_pack: {
+        Args: never
+        Returns: {
+          card_ids: string[]
+          opening_id: string
+        }[]
+      }
+      pack_select_card: {
+        Args: { _card_id: string; _opening_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "pro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -918,7 +1505,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "pro"],
     },
   },
 } as const
