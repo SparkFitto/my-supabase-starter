@@ -256,26 +256,38 @@ export function ChaptersReadBar({ count }: { count: number }) {
     <div>
       <div className="relative h-2 rounded-full bg-secondary">
         <div className="absolute left-0 top-0 h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
-        <div className="absolute inset-0 flex justify-between items-center px-0">
-          {milestones.map((m) => {
-            const reached = count >= m;
-            const left = (m / max) * 100;
-            return (
-              <div
-                key={m}
-                style={{ left: `${left}%` }}
-                className="absolute -translate-x-1/2 flex flex-col items-center"
-              >
-                <span className={`block h-3 w-3 rounded-full border-2 ${reached ? "bg-primary border-primary" : "bg-background border-border"}`} />
-              </div>
-            );
-          })}
-        </div>
+        {milestones.map((m) => {
+          const reached = count >= m;
+          const left = (m / max) * 100;
+          return (
+            <span
+              key={m}
+              style={{ left: `${left}%` }}
+              className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+            >
+              <span className={`block h-3 w-3 rounded-full border-2 ${reached ? "bg-primary border-primary" : "bg-background border-border"}`} />
+            </span>
+          );
+        })}
       </div>
-      <div className="mt-4 flex justify-between text-[10px] text-muted-foreground font-mono">
-        {milestones.map((m) => (
-          <span key={m}>{m.toLocaleString()}</span>
-        ))}
+      <div className="relative mt-3 h-4 text-[10px] text-muted-foreground font-mono">
+        {milestones.map((m, i) => {
+          const left = (m / max) * 100;
+          const isLast = i === milestones.length - 1;
+          const isFirst = i === 0;
+          return (
+            <span
+              key={m}
+              className="absolute whitespace-nowrap"
+              style={{
+                left: `${left}%`,
+                transform: isFirst ? "translateX(0)" : isLast ? "translateX(-100%)" : "translateX(-50%)",
+              }}
+            >
+              {m.toLocaleString()}
+            </span>
+          );
+        })}
       </div>
       <p className="mt-2 text-sm font-semibold">{count.toLocaleString()} chapters read</p>
     </div>
