@@ -42,6 +42,7 @@ function ReaderPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <CardDropTrigger seriesId={seriesId} translationId={translationId} />
       <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <div className="min-w-0">
@@ -52,14 +53,17 @@ function ReaderPage() {
             ) : <div className="h-4 w-32 animate-pulse rounded bg-muted" />}
             <p className="font-mono text-xs text-muted-foreground">Chapter {chapterNum ?? "—"}</p>
           </div>
-          {!isNovel && (
-            <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
-              <TabsList>
-                <TabsTrigger value="long_strip">Long strip</TabsTrigger>
-                <TabsTrigger value="single">Page</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
+          <div className="flex items-center gap-2">
+            {!isNovel && (
+              <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
+                <TabsList>
+                  <TabsTrigger value="long_strip">Long strip</TabsTrigger>
+                  <TabsTrigger value="single">Page</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
+            {seriesId && <CardSubmitButton seriesId={seriesId} seriesTitle={series?.title} />}
+          </div>
         </div>
       </div>
 
