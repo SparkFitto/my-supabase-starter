@@ -53,8 +53,8 @@ function MarketplacePage() {
         </div>
         <Tabs value={tab} onValueChange={(v) => nav({ to: "/marketplace", search: { tab: v } as any })}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="lots"><Tag className="mr-1.5 h-4 w-4" />SELL — Lots</TabsTrigger>
-            <TabsTrigger value="requests"><ShoppingBag className="mr-1.5 h-4 w-4" />BUY — Requests</TabsTrigger>
+            <TabsTrigger value="lots"><ShoppingBag className="mr-1.5 h-4 w-4" />Buy</TabsTrigger>
+            <TabsTrigger value="requests"><Tag className="mr-1.5 h-4 w-4" />Sell</TabsTrigger>
           </TabsList>
           <TabsContent value="lots" className="mt-6">
             <LotsTab userId={user?.id ?? null} />
