@@ -23,6 +23,7 @@ import { Route as NovelsRouteImport } from './routes/novels'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyCardsRouteImport } from './routes/my-cards'
 import { Route as MessagesRouteImport } from './routes/messages'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FriendsRouteImport } from './routes/friends'
@@ -117,6 +118,11 @@ const MyCardsRoute = MyCardsRouteImport.update({
 const MessagesRoute = MessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/marketplace': typeof MarketplaceRoute
   '/messages': typeof MessagesRoute
   '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
@@ -301,6 +308,7 @@ export interface FileRoutesByTo {
   '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/marketplace': typeof MarketplaceRoute
   '/messages': typeof MessagesRoute
   '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
@@ -343,6 +351,7 @@ export interface FileRoutesById {
   '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/marketplace': typeof MarketplaceRoute
   '/messages': typeof MessagesRoute
   '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/friends'
     | '/history'
     | '/leaderboard'
+    | '/marketplace'
     | '/messages'
     | '/my-cards'
     | '/notifications'
@@ -426,6 +436,7 @@ export interface FileRouteTypes {
     | '/friends'
     | '/history'
     | '/leaderboard'
+    | '/marketplace'
     | '/messages'
     | '/my-cards'
     | '/notifications'
@@ -467,6 +478,7 @@ export interface FileRouteTypes {
     | '/friends'
     | '/history'
     | '/leaderboard'
+    | '/marketplace'
     | '/messages'
     | '/my-cards'
     | '/notifications'
@@ -509,6 +521,7 @@ export interface RootRouteChildren {
   FriendsRoute: typeof FriendsRoute
   HistoryRoute: typeof HistoryRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  MarketplaceRoute: typeof MarketplaceRoute
   MessagesRoute: typeof MessagesRoute
   MyCardsRoute: typeof MyCardsRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -626,6 +639,13 @@ declare module '@tanstack/react-router' {
       path: '/messages'
       fullPath: '/messages'
       preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboard': {
@@ -875,6 +895,7 @@ const rootRouteChildren: RootRouteChildren = {
   FriendsRoute: FriendsRoute,
   HistoryRoute: HistoryRoute,
   LeaderboardRoute: LeaderboardRoute,
+  MarketplaceRoute: MarketplaceRoute,
   MessagesRoute: MessagesRoute,
   MyCardsRoute: MyCardsRoute,
   NotificationsRoute: NotificationsRoute,
