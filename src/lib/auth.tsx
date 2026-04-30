@@ -95,6 +95,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .from("user_profiles")
           .update({ last_seen: new Date().toISOString(), last_login_date: today, login_streak: streak })
           .eq("id", uid);
+        // Award daily login Ink (+10) once per day
+        try {
+          const { data: claimedRow } = await supabase
+            .from("user_profiles")
+            .select("daily_ink_claimed_at")
+            .eq("id", uid)
+            .maybeSingle();
+          if ((claimedRow as any)?.daily_ink_claimed_at !== today) {
+            await supabase.rpc("award_ink", { _amount: 10, _source: "daily_login" });
+            await supabase
+              .from("user_profiles")
+              .update({ daily_ink_claimed_at: today })
+              .eq("id", uid);
+          }
+        } catch {
+          // ignore
+        }
       } else {
         await supabase
           .from("user_profiles")
