@@ -167,7 +167,7 @@ function CreateLotForm({ userId, onCreated }: { userId: string; onCreated: () =>
             placeholder="Amount"
           />
           <select value={priceRank} onChange={(e) => setPriceRank(e.target.value)} className="rounded border border-border bg-background px-2 py-1.5 text-sm">
-            {CARD_RANKS.map((r) => <option key={r} value={r}>{r}-shards</option>)}
+            {CARD_RANKS.map((r) => <option key={r} value={r}>{r} cards</option>)}
           </select>
           <Button size="sm" onClick={submit}>List</Button>
         </div>
