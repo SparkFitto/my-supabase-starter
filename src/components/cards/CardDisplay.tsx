@@ -1,6 +1,9 @@
 import { cn } from "@/lib/utils";
 
-export type CardRank = "E" | "D" | "C" | "B" | "G" | "P" | "A" | "S" | "X" | "T" | "H" | "N" | "V" | "L" | "K" | "Q";
+// Ranks: X (top) → G (bottom). Special holographic ranks (T,H,N,V,L,K,Q) are reserved for events.
+export type CardRank =
+  | "X" | "S" | "A" | "B" | "C" | "D" | "E" | "F" | "G"
+  | "T" | "H" | "N" | "V" | "L" | "K" | "Q";
 
 export interface CardData {
   id: string;
@@ -43,15 +46,15 @@ const BADGE_SIZE = {
 } as const;
 
 const RANK_BORDER: Record<CardRank, string> = {
-  E: "border-2 border-amber-900",
-  D: "border-2 border-stone-600",
-  C: "border-2 border-yellow-600",
-  B: "border-2 border-pink-500",
-  G: "border-2 border-green-600",
-  P: "border-2 border-blue-500",
-  A: "border-2 border-red-700",
-  S: "border-2 border-purple-500 shadow-lg shadow-purple-500/40",
   X: "border-2 border-teal-400 shadow-lg shadow-teal-400/50",
+  S: "border-2 border-purple-500 shadow-lg shadow-purple-500/40",
+  A: "border-2 border-red-700",
+  B: "border-2 border-pink-500",
+  C: "border-2 border-yellow-600",
+  D: "border-2 border-stone-600",
+  E: "border-2 border-amber-900",
+  F: "border-2 border-blue-500",
+  G: "border-2 border-green-600",
   T: "border-2 border-yellow-400 shadow-lg shadow-yellow-400/50",
   H: "border-2 border-rose-400 shadow-lg shadow-rose-400/40",
   N: "border-2 border-sky-400 shadow-lg shadow-sky-400/40",
@@ -62,15 +65,15 @@ const RANK_BORDER: Record<CardRank, string> = {
 };
 
 const RANK_BADGE_BG: Record<CardRank, string> = {
-  E: "bg-amber-900",
-  D: "bg-stone-600",
-  C: "bg-yellow-600",
-  B: "bg-pink-500",
-  G: "bg-green-600",
-  P: "bg-blue-500",
-  A: "bg-red-700",
-  S: "bg-purple-500",
   X: "bg-teal-400 text-black",
+  S: "bg-purple-500",
+  A: "bg-red-700",
+  B: "bg-pink-500",
+  C: "bg-yellow-600",
+  D: "bg-stone-600",
+  E: "bg-amber-900",
+  F: "bg-blue-500",
+  G: "bg-green-600",
   T: "bg-yellow-400 text-black",
   H: "bg-rose-400",
   N: "bg-sky-400",
@@ -184,4 +187,5 @@ export function CardDisplay({
   );
 }
 
-export const CARD_RANKS: CardRank[] = ["X", "S", "A", "P", "G", "B", "C", "D", "E"];
+// Public order: top tier first
+export const CARD_RANKS: CardRank[] = ["X", "S", "A", "B", "C", "D", "E", "F", "G"];
