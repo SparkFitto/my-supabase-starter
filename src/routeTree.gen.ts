@@ -47,6 +47,7 @@ import { Route as AdminUpdatesRouteImport } from './routes/admin.updates'
 import { Route as AdminSeriesRouteImport } from './routes/admin.series'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminGlossaryRouteImport } from './routes/admin.glossary'
+import { Route as AdminCardsRouteImport } from './routes/admin.cards'
 import { Route as TranslateSlugChapterLangRouteImport } from './routes/translate.$slug.$chapter.$lang'
 import { Route as SeriesSlugChapterChapterRouteImport } from './routes/series.$slug.chapter.$chapter'
 
@@ -240,6 +241,11 @@ const AdminGlossaryRoute = AdminGlossaryRouteImport.update({
   path: '/glossary',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCardsRoute = AdminCardsRouteImport.update({
+  id: '/cards',
+  path: '/cards',
+  getParentRoute: () => AdminRoute,
+} as any)
 const TranslateSlugChapterLangRoute =
   TranslateSlugChapterLangRouteImport.update({
     id: '/$slug/$chapter/$lang',
@@ -282,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
+  '/admin/cards': typeof AdminCardsRoute
   '/admin/glossary': typeof AdminGlossaryRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
+  '/admin/cards': typeof AdminCardsRoute
   '/admin/glossary': typeof AdminGlossaryRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
@@ -366,6 +374,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
+  '/admin/cards': typeof AdminCardsRoute
   '/admin/glossary': typeof AdminGlossaryRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
@@ -410,6 +419,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/translate'
     | '/updates'
+    | '/admin/cards'
     | '/admin/glossary'
     | '/admin/reports'
     | '/admin/series'
@@ -451,6 +461,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/translate'
     | '/updates'
+    | '/admin/cards'
     | '/admin/glossary'
     | '/admin/reports'
     | '/admin/series'
@@ -493,6 +504,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/translate'
     | '/updates'
+    | '/admin/cards'
     | '/admin/glossary'
     | '/admin/reports'
     | '/admin/series'
@@ -809,6 +821,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGlossaryRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/cards': {
+      id: '/admin/cards'
+      path: '/cards'
+      fullPath: '/admin/cards'
+      preLoaderRoute: typeof AdminCardsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/translate/$slug/$chapter/$lang': {
       id: '/translate/$slug/$chapter/$lang'
       path: '/$slug/$chapter/$lang'
@@ -827,6 +846,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminCardsRoute: typeof AdminCardsRoute
   AdminGlossaryRoute: typeof AdminGlossaryRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSeriesRoute: typeof AdminSeriesRoute
@@ -836,6 +856,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCardsRoute: AdminCardsRoute,
   AdminGlossaryRoute: AdminGlossaryRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSeriesRoute: AdminSeriesRoute,
