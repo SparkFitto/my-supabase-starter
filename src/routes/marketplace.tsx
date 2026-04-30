@@ -110,7 +110,7 @@ function LotsTab({ userId }: { userId: string | null }) {
                   <p className="truncate text-sm font-bold">{l.card.character_name}</p>
                 </div>
                 <p className="text-xs text-muted-foreground">@{l.seller?.username}</p>
-                <p className="mt-2 text-sm font-bold">{l.price_amount} <span className="text-xs">{l.price_rank}-shards</span></p>
+                <p className="mt-2 text-sm font-bold">Price: {l.price_amount} <span className="text-xs">{l.price_rank} card{l.price_amount === 1 ? "" : "s"}</span></p>
                 {l.seller_id === userId && (
                   <button onClick={() => remove(l.id)} className="mt-1 text-xs text-destructive hover:underline">
                     <Trash2 className="mr-0.5 inline h-3 w-3" />Remove
