@@ -106,9 +106,6 @@ function MyCardsPage() {
               <Layers className="mr-1.5 h-4 w-4" />Decks
             </Link>
           </Button>
-          <Button variant="outline" size="sm" onClick={() => alert("Overall progress modal coming in next iteration")}>
-            <BarChart3 className="mr-1.5 h-4 w-4" />Progress
-          </Button>
           <Button size="sm" asChild>
             <Link to="/packs"><Package className="mr-1.5 h-4 w-4" />Open Packs</Link>
           </Button>
