@@ -12,6 +12,7 @@ import { typeLabel, formatDate, TARGET_LANGUAGES } from "@/lib/constants";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import { SeriesComments } from "@/components/SeriesComments";
+import { SeriesCardsTab } from "@/components/cards/SeriesCardsTab";
 
 const SITE = "https://rawl.app";
 
@@ -280,6 +281,7 @@ function SeriesPage() {
             <TabsList className="w-full justify-start overflow-x-auto">
               <TabsTrigger value="description">Description</TabsTrigger>
               <TabsTrigger value="chapters">Chapters {chapters?.length ? `(${chapters.length})` : ""}</TabsTrigger>
+              <TabsTrigger value="cards">Cards</TabsTrigger>
               <TabsTrigger value="glossary">Glossary</TabsTrigger>
             </TabsList>
 
@@ -333,6 +335,10 @@ function SeriesPage() {
                   Show all {chapters.length} <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               )}
+            </TabsContent>
+
+            <TabsContent value="cards" className="mt-6">
+              <SeriesCardsTab seriesId={series.id} seriesTitle={series.title} />
             </TabsContent>
 
             <TabsContent value="glossary" className="mt-6">
