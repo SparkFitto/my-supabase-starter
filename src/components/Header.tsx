@@ -183,6 +183,7 @@ function AvatarDropdown({
   username,
   plan,
   avatarUrl,
+  inkBalance,
   unreadCount,
   isAdmin,
   onSignOut,
@@ -191,6 +192,7 @@ function AvatarDropdown({
   username: string;
   plan: string;
   avatarUrl?: string | null;
+  inkBalance: number;
   unreadCount: number;
   isAdmin: boolean;
   onSignOut: () => void;
@@ -220,7 +222,10 @@ function AvatarDropdown({
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold truncate">@{username}</div>
-          <div className="text-[10px] uppercase tracking-wide text-primary font-bold">{plan}</div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wide text-primary font-bold">{plan}</span>
+            <span className="text-[10px] text-muted-foreground">🖊️ {inkBalance} Ink</span>
+          </div>
         </div>
       </div>
       <div className="border-t border-border" />
