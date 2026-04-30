@@ -97,11 +97,11 @@ function CardCatalogPage() {
           </select>
         </div>
 
-        {/* Grid */}
+        {/* Grid — fluid: each card takes a generous slice on phones (2 cols), more on larger */}
         {isLoading ? (
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-[168px] w-[120px] animate-pulse rounded-xl bg-secondary" />
+              <div key={i} className="aspect-[2/3] w-full animate-pulse rounded-xl bg-secondary" />
             ))}
           </div>
         ) : cards.length === 0 ? (
@@ -110,9 +110,9 @@ function CardCatalogPage() {
             <p>No cards found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 justify-items-center gap-3 sm:grid-cols-4 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {cards.map((c) => (
-              <CardDisplay key={c.id} card={c} onClick={() => setOpenCardId(c.id)} />
+              <FluidCard key={c.id} card={c} onClick={() => setOpenCardId(c.id)} />
             ))}
           </div>
         )}
