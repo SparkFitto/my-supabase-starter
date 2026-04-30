@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { timeAgo } from "@/lib/constants";
 import { toast } from "sonner";
+import { useInkRewards } from "@/hooks/useInkRewards";
+import { notify } from "@/lib/notify";
 
 const VOTE_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h
 const DAILY_DOWNVOTE_LIMIT = 15;
