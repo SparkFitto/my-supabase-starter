@@ -134,7 +134,7 @@ export function ProfileShell({
 
       {/* AVATAR + HEADER ROW */}
       <div className="px-4 sm:px-6 -mt-[45px] flex items-end gap-4 flex-wrap">
-        <div className="relative">
+        <div className="relative shrink-0">
           <div
             onClick={isOwn ? () => avatarInputRef.current?.click() : undefined}
             className={`relative h-[90px] w-[90px] rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold overflow-hidden ring-4 ring-background shadow-xl ${isOwn ? "cursor-pointer group" : ""}`}
@@ -178,10 +178,10 @@ export function ProfileShell({
           )}
         </div>
 
-        <div className="flex-1 min-w-0 mb-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl sm:text-2xl font-bold truncate">@{profile.username ?? "you"}</h1>
-            <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-bold uppercase tracking-wide">
+        <div className="flex-1 min-w-0 mt-3 sm:mt-0 sm:mb-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold truncate min-w-0">@{profile.username ?? "you"}</h1>
+            <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-bold uppercase tracking-wide shrink-0">
               {profile.plan}
             </span>
           </div>
@@ -190,7 +190,7 @@ export function ProfileShell({
           </p>
         </div>
 
-        {rightActions && <div className="mb-2">{rightActions}</div>}
+        {rightActions && <div className="mb-2 ml-auto">{rightActions}</div>}
       </div>
 
       {/* TABS */}
