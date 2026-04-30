@@ -12,6 +12,7 @@ import {
   Megaphone,
   Flag,
   Sparkles,
+  Swords,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -81,6 +82,7 @@ export function AdminShell() {
     { to: "/admin/series", label: "Series", icon: BookOpen },
     { to: "/admin/cards", label: "Cards", icon: Sparkles, badge: counts?.cards },
     { to: "/admin/users", label: "Users", icon: UsersIcon },
+    { to: "/admin/guilds", label: "Guilds", icon: Swords },
     { to: "/admin/glossary", label: "Glossary", icon: Languages, badge: counts?.glossary },
     { to: "/admin/updates", label: "Updates", icon: Megaphone },
     { to: "/admin/reports", label: "Reports", icon: Flag, badge: counts?.reports },

@@ -580,6 +580,322 @@ export type Database = {
         }
         Relationships: []
       }
+      guild_chest: {
+        Row: {
+          card_id: string
+          donated_at: string
+          donated_by: string | null
+          guild_id: string
+          id: string
+          quantity: number
+        }
+        Insert: {
+          card_id: string
+          donated_at?: string
+          donated_by?: string | null
+          guild_id: string
+          id?: string
+          quantity?: number
+        }
+        Update: {
+          card_id?: string
+          donated_at?: string
+          donated_by?: string | null
+          guild_id?: string
+          id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_chest_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guild_chest_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guild_join_requests: {
+        Row: {
+          created_at: string
+          guild_id: string
+          id: string
+          message: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          guild_id: string
+          id?: string
+          message?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          guild_id?: string
+          id?: string
+          message?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_join_requests_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guild_members: {
+        Row: {
+          guild_id: string
+          guild_nickname: string | null
+          id: string
+          joined_at: string
+          role: string
+          total_xp_contributed: number
+          user_id: string
+          weekly_xp_contributed: number
+        }
+        Insert: {
+          guild_id: string
+          guild_nickname?: string | null
+          id?: string
+          joined_at?: string
+          role?: string
+          total_xp_contributed?: number
+          user_id: string
+          weekly_xp_contributed?: number
+        }
+        Update: {
+          guild_id?: string
+          guild_nickname?: string | null
+          id?: string
+          joined_at?: string
+          role?: string
+          total_xp_contributed?: number
+          user_id?: string
+          weekly_xp_contributed?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_members_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guild_relations: {
+        Row: {
+          created_at: string
+          guild_id: string
+          id: string
+          target_guild_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          guild_id: string
+          id?: string
+          target_guild_id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          guild_id?: string
+          id?: string
+          target_guild_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_relations_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guild_relations_target_guild_id_fkey"
+            columns: ["target_guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guild_wars: {
+        Row: {
+          ends_at: string
+          guild_a_id: string
+          guild_a_score: number
+          guild_b_id: string
+          guild_b_score: number
+          id: string
+          series_id: string
+          started_at: string
+          status: string
+          winner_id: string | null
+        }
+        Insert: {
+          ends_at?: string
+          guild_a_id: string
+          guild_a_score?: number
+          guild_b_id: string
+          guild_b_score?: number
+          id?: string
+          series_id: string
+          started_at?: string
+          status?: string
+          winner_id?: string | null
+        }
+        Update: {
+          ends_at?: string
+          guild_a_id?: string
+          guild_a_score?: number
+          guild_b_id?: string
+          guild_b_score?: number
+          id?: string
+          series_id?: string
+          started_at?: string
+          status?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_wars_guild_a_id_fkey"
+            columns: ["guild_a_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guild_wars_guild_b_id_fkey"
+            columns: ["guild_b_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guild_wars_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guild_wars_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guild_xp_log: {
+        Row: {
+          created_at: string
+          description: string | null
+          guild_id: string
+          id: string
+          source: string
+          user_id: string
+          xp_amount: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          guild_id: string
+          id?: string
+          source: string
+          user_id: string
+          xp_amount: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          guild_id?: string
+          id?: string
+          source?: string
+          user_id?: string
+          xp_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_xp_log_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guilds: {
+        Row: {
+          avatar_url: string | null
+          banner_url: string | null
+          created_at: string
+          description: string | null
+          guild_card_id: string | null
+          id: string
+          join_type: string
+          leader_id: string
+          level: number
+          member_count: number
+          name: string
+          xp: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          guild_card_id?: string | null
+          id?: string
+          join_type?: string
+          leader_id: string
+          level?: number
+          member_count?: number
+          name: string
+          xp?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          guild_card_id?: string | null
+          id?: string
+          join_type?: string
+          leader_id?: string
+          level?: number
+          member_count?: number
+          name?: string
+          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guilds_guild_card_id_fkey"
+            columns: ["guild_card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           chapter_id: string | null
@@ -1238,6 +1554,7 @@ export type Database = {
           daily_ink_claimed_at: string | null
           downvotes_reset_at: string
           friends_are_private: boolean
+          guild_id: string | null
           history_is_private: boolean
           id: string
           ink_balance: number
@@ -1272,6 +1589,7 @@ export type Database = {
           daily_ink_claimed_at?: string | null
           downvotes_reset_at?: string
           friends_are_private?: boolean
+          guild_id?: string | null
           history_is_private?: boolean
           id: string
           ink_balance?: number
@@ -1306,6 +1624,7 @@ export type Database = {
           daily_ink_claimed_at?: string | null
           downvotes_reset_at?: string
           friends_are_private?: boolean
+          guild_id?: string | null
           history_is_private?: boolean
           id?: string
           ink_balance?: number
@@ -1327,7 +1646,15 @@ export type Database = {
           weekly_reset_at?: string
           x_pity_counter?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_profiles_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -1356,6 +1683,16 @@ export type Database = {
     }
     Functions: {
       accept_trade: { Args: { _trade_id: string }; Returns: undefined }
+      award_guild_xp: {
+        Args: {
+          _amount: number
+          _description?: string
+          _guild_id: string
+          _source: string
+          _user_id: string
+        }
+        Returns: number
+      }
       award_ink: { Args: { _amount: number; _source: string }; Returns: number }
       has_role: {
         Args: {
@@ -1402,6 +1739,7 @@ export type Database = {
           output_rank: string
         }[]
       }
+      spend_ink: { Args: { _amount: number; _source: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "pro"
