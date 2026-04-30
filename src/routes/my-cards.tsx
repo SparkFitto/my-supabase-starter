@@ -93,7 +93,6 @@ function MyCardsPage() {
 
         {/* Action row */}
         <div className="mb-4 flex flex-wrap gap-2">
-          <Link to="/cards/wishlist" className="hidden">Wishlist</Link>
           <Button variant="outline" size="sm" onClick={() => setShowSearch((v) => !v)}>
             <Search className="mr-1.5 h-4 w-4" />Search
           </Button>

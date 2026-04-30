@@ -18,6 +18,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PacksRouteImport } from './routes/packs'
 import { Route as NovelsRouteImport } from './routes/novels'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyCardsRouteImport } from './routes/my-cards'
@@ -26,6 +27,8 @@ import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as ExchangesRouteImport } from './routes/exchanges'
+import { Route as DecksRouteImport } from './routes/decks'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as CardsRouteImport } from './routes/cards'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
@@ -91,6 +94,11 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PacksRoute = PacksRouteImport.update({
+  id: '/packs',
+  path: '/packs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NovelsRoute = NovelsRouteImport.update({
   id: '/novels',
   path: '/novels',
@@ -129,6 +137,16 @@ const FriendsRoute = FriendsRouteImport.update({
 const FavoritesRoute = FavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangesRoute = ExchangesRouteImport.update({
+  id: '/exchanges',
+  path: '/exchanges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DecksRoute = DecksRouteImport.update({
+  id: '/decks',
+  path: '/decks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogueRoute = CatalogueRouteImport.update({
@@ -237,6 +255,8 @@ export interface FileRoutesByFullPath {
   '/bookmarks': typeof BookmarksRoute
   '/cards': typeof CardsRoute
   '/catalogue': typeof CatalogueRoute
+  '/decks': typeof DecksRoute
+  '/exchanges': typeof ExchangesRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
@@ -245,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
+  '/packs': typeof PacksRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -274,6 +295,8 @@ export interface FileRoutesByTo {
   '/bookmarks': typeof BookmarksRoute
   '/cards': typeof CardsRoute
   '/catalogue': typeof CatalogueRoute
+  '/decks': typeof DecksRoute
+  '/exchanges': typeof ExchangesRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
@@ -282,6 +305,7 @@ export interface FileRoutesByTo {
   '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
+  '/packs': typeof PacksRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -313,6 +337,8 @@ export interface FileRoutesById {
   '/bookmarks': typeof BookmarksRoute
   '/cards': typeof CardsRoute
   '/catalogue': typeof CatalogueRoute
+  '/decks': typeof DecksRoute
+  '/exchanges': typeof ExchangesRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
@@ -321,6 +347,7 @@ export interface FileRoutesById {
   '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
+  '/packs': typeof PacksRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -353,6 +380,8 @@ export interface FileRouteTypes {
     | '/bookmarks'
     | '/cards'
     | '/catalogue'
+    | '/decks'
+    | '/exchanges'
     | '/favorites'
     | '/friends'
     | '/history'
@@ -361,6 +390,7 @@ export interface FileRouteTypes {
     | '/my-cards'
     | '/notifications'
     | '/novels'
+    | '/packs'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -390,6 +420,8 @@ export interface FileRouteTypes {
     | '/bookmarks'
     | '/cards'
     | '/catalogue'
+    | '/decks'
+    | '/exchanges'
     | '/favorites'
     | '/friends'
     | '/history'
@@ -398,6 +430,7 @@ export interface FileRouteTypes {
     | '/my-cards'
     | '/notifications'
     | '/novels'
+    | '/packs'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -428,6 +461,8 @@ export interface FileRouteTypes {
     | '/bookmarks'
     | '/cards'
     | '/catalogue'
+    | '/decks'
+    | '/exchanges'
     | '/favorites'
     | '/friends'
     | '/history'
@@ -436,6 +471,7 @@ export interface FileRouteTypes {
     | '/my-cards'
     | '/notifications'
     | '/novels'
+    | '/packs'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
@@ -467,6 +503,8 @@ export interface RootRouteChildren {
   BookmarksRoute: typeof BookmarksRoute
   CardsRoute: typeof CardsRoute
   CatalogueRoute: typeof CatalogueRoute
+  DecksRoute: typeof DecksRoute
+  ExchangesRoute: typeof ExchangesRoute
   FavoritesRoute: typeof FavoritesRoute
   FriendsRoute: typeof FriendsRoute
   HistoryRoute: typeof HistoryRoute
@@ -475,6 +513,7 @@ export interface RootRouteChildren {
   MyCardsRoute: typeof MyCardsRoute
   NotificationsRoute: typeof NotificationsRoute
   NovelsRoute: typeof NovelsRoute
+  PacksRoute: typeof PacksRoute
   ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -554,6 +593,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/packs': {
+      id: '/packs'
+      path: '/packs'
+      fullPath: '/packs'
+      preLoaderRoute: typeof PacksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/novels': {
       id: '/novels'
       path: '/novels'
@@ -608,6 +654,20 @@ declare module '@tanstack/react-router' {
       path: '/favorites'
       fullPath: '/favorites'
       preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchanges': {
+      id: '/exchanges'
+      path: '/exchanges'
+      fullPath: '/exchanges'
+      preLoaderRoute: typeof ExchangesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/decks': {
+      id: '/decks'
+      path: '/decks'
+      fullPath: '/decks'
+      preLoaderRoute: typeof DecksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogue': {
@@ -809,6 +869,8 @@ const rootRouteChildren: RootRouteChildren = {
   BookmarksRoute: BookmarksRoute,
   CardsRoute: CardsRoute,
   CatalogueRoute: CatalogueRoute,
+  DecksRoute: DecksRoute,
+  ExchangesRoute: ExchangesRoute,
   FavoritesRoute: FavoritesRoute,
   FriendsRoute: FriendsRoute,
   HistoryRoute: HistoryRoute,
@@ -817,6 +879,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyCardsRoute: MyCardsRoute,
   NotificationsRoute: NotificationsRoute,
   NovelsRoute: NovelsRoute,
+  PacksRoute: PacksRoute,
   ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
