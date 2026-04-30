@@ -26,6 +26,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
+import { Route as CardsRouteImport } from './routes/cards'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as BillboardRouteImport } from './routes/billboard'
 import { Route as BannedRouteImport } from './routes/banned'
@@ -129,6 +130,11 @@ const CatalogueRoute = CatalogueRouteImport.update({
   path: '/catalogue',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CardsRoute = CardsRouteImport.update({
+  id: '/cards',
+  path: '/cards',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookmarksRoute = BookmarksRouteImport.update({
   id: '/bookmarks',
   path: '/bookmarks',
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/banned': typeof BannedRoute
   '/billboard': typeof BillboardRoute
   '/bookmarks': typeof BookmarksRoute
+  '/cards': typeof CardsRoute
   '/catalogue': typeof CatalogueRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/banned': typeof BannedRoute
   '/billboard': typeof BillboardRoute
   '/bookmarks': typeof BookmarksRoute
+  '/cards': typeof CardsRoute
   '/catalogue': typeof CatalogueRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
@@ -295,6 +303,7 @@ export interface FileRoutesById {
   '/banned': typeof BannedRoute
   '/billboard': typeof BillboardRoute
   '/bookmarks': typeof BookmarksRoute
+  '/cards': typeof CardsRoute
   '/catalogue': typeof CatalogueRoute
   '/favorites': typeof FavoritesRoute
   '/friends': typeof FriendsRoute
@@ -333,6 +342,7 @@ export interface FileRouteTypes {
     | '/banned'
     | '/billboard'
     | '/bookmarks'
+    | '/cards'
     | '/catalogue'
     | '/favorites'
     | '/friends'
@@ -368,6 +378,7 @@ export interface FileRouteTypes {
     | '/banned'
     | '/billboard'
     | '/bookmarks'
+    | '/cards'
     | '/catalogue'
     | '/favorites'
     | '/friends'
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/banned'
     | '/billboard'
     | '/bookmarks'
+    | '/cards'
     | '/catalogue'
     | '/favorites'
     | '/friends'
@@ -441,6 +453,7 @@ export interface RootRouteChildren {
   BannedRoute: typeof BannedRoute
   BillboardRoute: typeof BillboardRoute
   BookmarksRoute: typeof BookmarksRoute
+  CardsRoute: typeof CardsRoute
   CatalogueRoute: typeof CatalogueRoute
   FavoritesRoute: typeof FavoritesRoute
   FriendsRoute: typeof FriendsRoute
@@ -582,6 +595,13 @@ declare module '@tanstack/react-router' {
       path: '/catalogue'
       fullPath: '/catalogue'
       preLoaderRoute: typeof CatalogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cards': {
+      id: '/cards'
+      path: '/cards'
+      fullPath: '/cards'
+      preLoaderRoute: typeof CardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookmarks': {
@@ -767,6 +787,7 @@ const rootRouteChildren: RootRouteChildren = {
   BannedRoute: BannedRoute,
   BillboardRoute: BillboardRoute,
   BookmarksRoute: BookmarksRoute,
+  CardsRoute: CardsRoute,
   CatalogueRoute: CatalogueRoute,
   FavoritesRoute: FavoritesRoute,
   FriendsRoute: FriendsRoute,
