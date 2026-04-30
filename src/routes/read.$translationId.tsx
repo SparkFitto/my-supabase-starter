@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CardDropTrigger } from "@/components/cards/CardDropToast";
+import { CardSubmitButton } from "@/components/cards/CardSubmitButton";
 
 export const Route = createFileRoute("/read/$translationId")({
   head: () => ({ meta: [{ title: "Read — RAWL" }] }),
