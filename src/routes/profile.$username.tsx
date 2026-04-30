@@ -12,6 +12,7 @@ import { ProfileShell } from "@/components/profile/ProfileShell";
 import { ProfileTab } from "@/components/profile/ProfileTab";
 import { BookmarksList } from "@/components/profile/BookmarksList";
 import { SocialTab } from "@/components/profile/SocialTab";
+import { ShowcaseSection } from "@/components/profile/ShowcaseSection";
 
 export const Route = createFileRoute("/profile/$username")({
   head: ({ params }) => ({ meta: [{ title: `@${params.username} — RAWL` }] }),
@@ -144,16 +145,19 @@ function PublicProfilePage() {
           onProfileUpdated={() => refetch()}
         >
           {tab === "profile" && (
-            <ProfileTab
-              profileId={profile.id}
-              username={profile.username ?? ""}
-              isOwn={isOwn}
-              bio={profile.bio}
-              historyIsPrivate={!!profile.history_is_private}
-              friendsArePrivate={!!profile.friends_are_private}
-              readingIsPrivate={!!profile.reading_is_private}
-              onBioSaved={() => refetch()}
-            />
+            <div className="space-y-6">
+              <ProfileTab
+                profileId={profile.id}
+                username={profile.username ?? ""}
+                isOwn={isOwn}
+                bio={profile.bio}
+                historyIsPrivate={!!profile.history_is_private}
+                friendsArePrivate={!!profile.friends_are_private}
+                readingIsPrivate={!!profile.reading_is_private}
+                onBioSaved={() => refetch()}
+              />
+              <ShowcaseSection userId={profile.id} isOwn={isOwn} />
+            </div>
           )}
           {tab === "bookmarks" && (
             <BookmarksList

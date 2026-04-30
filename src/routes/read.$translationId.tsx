@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CardDropTrigger } from "@/components/cards/CardDropToast";
+import { CardSubmitButton } from "@/components/cards/CardSubmitButton";
 
 export const Route = createFileRoute("/read/$translationId")({
   head: () => ({ meta: [{ title: "Read — RAWL" }] }),
@@ -22,7 +24,7 @@ function ReaderPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("translations")
-        .select("id, target_language, image_urls, page_count, chapter:chapters(id, chapter_number, content, series:series(slug, title, type))")
+        .select("id, target_language, image_urls, page_count, chapter:chapters(id, chapter_number, content, series_id, series:series(id, slug, title, type))")
         .eq("id", translationId)
         .maybeSingle();
       return data;
@@ -30,15 +32,17 @@ function ReaderPage() {
   });
 
   const images = data?.image_urls ?? [];
-  const chapter = data?.chapter as { chapter_number?: string; content?: string | null; series?: { slug: string; title: string; type: string } } | null;
+  const chapter = data?.chapter as { chapter_number?: string; content?: string | null; series_id?: string; series?: { id: string; slug: string; title: string; type: string } } | null;
   const series = chapter?.series;
   const chapterNum = chapter?.chapter_number;
   const isNovel = series?.type === "novel";
   const novelText = chapter?.content ?? "";
+  const seriesId = series?.id ?? chapter?.series_id ?? null;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <CardDropTrigger seriesId={seriesId} translationId={translationId} />
       <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <div className="min-w-0">
@@ -49,14 +53,17 @@ function ReaderPage() {
             ) : <div className="h-4 w-32 animate-pulse rounded bg-muted" />}
             <p className="font-mono text-xs text-muted-foreground">Chapter {chapterNum ?? "—"}</p>
           </div>
-          {!isNovel && (
-            <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
-              <TabsList>
-                <TabsTrigger value="long_strip">Long strip</TabsTrigger>
-                <TabsTrigger value="single">Page</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
+          <div className="flex items-center gap-2">
+            {!isNovel && (
+              <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
+                <TabsList>
+                  <TabsTrigger value="long_strip">Long strip</TabsTrigger>
+                  <TabsTrigger value="single">Page</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
+            {seriesId && <CardSubmitButton seriesId={seriesId} seriesTitle={series?.title} />}
+          </div>
         </div>
       </div>
 

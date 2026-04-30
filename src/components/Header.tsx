@@ -210,6 +210,7 @@ function AvatarDropdown({
     { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
     { icon: Package, label: "Open Packs", to: "/packs" },
     { icon: Layers, label: "Decks", to: "/decks" },
+    { icon: Spade, label: "Marketplace", to: "/marketplace" },
     { icon: Settings, label: "Settings", to: "/settings" },
     ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", to: "/admin" as const }] : []),
   ] as const;
