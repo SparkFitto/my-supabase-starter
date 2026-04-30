@@ -94,6 +94,9 @@ function MyCardsPage() {
 
         {/* Action row */}
         <div className="mb-4 flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={() => setShowWishlist(true)}>
+            <Heart className="mr-1.5 h-4 w-4" />Wish List
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setShowSearch((v) => !v)}>
             <Search className="mr-1.5 h-4 w-4" />Search
           </Button>
