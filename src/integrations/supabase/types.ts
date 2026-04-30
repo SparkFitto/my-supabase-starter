@@ -1371,9 +1371,29 @@ export type Database = {
           opening_id: string
         }[]
       }
+      open_pack_10: {
+        Args: never
+        Returns: {
+          columns: Json
+          opening_ids: string[]
+        }[]
+      }
       pack_select_card: {
         Args: { _card_id: string; _opening_id: string }
         Returns: undefined
+      }
+      recent_pack_picks: {
+        Args: { _limit?: number }
+        Returns: {
+          avatar_url: string
+          card_id: string
+          character_name: string
+          image_url: string
+          opened_at: string
+          opening_id: string
+          rank: string
+          username: string
+        }[]
       }
     }
     Enums: {
