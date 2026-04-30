@@ -132,8 +132,8 @@ export function ProfileShell({
         )}
       </div>
 
-      {/* AVATAR + HEADER ROW */}
-      <div className="px-4 sm:px-6 -mt-[45px] flex items-end gap-4 flex-wrap">
+      {/* AVATAR + HEADER ROW — stacked on mobile, horizontal on sm+ */}
+      <div className="px-4 sm:px-6 -mt-[45px] flex flex-col items-center text-center sm:flex-row sm:items-end sm:text-left sm:gap-4">
         <div className="relative shrink-0">
           <div
             onClick={isOwn ? () => avatarInputRef.current?.click() : undefined}
@@ -150,7 +150,7 @@ export function ProfileShell({
               </div>
             )}
           </div>
-          {/* Live indicator: positioned OUTSIDE the avatar ring, bottom-right corner, with pulse when online */}
+          {/* Live indicator */}
           <span
             className={`pointer-events-none absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full border-[3px] border-background ${
               isOnline ? "bg-success" : "bg-muted-foreground"
@@ -178,9 +178,9 @@ export function ProfileShell({
           )}
         </div>
 
-        <div className="flex-1 min-w-0 mt-3 sm:mt-0 sm:mb-2 w-full sm:w-auto">
-          <div className="flex items-center gap-2 flex-wrap min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold truncate min-w-0">@{profile.username ?? "you"}</h1>
+        <div className="mt-3 sm:mt-0 sm:mb-2 sm:pl-2 flex-1 min-w-0 w-full">
+          <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold break-all sm:break-normal min-w-0">@{profile.username ?? "you"}</h1>
             <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-bold uppercase tracking-wide shrink-0">
               {profile.plan}
             </span>
@@ -190,7 +190,7 @@ export function ProfileShell({
           </p>
         </div>
 
-        {rightActions && <div className="mb-2 ml-auto">{rightActions}</div>}
+        {rightActions && <div className="mt-3 sm:mt-0 sm:mb-2 sm:ml-auto">{rightActions}</div>}
       </div>
 
       {/* TABS */}
