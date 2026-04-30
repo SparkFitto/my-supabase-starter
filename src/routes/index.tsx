@@ -137,6 +137,7 @@ function HomePage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-7xl px-4 py-6 space-y-10 pb-20">
+        <HomeSearchBar />
         {/* Popular Right Now */}
         <section>
           <SectionHeader title="Popular Right Now" href="/catalogue" />
