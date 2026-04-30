@@ -203,6 +203,10 @@ function AvatarDropdown({
     { icon: Bookmark, label: "Reading List", to: "/bookmarks" },
     { icon: History, label: "Reading History", to: "/history" },
     { icon: UserIcon, label: "My Profile", to: "/profile" },
+    { icon: Spade, label: "My Cards", to: "/my-cards" },
+    { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
+    { icon: Package, label: "Open Packs", to: "/packs" },
+    { icon: Layers, label: "Decks", to: "/decks" },
     { icon: Settings, label: "Settings", to: "/settings" },
     ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", to: "/admin" as const }] : []),
   ] as const;
