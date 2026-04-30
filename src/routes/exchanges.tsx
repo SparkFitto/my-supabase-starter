@@ -280,14 +280,14 @@ function SmeltTab({ userId }: { userId: string }) {
       user_id: userId, type: "smelt", input_card_ids: selected,
     });
     if (error) toast.error(error.message);
-    else { toast.success(`Smelted ${selected.length} card${selected.length === 1 ? "" : "s"} into shards`); setSelected([]); }
+    else { toast.success(`Upgraded ${selected.length} card${selected.length === 1 ? "" : "s"} into shards`); setSelected([]); }
   };
 
   return (
     <div>
       <p className="mb-4 text-sm text-muted-foreground">Convert duplicate cards into rank-matching shards. Only duplicates (quantity &gt; 1) are eligible.</p>
       {cards.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No duplicate cards available to smelt.</p>
+        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No duplicate cards available to upgrade.</p>
       ) : (
         <>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
@@ -308,7 +308,7 @@ function SmeltTab({ userId }: { userId: string }) {
           </div>
           <div className="mt-4 flex justify-end">
             <Button onClick={smelt} disabled={selected.length === 0}>
-              <Flame className="mr-2 h-4 w-4" />Smelt {selected.length} card{selected.length === 1 ? "" : "s"}
+              <Flame className="mr-2 h-4 w-4" />Upgrade {selected.length} card{selected.length === 1 ? "" : "s"}
             </Button>
           </div>
         </>
