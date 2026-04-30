@@ -20,6 +20,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NovelsRouteImport } from './routes/novels'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MyCardsRouteImport } from './routes/my-cards'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HistoryRouteImport } from './routes/history'
@@ -98,6 +99,11 @@ const NovelsRoute = NovelsRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyCardsRoute = MyCardsRouteImport.update({
+  id: '/my-cards',
+  path: '/my-cards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesRoute = MessagesRouteImport.update({
@@ -236,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
+  '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
   '/profile': typeof ProfileRouteWithChildren
@@ -272,6 +279,7 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
+  '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
   '/profile': typeof ProfileRouteWithChildren
@@ -310,6 +318,7 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/leaderboard': typeof LeaderboardRoute
   '/messages': typeof MessagesRoute
+  '/my-cards': typeof MyCardsRoute
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
   '/profile': typeof ProfileRouteWithChildren
@@ -349,6 +358,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/leaderboard'
     | '/messages'
+    | '/my-cards'
     | '/notifications'
     | '/novels'
     | '/profile'
@@ -385,6 +395,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/leaderboard'
     | '/messages'
+    | '/my-cards'
     | '/notifications'
     | '/novels'
     | '/profile'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/leaderboard'
     | '/messages'
+    | '/my-cards'
     | '/notifications'
     | '/novels'
     | '/profile'
@@ -460,6 +472,7 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   LeaderboardRoute: typeof LeaderboardRoute
   MessagesRoute: typeof MessagesRoute
+  MyCardsRoute: typeof MyCardsRoute
   NotificationsRoute: typeof NotificationsRoute
   NovelsRoute: typeof NovelsRoute
   ProfileRoute: typeof ProfileRouteWithChildren
@@ -553,6 +566,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-cards': {
+      id: '/my-cards'
+      path: '/my-cards'
+      fullPath: '/my-cards'
+      preLoaderRoute: typeof MyCardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/messages': {
@@ -794,6 +814,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoryRoute: HistoryRoute,
   LeaderboardRoute: LeaderboardRoute,
   MessagesRoute: MessagesRoute,
+  MyCardsRoute: MyCardsRoute,
   NotificationsRoute: NotificationsRoute,
   NovelsRoute: NovelsRoute,
   ProfileRoute: ProfileRouteWithChildren,
