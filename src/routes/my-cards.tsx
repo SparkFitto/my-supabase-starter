@@ -22,6 +22,7 @@ function MyCardsPage() {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [openCardId, setOpenCardId] = useState<string | null>(null);
+  const [showWishlist, setShowWishlist] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
