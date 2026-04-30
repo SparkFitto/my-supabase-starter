@@ -56,7 +56,7 @@ function ExchangesPage() {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="offers"><ArrowLeftRight className="mr-1.5 h-4 w-4" />Offers</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
-            <TabsTrigger value="smelt"><Flame className="mr-1.5 h-4 w-4" />Smelt</TabsTrigger>
+            <TabsTrigger value="smelt"><Flame className="mr-1.5 h-4 w-4" />Upgrade</TabsTrigger>
             <TabsTrigger value="split"><Scissors className="mr-1.5 h-4 w-4" />Split</TabsTrigger>
           </TabsList>
 
@@ -132,11 +132,33 @@ function OffersTab({ userId }: { userId: string }) {
     toast.success("Trade cancelled");
   };
 
+  const [sub, setSub] = useState<"incoming" | "outgoing">("incoming");
+
   return (
-    <div className="space-y-6">
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Incoming ({incoming.length})</h2>
-        {incoming.length === 0 ? (
+    <div>
+      <div className="mb-4 inline-flex rounded-lg border border-border bg-card p-1">
+        <button
+          onClick={() => setSub("incoming")}
+          className={cn(
+            "rounded-md px-4 py-1.5 text-sm font-medium transition-colors",
+            sub === "incoming" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          Incoming ({incoming.length})
+        </button>
+        <button
+          onClick={() => setSub("outgoing")}
+          className={cn(
+            "rounded-md px-4 py-1.5 text-sm font-medium transition-colors",
+            sub === "outgoing" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          Outgoing ({outgoing.length})
+        </button>
+      </div>
+
+      {sub === "incoming" ? (
+        incoming.length === 0 ? (
           <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No incoming offers.</p>
         ) : (
           <div className="space-y-2">
@@ -144,20 +166,16 @@ function OffersTab({ userId }: { userId: string }) {
               <TradeCard key={t.id} trade={t} otherUser={t.sender} role="incoming" onAccept={() => accept(t.id)} onReject={() => reject(t.id)} />
             ))}
           </div>
-        )}
-      </section>
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Outgoing ({outgoing.length})</h2>
-        {outgoing.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">You haven't sent any offers.</p>
-        ) : (
-          <div className="space-y-2">
-            {outgoing.map((t: any) => (
-              <TradeCard key={t.id} trade={t} otherUser={t.receiver} role="outgoing" onCancel={() => cancel(t.id)} />
-            ))}
-          </div>
-        )}
-      </section>
+        )
+      ) : outgoing.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">You haven't sent any offers.</p>
+      ) : (
+        <div className="space-y-2">
+          {outgoing.map((t: any) => (
+            <TradeCard key={t.id} trade={t} otherUser={t.receiver} role="outgoing" onCancel={() => cancel(t.id)} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -262,14 +280,14 @@ function SmeltTab({ userId }: { userId: string }) {
       user_id: userId, type: "smelt", input_card_ids: selected,
     });
     if (error) toast.error(error.message);
-    else { toast.success(`Smelted ${selected.length} card${selected.length === 1 ? "" : "s"} into shards`); setSelected([]); }
+    else { toast.success(`Upgraded ${selected.length} card${selected.length === 1 ? "" : "s"} into shards`); setSelected([]); }
   };
 
   return (
     <div>
       <p className="mb-4 text-sm text-muted-foreground">Convert duplicate cards into rank-matching shards. Only duplicates (quantity &gt; 1) are eligible.</p>
       {cards.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No duplicate cards available to smelt.</p>
+        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No duplicate cards available to upgrade.</p>
       ) : (
         <>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
@@ -290,7 +308,7 @@ function SmeltTab({ userId }: { userId: string }) {
           </div>
           <div className="mt-4 flex justify-end">
             <Button onClick={smelt} disabled={selected.length === 0}>
-              <Flame className="mr-2 h-4 w-4" />Smelt {selected.length} card{selected.length === 1 ? "" : "s"}
+              <Flame className="mr-2 h-4 w-4" />Upgrade {selected.length} card{selected.length === 1 ? "" : "s"}
             </Button>
           </div>
         </>

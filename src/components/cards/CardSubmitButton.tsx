@@ -10,7 +10,6 @@ import { toast } from "sonner";
 export function CardSubmitButton({ seriesId, seriesTitle }: { seriesId?: string | null; seriesTitle?: string }) {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
   const [characterName, setCharacterName] = useState("");
   const [rank, setRank] = useState("C");
   const [file, setFile] = useState<File | null>(null);
@@ -29,7 +28,6 @@ export function CardSubmitButton({ seriesId, seriesTitle }: { seriesId?: string 
 
   const submit = async () => {
     if (!characterName.trim()) return toast.error("Please enter a character name");
-    if (!name.trim()) return toast.error("Please enter a card title");
     if (!file) return toast.error("Please choose a card image");
     setSubmitting(true);
     try {
@@ -39,14 +37,14 @@ export function CardSubmitButton({ seriesId, seriesTitle }: { seriesId?: string 
       if (upErr) throw upErr;
       const { data: pub } = supabase.storage.from("card-images").getPublicUrl(path);
       const { error: insErr } = await supabase.from("cards").insert({
-        name: name.trim(), character_name: characterName.trim(), image_url: pub.publicUrl,
+        name: characterName.trim(), character_name: characterName.trim(), image_url: pub.publicUrl,
         rank, tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
         series_id: seriesId ?? null, submitted_by: user.id, is_approved: false,
       });
       if (insErr) throw insErr;
       toast.success("Card submitted! A moderator will review it shortly.");
       setOpen(false);
-      setName(""); setCharacterName(""); setRank("C"); onPickFile(null); setTags("");
+      setCharacterName(""); setRank("C"); onPickFile(null); setTags("");
     } catch (e: any) {
       toast.error(e.message ?? "Submission failed");
     } finally {
@@ -60,7 +58,7 @@ export function CardSubmitButton({ seriesId, seriesTitle }: { seriesId?: string 
         <Plus className="mr-1.5 h-4 w-4" />Submit Card
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Submit a card{seriesTitle ? ` for ${seriesTitle}` : ""}</DialogTitle>
           </DialogHeader>
@@ -102,11 +100,6 @@ export function CardSubmitButton({ seriesId, seriesTitle }: { seriesId?: string 
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Character name *</label>
               <input value={characterName} onChange={(e) => setCharacterName(e.target.value)} placeholder="e.g. Sung Jin-Woo" className="w-full rounded border border-border bg-background px-3 py-2" />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Card title *</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Shadow Monarch Awakening" className="w-full rounded border border-border bg-background px-3 py-2" />
-              <p className="mt-1 text-[10px] text-muted-foreground">A short subtitle that describes this version of the character.</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
