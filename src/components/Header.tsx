@@ -148,6 +148,7 @@ export function Header() {
                   username={profile?.username ?? "you"}
                   plan={profile?.plan ?? "free"}
                   avatarUrl={profile?.avatar_url}
+                  inkBalance={profile?.ink_balance ?? 0}
                   unreadCount={unreadCount}
                   isAdmin={isAdmin}
                   onSignOut={handleSignOut}
