@@ -150,7 +150,6 @@ function MyCardsPage() {
           </div>
         ) : rows.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-secondary/30 p-10 text-center">
-            <div className="mb-3 text-5xl">🎴</div>
             <p className="mb-1 font-semibold">You haven't collected any cards yet!</p>
             <p className="mb-4 text-sm text-muted-foreground">
               Open packs or trade with other users to start your collection.
@@ -179,6 +178,68 @@ function MyCardsPage() {
       </main>
 
       <CardDetailModal cardId={openCardId} onClose={() => setOpenCardId(null)} />
+      {showWishlist && user && (
+        <WishlistModal userId={user.id} onClose={() => setShowWishlist(false)} onOpenCard={(id) => setOpenCardId(id)} />
+      )}
+    </div>
+  );
+}
+
+function WishlistModal({ userId, onClose, onOpenCard }: { userId: string; onClose: () => void; onOpenCard: (id: string) => void }) {
+  const qc = useQueryClient();
+  const [tab, setTab] = useState<"want" | "unwanted">("want");
+
+  const { data: items = [] } = useQuery({
+    queryKey: ["wishlist", userId, tab],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("card_wishlist")
+        .select("type, added_at, card:cards!inner(id, name, character_name, image_url, rank, is_animated, series:series(slug, title))")
+        .eq("user_id", userId).eq("type", tab)
+        .order("added_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const remove = async (cardId: string) => {
+    await supabase.from("card_wishlist").delete().eq("user_id", userId).eq("card_id", cardId).eq("type", tab);
+    qc.invalidateQueries({ queryKey: ["wishlist", userId, tab] });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 p-0 sm:p-4" onClick={onClose}>
+      <div className="w-full sm:max-w-2xl max-h-[85vh] flex flex-col rounded-t-2xl sm:rounded-2xl bg-card border border-border" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-border p-4">
+          <h2 className="font-bold flex items-center gap-2"><Heart className="h-4 w-4" /> Wish List</h2>
+          <button onClick={onClose} className="p-1 rounded hover:bg-secondary"><XIcon className="h-4 w-4" /></button>
+        </div>
+        <div className="flex border-b border-border">
+          <button onClick={() => setTab("want")} className={cn("flex-1 py-2.5 text-sm font-bold", tab === "want" ? "border-b-2 border-primary text-primary" : "text-muted-foreground")}>Want</button>
+          <button onClick={() => setTab("unwanted")} className={cn("flex-1 py-2.5 text-sm font-bold", tab === "unwanted" ? "border-b-2 border-primary text-primary" : "text-muted-foreground")}>Not Needed</button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4">
+          {items.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+              {tab === "want" ? "No cards on your want list yet. Browse the Card Catalog and tap the heart on any card to add it here." : "No cards marked as not needed."}
+            </p>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 justify-items-center">
+              {items.map((it: any) => (
+                <div key={it.card.id} className="relative">
+                  <CardDisplay card={it.card} size="sm" onClick={() => onOpenCard(it.card.id)} />
+                  <button
+                    onClick={() => remove(it.card.id)}
+                    aria-label="Remove from wishlist"
+                    className="absolute -top-1.5 -right-1.5 h-6 w-6 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-md hover:opacity-90"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
