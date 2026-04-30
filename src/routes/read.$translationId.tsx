@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Settings2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardDropTrigger } from "@/components/cards/CardDropToast";
 import { CardSubmitButton } from "@/components/cards/CardSubmitButton";
+import { useAuth } from "@/lib/auth";
+import { useInkRewards } from "@/hooks/useInkRewards";
 
 export const Route = createFileRoute("/read/$translationId")({
   head: () => ({ meta: [{ title: "Read — RAWL" }] }),
@@ -38,6 +40,26 @@ function ReaderPage() {
   const isNovel = series?.type === "novel";
   const novelText = chapter?.content ?? "";
   const seriesId = series?.id ?? chapter?.series_id ?? null;
+
+  // Reading history + Ink reward (once per chapter, after 5s of reading)
+  const { user } = useAuth();
+  const { award } = useInkRewards();
+  const loggedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!user || !seriesId || !translationId) return;
+    if (loggedRef.current === translationId) return;
+    const t = setTimeout(async () => {
+      loggedRef.current = translationId;
+      await supabase.from("reading_history").insert({
+        user_id: user.id,
+        series_id: seriesId,
+        translation_id: translationId,
+        chapter_number: chapterNum ?? null,
+      });
+      award("reading_chapter", { silent: true });
+    }, 5000);
+    return () => clearTimeout(t);
+  }, [user, seriesId, translationId, chapterNum, award]);
 
   return (
     <div className="min-h-screen bg-background">
