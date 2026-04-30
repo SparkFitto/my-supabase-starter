@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { notify } from "@/lib/notify";
 
 export const Route = createFileRoute("/exchanges")({
   head: () => ({ meta: [{ title: "Exchanges — RAWL" }] }),
@@ -105,14 +106,25 @@ function OffersTab({ userId }: { userId: string }) {
   });
 
   const accept = async (id: string) => {
+    const { data: trade } = await supabase.from("card_trades").select("sender_id").eq("id", id).maybeSingle();
     const { error } = await supabase.rpc("accept_trade", { _trade_id: id });
     if (error) toast.error(error.message);
-    else { toast.success("Trade accepted"); qc.invalidateQueries({ queryKey: ["my-cards"] }); }
+    else {
+      toast.success("Trade accepted");
+      qc.invalidateQueries({ queryKey: ["my-cards"] });
+      if (trade?.sender_id) {
+        notify({ user_id: trade.sender_id, type: "trade_accepted", title: "Trade accepted ✅", body: "Your trade was accepted!", link: "/exchanges" });
+      }
+    }
   };
 
   const reject = async (id: string) => {
+    const { data: trade } = await supabase.from("card_trades").select("sender_id").eq("id", id).maybeSingle();
     await supabase.from("card_trades").update({ status: "rejected" }).eq("id", id);
     toast.success("Trade rejected");
+    if (trade?.sender_id) {
+      notify({ user_id: trade.sender_id, type: "trade_declined", title: "Trade declined", body: "Your trade was declined.", link: "/exchanges" });
+    }
   };
 
   const cancel = async (id: string) => {

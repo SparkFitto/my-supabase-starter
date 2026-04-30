@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { timeAgo } from "@/lib/constants";
 import { toast } from "sonner";
+import { useInkRewards } from "@/hooks/useInkRewards";
+import { notify } from "@/lib/notify";
 
 const VOTE_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h
 const DAILY_DOWNVOTE_LIMIT = 15;
@@ -27,6 +29,7 @@ type Vote = { comment_id: string; vote_type: "up" | "down"; created_at: string }
 
 export function SeriesComments({ seriesId }: { seriesId: string }) {
   const { user } = useAuth();
+  const { award } = useInkRewards();
   const [comments, setComments] = useState<Comment[]>([]);
   const [votes, setVotes] = useState<Record<string, { up: number; down: number }>>({});
   const [myVotes, setMyVotes] = useState<Record<string, Vote>>({});
@@ -181,7 +184,19 @@ export function SeriesComments({ seriesId }: { seriesId: string }) {
       if (parentId) {
         setReplyText("");
         setReplyTo(null);
+        // Notify parent comment author of reply
+        const parent = comments.find((c) => c.id === parentId);
+        if (parent && parent.user_id !== user.id) {
+          notify({
+            user_id: parent.user_id,
+            type: "comment_reply",
+            title: "New reply to your comment",
+            body: trimmed.slice(0, 100),
+            link: window.location.pathname,
+          });
+        }
       } else setText("");
+      award("comment", { silent: true });
     }
   };
 
