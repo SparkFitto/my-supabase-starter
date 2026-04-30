@@ -276,7 +276,7 @@ function CreateRequestForm({ userId, onCreated }: { userId: string; onCreated: (
         <div className="flex gap-2">
           <input type="number" min={1} value={offerAmount} onChange={(e) => setOfferAmount(parseInt(e.target.value) || 1)} className="w-24 rounded border border-border bg-background px-2 py-1.5 text-sm" />
           <select value={offerRank} onChange={(e) => setOfferRank(e.target.value)} className="rounded border border-border bg-background px-2 py-1.5 text-sm">
-            {CARD_RANKS.map((r) => <option key={r} value={r}>{r}-shards</option>)}
+            {CARD_RANKS.map((r) => <option key={r} value={r}>{r} cards</option>)}
           </select>
           <Button size="sm" onClick={submit}>Post</Button>
         </div>
