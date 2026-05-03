@@ -470,6 +470,66 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_waitlist: {
+        Row: {
+          contract_id: string | null
+          created_at: string
+          email: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          contract_id?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          contract_id?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      contracts: {
+        Row: {
+          daily_ink_bonus: number
+          description: string | null
+          duration_days: number
+          id: string
+          is_active: boolean
+          milestone_rewards: Json
+          name: string
+          price_usd: number
+          total_ink: number
+        }
+        Insert: {
+          daily_ink_bonus?: number
+          description?: string | null
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          milestone_rewards?: Json
+          name: string
+          price_usd: number
+          total_ink: number
+        }
+        Update: {
+          daily_ink_bonus?: number
+          description?: string | null
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          milestone_rewards?: Json
+          name?: string
+          price_usd?: number
+          total_ink?: number
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -896,6 +956,66 @@ export type Database = {
           },
         ]
       }
+      homepage_featured: {
+        Row: {
+          created_at: string
+          id: string
+          section: string
+          series_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          section: string
+          series_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          section?: string
+          series_id?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      ink_packages: {
+        Row: {
+          bonus_percent: number
+          first_purchase_bonus_percent: number
+          id: string
+          ink_amount: number
+          is_active: boolean
+          is_popular: boolean
+          is_vip: boolean
+          price_usd: number
+          sort_order: number
+        }
+        Insert: {
+          bonus_percent?: number
+          first_purchase_bonus_percent?: number
+          id?: string
+          ink_amount: number
+          is_active?: boolean
+          is_popular?: boolean
+          is_vip?: boolean
+          price_usd: number
+          sort_order?: number
+        }
+        Update: {
+          bonus_percent?: number
+          first_purchase_bonus_percent?: number
+          id?: string
+          ink_amount?: number
+          is_active?: boolean
+          is_popular?: boolean
+          is_vip?: boolean
+          price_usd?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           chapter_id: string | null
@@ -1064,6 +1184,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_waitlist: {
+        Row: {
+          context: string | null
+          created_at: string
+          email: string
+          id: string
+          package_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          package_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          package_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      platform_settings: {
+        Row: {
+          description: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          description: string
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          description?: string
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
       }
       profile_comments: {
         Row: {
@@ -1262,6 +1430,7 @@ export type Database = {
           source_language: string
           status: string
           tags: string[] | null
+          tier: number
           title: string
           type: string
         }
@@ -1282,6 +1451,7 @@ export type Database = {
           source_language: string
           status?: string
           tags?: string[] | null
+          tier?: number
           title: string
           type?: string
         }
@@ -1302,6 +1472,7 @@ export type Database = {
           source_language?: string
           status?: string
           tags?: string[] | null
+          tier?: number
           title?: string
           type?: string
         }
@@ -1392,6 +1563,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      shop_items: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          is_active: boolean
+          name: string
+          original_price_ink: number | null
+          price_ink: number
+          sort_order: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean
+          name: string
+          original_price_ink?: number | null
+          price_ink: number
+          sort_order?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          name?: string
+          original_price_ink?: number | null
+          price_ink?: number
+          sort_order?: number
+        }
+        Relationships: []
       }
       showcase_cards: {
         Row: {
@@ -1540,6 +1750,50 @@ export type Database = {
           },
         ]
       }
+      user_contracts: {
+        Row: {
+          contract_id: string
+          days_claimed: number
+          expires_at: string
+          id: string
+          is_active: boolean
+          milestones_claimed: number[]
+          started_at: string
+          total_ink_collected: number
+          user_id: string
+        }
+        Insert: {
+          contract_id: string
+          days_claimed?: number
+          expires_at: string
+          id?: string
+          is_active?: boolean
+          milestones_claimed?: number[]
+          started_at?: string
+          total_ink_collected?: number
+          user_id: string
+        }
+        Update: {
+          contract_id?: string
+          days_claimed?: number
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          milestones_claimed?: number[]
+          started_at?: string
+          total_ink_collected?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_contracts_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           age: number | null
@@ -1553,14 +1807,23 @@ export type Database = {
           daily_downvotes_used: number
           daily_ink_claimed_at: string | null
           downvotes_reset_at: string
+          equipped_avatar_item_id: string | null
+          equipped_banner_item_id: string | null
+          equipped_frame_item_id: string | null
           friends_are_private: boolean
           guild_id: string | null
+          has_pro: boolean
           history_is_private: boolean
           id: string
           ink_balance: number
           last_login_date: string | null
           last_seen: string | null
+          lifetime_free_translations_used: number
           login_streak: number
+          monthly_ink_purchased: number
+          monthly_pro_translations_used: number
+          monthly_spend_reset_at: string | null
+          monthly_spend_usd: number
           notify_on_release: boolean
           pack_counter: number
           paddle_customer_id: string | null
@@ -1568,9 +1831,13 @@ export type Database = {
           plan: string
           preferred_reading_mode: string | null
           preferred_target_language: string | null
+          pro_expires_at: string | null
+          pro_translations_reset_at: string | null
           reading_is_private: boolean
           s_pity_counter: number
           shard_balance: Json
+          show_pro_badge: boolean
+          status_text: string | null
           username: string | null
           weekly_chapters_used: number
           weekly_reset_at: string
@@ -1588,14 +1855,23 @@ export type Database = {
           daily_downvotes_used?: number
           daily_ink_claimed_at?: string | null
           downvotes_reset_at?: string
+          equipped_avatar_item_id?: string | null
+          equipped_banner_item_id?: string | null
+          equipped_frame_item_id?: string | null
           friends_are_private?: boolean
           guild_id?: string | null
+          has_pro?: boolean
           history_is_private?: boolean
           id: string
           ink_balance?: number
           last_login_date?: string | null
           last_seen?: string | null
+          lifetime_free_translations_used?: number
           login_streak?: number
+          monthly_ink_purchased?: number
+          monthly_pro_translations_used?: number
+          monthly_spend_reset_at?: string | null
+          monthly_spend_usd?: number
           notify_on_release?: boolean
           pack_counter?: number
           paddle_customer_id?: string | null
@@ -1603,9 +1879,13 @@ export type Database = {
           plan?: string
           preferred_reading_mode?: string | null
           preferred_target_language?: string | null
+          pro_expires_at?: string | null
+          pro_translations_reset_at?: string | null
           reading_is_private?: boolean
           s_pity_counter?: number
           shard_balance?: Json
+          show_pro_badge?: boolean
+          status_text?: string | null
           username?: string | null
           weekly_chapters_used?: number
           weekly_reset_at?: string
@@ -1623,14 +1903,23 @@ export type Database = {
           daily_downvotes_used?: number
           daily_ink_claimed_at?: string | null
           downvotes_reset_at?: string
+          equipped_avatar_item_id?: string | null
+          equipped_banner_item_id?: string | null
+          equipped_frame_item_id?: string | null
           friends_are_private?: boolean
           guild_id?: string | null
+          has_pro?: boolean
           history_is_private?: boolean
           id?: string
           ink_balance?: number
           last_login_date?: string | null
           last_seen?: string | null
+          lifetime_free_translations_used?: number
           login_streak?: number
+          monthly_ink_purchased?: number
+          monthly_pro_translations_used?: number
+          monthly_spend_reset_at?: string | null
+          monthly_spend_usd?: number
           notify_on_release?: boolean
           pack_counter?: number
           paddle_customer_id?: string | null
@@ -1638,9 +1927,13 @@ export type Database = {
           plan?: string
           preferred_reading_mode?: string | null
           preferred_target_language?: string | null
+          pro_expires_at?: string | null
+          pro_translations_reset_at?: string | null
           reading_is_private?: boolean
           s_pity_counter?: number
           shard_balance?: Json
+          show_pro_badge?: boolean
+          status_text?: string | null
           username?: string | null
           weekly_chapters_used?: number
           weekly_reset_at?: string
@@ -1652,6 +1945,41 @@ export type Database = {
             columns: ["guild_id"]
             isOneToOne: false
             referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_purchases: {
+        Row: {
+          id: string
+          ink_spent: number
+          is_equipped: boolean
+          item_id: string
+          purchased_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          ink_spent: number
+          is_equipped?: boolean
+          item_id: string
+          purchased_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          ink_spent?: number
+          is_equipped?: boolean
+          item_id?: string
+          purchased_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_purchases_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "shop_items"
             referencedColumns: ["id"]
           },
         ]
