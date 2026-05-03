@@ -204,6 +204,7 @@ function AvatarDropdown({
   inkBalance,
   unreadCount,
   isAdmin,
+  isPro,
   onSignOut,
   onClose,
 }: {
