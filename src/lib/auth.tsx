@@ -151,6 +151,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.subscription.unsubscribe();
   }, []);
 
+  // Realtime: keep profile (ink balance, cosmetics, etc.) live without page refresh
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel(`profile-live:${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "user_profiles", filter: `id=eq.${user.id}` },
+        (payload) => {
+          setProfile((prev) => ({ ...(prev as any), ...(payload.new as any) }) as Profile);
+        },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id]);
+
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };

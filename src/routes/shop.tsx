@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { SwipeTabs } from "@/components/ui/swipe-tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
@@ -20,7 +20,6 @@ const CATEGORIES = [
   { key: "frame", label: "Frames" },
   { key: "banner", label: "Banners" },
   { key: "skin", label: "Skins" },
-  { key: "status", label: "Status" },
 ] as const;
 
 function ShopPage() {
@@ -119,18 +118,10 @@ function ShopPage() {
           )}
         </div>
 
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="w-full overflow-x-auto justify-start">
-            {CATEGORIES.map((c) => (
-              <TabsTrigger key={c.key} value={c.key}>
-                {c.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
+        <SwipeTabs tabs={CATEGORIES.map((c) => ({ key: c.key, label: c.label }))} value={tab} onValueChange={setTab}>
           {CATEGORIES.map((c) => (
-            <TabsContent key={c.key} value={c.key} className="mt-4">
-              {isLoading ? (
+            <div key={c.key}>
+              {c.key !== tab ? null : isLoading ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {[...Array(6)].map((_, i) => (
                     <Skeleton key={i} className="h-56" />
@@ -190,9 +181,9 @@ function ShopPage() {
                   })}
                 </div>
               )}
-            </TabsContent>
+            </div>
           ))}
-        </Tabs>
+        </SwipeTabs>
       </div>
     </div>
   );
