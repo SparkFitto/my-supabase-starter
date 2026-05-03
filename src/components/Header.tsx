@@ -19,6 +19,9 @@ import {
   ArrowLeftRight,
   Spade,
   Swords,
+  ShoppingBag,
+  Coins,
+  Crown,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -223,6 +226,8 @@ function AvatarDropdown({
     { icon: Layers, label: "Decks", to: "/decks" },
     { icon: Spade, label: "Marketplace", to: "/marketplace" },
     { icon: Swords, label: "My Guild", to: "/guilds" },
+    { icon: ShoppingBag, label: "Shop", to: "/shop" },
+    { icon: Coins, label: "Top Up Ink", to: "/topup" },
     { icon: Settings, label: "Settings", to: "/settings" },
     ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", to: "/admin" as const }] : []),
   ] as const;
@@ -293,6 +298,9 @@ function Drawer({
     { label: "Novels", to: "/novels" },
     { label: "Card Catalog", to: "/cards", icon: Spade },
     { label: "⚔️ Guilds", to: "/guilds" },
+    { label: "🛍️ Shop", to: "/shop" },
+    { label: "🖊️ Top Up Ink", to: "/topup" },
+    { label: "👑 Go PRO", to: "/pricing" },
     { label: "Translate", to: "/translate", icon: Sparkles },
     { label: "Leaderboard", to: "/leaderboard" },
     { label: "What's New", to: "/updates" },
