@@ -243,9 +243,6 @@ function TopUpPage() {
               ))}
             </div>
           )}
-          <p className="text-xs text-muted-foreground mt-3 text-center">
-            💬 Pay via Telegram? Message us @rawl_support
-          </p>
         </div>
       </div>
 

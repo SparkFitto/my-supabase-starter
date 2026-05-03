@@ -20,7 +20,6 @@ const CATEGORIES = [
   { key: "frame", label: "Frames" },
   { key: "banner", label: "Banners" },
   { key: "skin", label: "Skins" },
-  { key: "status", label: "Status" },
 ] as const;
 
 function ShopPage() {

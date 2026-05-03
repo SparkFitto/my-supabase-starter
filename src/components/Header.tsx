@@ -230,9 +230,6 @@ function AvatarDropdown({
     { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
     { icon: Package, label: "Open Packs", to: "/packs" },
     { icon: Layers, label: "Decks", to: "/decks" },
-    { icon: Spade, label: "Marketplace", to: "/marketplace" },
-    { icon: Swords, label: "My Guild", to: "/guilds" },
-    { icon: ShoppingBag, label: "Shop", to: "/shop" },
     { icon: Coins, label: "Top Up Ink", to: "/topup" },
     ...(!isPro ? [{ icon: Crown, label: "Upgrade to PRO", to: "/pricing" as const, highlight: true }] : []),
     { icon: Settings, label: "Settings", to: "/settings" },
@@ -240,7 +237,7 @@ function AvatarDropdown({
   ] as const;
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-64 rounded-lg border border-border bg-popover shadow-xl overflow-hidden z-50">
+    <div className="absolute right-0 top-full mt-2 w-64 max-h-[80vh] overflow-y-auto rounded-lg border border-border bg-popover shadow-xl z-50">
       <div className="p-3 flex items-center gap-3 bg-secondary/40">
         <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold overflow-hidden">
           {avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : initials(username)}
@@ -308,6 +305,7 @@ function Drawer({
     { label: "Card Catalog", to: "/cards", icon: Spade },
     { label: "⚔️ Guilds", to: "/guilds" },
     { label: "🛍️ Shop", to: "/shop" },
+    { label: "🃏 Marketplace", to: "/marketplace" },
     { label: "🖊️ Top Up Ink", to: "/topup" },
     ...(!isPro ? [{ label: "👑 Go PRO", to: "/pricing", highlight: true }] : []),
     { label: "Translate", to: "/translate", icon: Sparkles },
