@@ -11,13 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as TranslateRouteImport } from './routes/translate'
+import { Route as TopupRouteImport } from './routes/topup'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PacksRouteImport } from './routes/packs'
 import { Route as NovelsRouteImport } from './routes/novels'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -46,6 +49,8 @@ import { Route as JobJobIdRouteImport } from './routes/job.$jobId'
 import { Route as GuildsGuildIdRouteImport } from './routes/guilds.$guildId'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminUpdatesRouteImport } from './routes/admin.updates'
+import { Route as AdminShopRouteImport } from './routes/admin.shop'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminSeriesRouteImport } from './routes/admin.series'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminGuildsRouteImport } from './routes/admin.guilds'
@@ -64,6 +69,11 @@ const TranslateRoute = TranslateRouteImport.update({
   path: '/translate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TopupRoute = TopupRouteImport.update({
+  id: '/topup',
+  path: '/topup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -77,6 +87,11 @@ const SignupRoute = SignupRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -97,6 +112,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PacksRoute = PacksRouteImport.update({
@@ -239,6 +259,16 @@ const AdminUpdatesRoute = AdminUpdatesRouteImport.update({
   path: '/updates',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminShopRoute = AdminShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSeriesRoute = AdminSeriesRouteImport.update({
   id: '/series',
   path: '/series',
@@ -298,13 +328,16 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
   '/packs': typeof PacksRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/topup': typeof TopupRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
   '/admin/cards': typeof AdminCardsRoute
@@ -312,6 +345,8 @@ export interface FileRoutesByFullPath {
   '/admin/guilds': typeof AdminGuildsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/shop': typeof AdminShopRoute
   '/admin/updates': typeof AdminUpdatesRoute
   '/admin/users': typeof AdminUsersRoute
   '/guilds/$guildId': typeof GuildsGuildIdRoute
@@ -343,13 +378,16 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
   '/packs': typeof PacksRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/topup': typeof TopupRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
   '/admin/cards': typeof AdminCardsRoute
@@ -357,6 +395,8 @@ export interface FileRoutesByTo {
   '/admin/guilds': typeof AdminGuildsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/shop': typeof AdminShopRoute
   '/admin/updates': typeof AdminUpdatesRoute
   '/admin/users': typeof AdminUsersRoute
   '/guilds/$guildId': typeof GuildsGuildIdRoute
@@ -390,13 +430,16 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/novels': typeof NovelsRoute
   '/packs': typeof PacksRoute
+  '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/topup': typeof TopupRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
   '/admin/cards': typeof AdminCardsRoute
@@ -404,6 +447,8 @@ export interface FileRoutesById {
   '/admin/guilds': typeof AdminGuildsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/series': typeof AdminSeriesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/shop': typeof AdminShopRoute
   '/admin/updates': typeof AdminUpdatesRoute
   '/admin/users': typeof AdminUsersRoute
   '/guilds/$guildId': typeof GuildsGuildIdRoute
@@ -438,13 +483,16 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/novels'
     | '/packs'
+    | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
     | '/settings'
+    | '/shop'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/topup'
     | '/translate'
     | '/updates'
     | '/admin/cards'
@@ -452,6 +500,8 @@ export interface FileRouteTypes {
     | '/admin/guilds'
     | '/admin/reports'
     | '/admin/series'
+    | '/admin/settings'
+    | '/admin/shop'
     | '/admin/updates'
     | '/admin/users'
     | '/guilds/$guildId'
@@ -483,13 +533,16 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/novels'
     | '/packs'
+    | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
     | '/settings'
+    | '/shop'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/topup'
     | '/translate'
     | '/updates'
     | '/admin/cards'
@@ -497,6 +550,8 @@ export interface FileRouteTypes {
     | '/admin/guilds'
     | '/admin/reports'
     | '/admin/series'
+    | '/admin/settings'
+    | '/admin/shop'
     | '/admin/updates'
     | '/admin/users'
     | '/guilds/$guildId'
@@ -529,13 +584,16 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/novels'
     | '/packs'
+    | '/pricing'
     | '/profile'
     | '/reset-password'
     | '/robots.txt'
     | '/settings'
+    | '/shop'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/topup'
     | '/translate'
     | '/updates'
     | '/admin/cards'
@@ -543,6 +601,8 @@ export interface FileRouteTypes {
     | '/admin/guilds'
     | '/admin/reports'
     | '/admin/series'
+    | '/admin/settings'
+    | '/admin/shop'
     | '/admin/updates'
     | '/admin/users'
     | '/guilds/$guildId'
@@ -576,13 +636,16 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   NovelsRoute: typeof NovelsRoute
   PacksRoute: typeof PacksRoute
+  PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SettingsRoute: typeof SettingsRoute
+  ShopRoute: typeof ShopRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TopupRoute: typeof TopupRoute
   TranslateRoute: typeof TranslateRouteWithChildren
   UpdatesRoute: typeof UpdatesRoute
   JobJobIdRoute: typeof JobJobIdRoute
@@ -606,6 +669,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TranslateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/topup': {
+      id: '/topup'
+      path: '/topup'
+      fullPath: '/topup'
+      preLoaderRoute: typeof TopupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -625,6 +695,13 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -653,6 +730,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/packs': {
@@ -851,6 +935,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUpdatesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/shop': {
+      id: '/admin/shop'
+      path: '/shop'
+      fullPath: '/admin/shop'
+      preLoaderRoute: typeof AdminShopRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/series': {
       id: '/admin/series'
       path: '/series'
@@ -909,6 +1007,8 @@ interface AdminRouteChildren {
   AdminGuildsRoute: typeof AdminGuildsRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSeriesRoute: typeof AdminSeriesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminShopRoute: typeof AdminShopRoute
   AdminUpdatesRoute: typeof AdminUpdatesRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -920,6 +1020,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminGuildsRoute: AdminGuildsRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSeriesRoute: AdminSeriesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminShopRoute: AdminShopRoute,
   AdminUpdatesRoute: AdminUpdatesRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -994,13 +1096,16 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   NovelsRoute: NovelsRoute,
   PacksRoute: PacksRoute,
+  PricingRoute: PricingRoute,
   ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SettingsRoute: SettingsRoute,
+  ShopRoute: ShopRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TopupRoute: TopupRoute,
   TranslateRoute: TranslateRouteWithChildren,
   UpdatesRoute: UpdatesRoute,
   JobJobIdRoute: JobJobIdRoute,

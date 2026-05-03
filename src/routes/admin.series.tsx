@@ -20,7 +20,7 @@ function AdminSeries() {
     queryFn: async () => {
       let query = supabase
         .from("series")
-        .select("id,title,slug,type,status,dmca_struck,follow_count,cover_url")
+        .select("id,title,slug,type,status,dmca_struck,follow_count,cover_url,tier")
         .order("created_at", { ascending: false })
         .limit(100);
       if (q.trim()) query = query.ilike("title", `%${q.trim()}%`);
@@ -39,6 +39,12 @@ function AdminSeries() {
       toast.success(!current ? "Marked as DMCA struck" : "DMCA strike removed");
       refetch();
     }
+  };
+
+  const setTier = async (id: string, tier: number) => {
+    const { error } = await supabase.from("series").update({ tier } as never).eq("id", id);
+    if (error) toast.error(error.message);
+    else { toast.success("Tier updated"); refetch(); }
   };
 
   const remove = async (id: string, title: string) => {
@@ -86,6 +92,15 @@ function AdminSeries() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <select
+                className="h-8 rounded-md border border-border bg-background px-2 text-xs"
+                value={(s as any).tier ?? 1}
+                onChange={(e) => setTier(s.id, Number(e.target.value))}
+              >
+                <option value={1}>Standard</option>
+                <option value={2}>Popular</option>
+                <option value={3}>Ultra</option>
+              </select>
               <label className="flex items-center gap-1 text-xs text-muted-foreground">
                 <span className="hidden sm:inline">DMCA</span>
                 <Switch

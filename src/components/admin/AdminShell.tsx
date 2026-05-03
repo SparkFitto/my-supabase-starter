@@ -13,6 +13,8 @@ import {
   Flag,
   Sparkles,
   Swords,
+  Settings as SettingsIcon,
+  ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -84,6 +86,8 @@ export function AdminShell() {
     { to: "/admin/users", label: "Users", icon: UsersIcon },
     { to: "/admin/guilds", label: "Guilds", icon: Swords },
     { to: "/admin/glossary", label: "Glossary", icon: Languages, badge: counts?.glossary },
+    { to: "/admin/shop", label: "Shop", icon: ShoppingBag },
+    { to: "/admin/settings", label: "Settings", icon: SettingsIcon },
     { to: "/admin/updates", label: "Updates", icon: Megaphone },
     { to: "/admin/reports", label: "Reports", icon: Flag, badge: counts?.reports },
   ];
