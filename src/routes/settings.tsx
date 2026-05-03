@@ -279,7 +279,6 @@ function AppearanceTab({ profile, userId, refreshProfile }: { profile: any; user
             <TabsTrigger value="avatar">Avatar</TabsTrigger>
             <TabsTrigger value="banner">Banner</TabsTrigger>
             <TabsTrigger value="frame">Frame</TabsTrigger>
-            <TabsTrigger value="status">Status</TabsTrigger>
           </TabsList>
 
           <TabsContent value="avatar" className="mt-4 space-y-4">
@@ -351,11 +350,6 @@ function AppearanceTab({ profile, userId, refreshProfile }: { profile: any; user
             )}
           </TabsContent>
 
-          <TabsContent value="status" className="mt-4 space-y-2">
-            <Label>Status text (max 80 chars)</Label>
-            <Input maxLength={80} value={statusText} onChange={(e) => setStatusText(e.target.value)} placeholder="What are you reading?" />
-            <Button size="sm" onClick={saveStatus}>Save status</Button>
-          </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
