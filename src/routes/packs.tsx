@@ -128,6 +128,13 @@ function PacksPage() {
   const allChosen = openings.length > 0 && openings.every((o) => !!o.chosen);
   const reset = () => setOpenings([]);
 
+  // Auto-reset 2s after the user has finished picking — return to pre-opening state
+  useEffect(() => {
+    if (!allChosen) return;
+    const t = setTimeout(() => setOpenings([]), 2000);
+    return () => clearTimeout(t);
+  }, [allChosen]);
+
   if (loading || !user) {
     return <div className="min-h-screen bg-background"><Header /><div className="p-8 text-center text-muted-foreground">Loading…</div></div>;
   }
@@ -240,7 +247,7 @@ function PacksPage() {
                     )}>
                       Pack {idx + 1}
                     </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-row gap-2">
                       {op.cards.map((cid) => {
                         const card = cardMap[cid];
                         if (!card) return <div key={cid} className="h-[126px] w-[90px] animate-pulse rounded-xl bg-secondary" />;
