@@ -287,6 +287,7 @@ function Drawer({
   avatarUrl,
   isLoggedIn,
   isAdmin,
+  isPro,
   onClose,
   onSignOut,
 }: {
@@ -294,6 +295,7 @@ function Drawer({
   avatarUrl: string | null | undefined;
   isLoggedIn: boolean;
   isAdmin: boolean;
+  isPro: boolean;
   onClose: () => void;
   onSignOut: () => void;
 }) {
@@ -306,7 +308,7 @@ function Drawer({
     { label: "⚔️ Guilds", to: "/guilds" },
     { label: "🛍️ Shop", to: "/shop" },
     { label: "🖊️ Top Up Ink", to: "/topup" },
-    { label: "👑 Go PRO", to: "/pricing" },
+    ...(!isPro ? [{ label: "👑 Go PRO", to: "/pricing", highlight: true }] : []),
     { label: "Translate", to: "/translate", icon: Sparkles },
     { label: "Leaderboard", to: "/leaderboard" },
     { label: "What's New", to: "/updates" },
