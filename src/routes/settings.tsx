@@ -14,6 +14,7 @@ import { TARGET_LANGUAGES } from "@/lib/constants";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
+import { FileDropzone } from "@/components/ui/file-dropzone";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Settings — RAWL" }, { name: "robots", content: "noindex" }] }),
@@ -275,15 +276,17 @@ function AppearanceTab({ profile, userId, refreshProfile }: { profile: any; user
           </TabsList>
 
           <TabsContent value="avatar" className="mt-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="h-20 w-20 rounded-full bg-muted overflow-hidden">
-                {profile.avatar_url && <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />}
-              </div>
-              <div className="space-y-2">
-                <Label>Upload custom avatar</Label>
-                <input type="file" accept="image/*" className="text-sm" onChange={(e) => e.target.files?.[0] && upload("avatars", e.target.files[0], "avatar_url")} />
-                {uploading === "avatar_url" && <p className="text-xs text-muted-foreground">Uploading…</p>}
-              </div>
+            <div className="space-y-2">
+              <Label>Upload custom avatar</Label>
+              <FileDropzone
+                accept="image/*"
+                aspect="square"
+                preview={profile.avatar_url}
+                label="Upload avatar"
+                onFile={(f) => upload("avatars", f, "avatar_url")}
+                className="max-w-[200px]"
+              />
+              {uploading === "avatar_url" && <p className="text-xs text-muted-foreground">Uploading…</p>}
             </div>
             <div>
               <div className="text-sm font-semibold mb-2">From Shop</div>
@@ -304,11 +307,14 @@ function AppearanceTab({ profile, userId, refreshProfile }: { profile: any; user
 
           <TabsContent value="banner" className="mt-4 space-y-4">
             <div className="space-y-2">
-              <div className="aspect-[16/5] w-full rounded bg-muted overflow-hidden">
-                {profile.banner_url && <img src={profile.banner_url} alt="" className="h-full w-full object-cover" />}
-              </div>
               <Label>Upload custom banner</Label>
-              <input type="file" accept="image/*" className="text-sm" onChange={(e) => e.target.files?.[0] && upload("banners", e.target.files[0], "banner_url")} />
+              <FileDropzone
+                accept="image/*"
+                aspect="banner"
+                preview={profile.banner_url}
+                label="Upload banner"
+                onFile={(f) => upload("banners", f, "banner_url")}
+              />
               {uploading === "banner_url" && <p className="text-xs text-muted-foreground">Uploading…</p>}
             </div>
             <div>
