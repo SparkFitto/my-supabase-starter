@@ -221,7 +221,6 @@ function ToggleRow({ label, description, checked, onChange }: { label: string; d
 
 function AppearanceTab({ profile, userId, refreshProfile }: { profile: any; userId: string; refreshProfile: () => void }) {
   const qc = useQueryClient();
-  const [statusText, setStatusText] = useState<string>(profile.status_text ?? "");
   const [uploading, setUploading] = useState<string | null>(null);
 
   const { data: purchases = [] } = useQuery({
@@ -260,12 +259,6 @@ function AppearanceTab({ profile, userId, refreshProfile }: { profile: any; user
     const { error } = await supabase.from("user_profiles").update(patch as never).eq("id", userId);
     if (error) toast.error(error.message);
     else { toast.success("Equipped"); refreshProfile(); qc.invalidateQueries({ queryKey: ["my_purchases_with_items", userId] }); }
-  };
-
-  const saveStatus = async () => {
-    const { error } = await supabase.from("user_profiles").update({ status_text: statusText.slice(0, 80) } as never).eq("id", userId);
-    if (error) toast.error(error.message);
-    else { toast.success("Status saved"); refreshProfile(); }
   };
 
   const purchasesByCat = (cat: string) => purchases.filter((p: any) => p.shop_items?.category === cat);
