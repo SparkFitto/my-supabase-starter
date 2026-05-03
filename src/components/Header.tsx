@@ -27,6 +27,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsPro } from "@/hooks/useIsPro";
 
 function initials(name: string | null | undefined) {
   if (!name) return "?";
@@ -35,6 +36,7 @@ function initials(name: string | null | undefined) {
 
 export function Header() {
   const { user, profile, signOut } = useAuth();
+  const isPro = useIsPro();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -165,6 +167,7 @@ export function Header() {
                   inkBalance={profile?.ink_balance ?? 0}
                   unreadCount={unreadCount}
                   isAdmin={isAdmin}
+                  isPro={isPro}
                   onSignOut={handleSignOut}
                   onClose={() => setMenuOpen(false)}
                 />
@@ -185,6 +188,7 @@ export function Header() {
           avatarUrl={profile?.avatar_url}
           isLoggedIn={!!user}
           isAdmin={isAdmin}
+          isPro={isPro}
           onClose={() => setDrawerOpen(false)}
           onSignOut={handleSignOut}
         />
@@ -200,6 +204,7 @@ function AvatarDropdown({
   inkBalance,
   unreadCount,
   isAdmin,
+  isPro,
   onSignOut,
   onClose,
 }: {
@@ -209,6 +214,7 @@ function AvatarDropdown({
   inkBalance: number;
   unreadCount: number;
   isAdmin: boolean;
+  isPro: boolean;
   onSignOut: () => void;
   onClose: () => void;
 }) {
@@ -228,6 +234,7 @@ function AvatarDropdown({
     { icon: Swords, label: "My Guild", to: "/guilds" },
     { icon: ShoppingBag, label: "Shop", to: "/shop" },
     { icon: Coins, label: "Top Up Ink", to: "/topup" },
+    ...(!isPro ? [{ icon: Crown, label: "Upgrade to PRO", to: "/pricing" as const, highlight: true }] : []),
     { icon: Settings, label: "Settings", to: "/settings" },
     ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", to: "/admin" as const }] : []),
   ] as const;
@@ -281,6 +288,7 @@ function Drawer({
   avatarUrl,
   isLoggedIn,
   isAdmin,
+  isPro,
   onClose,
   onSignOut,
 }: {
@@ -288,6 +296,7 @@ function Drawer({
   avatarUrl: string | null | undefined;
   isLoggedIn: boolean;
   isAdmin: boolean;
+  isPro: boolean;
   onClose: () => void;
   onSignOut: () => void;
 }) {
@@ -300,7 +309,7 @@ function Drawer({
     { label: "⚔️ Guilds", to: "/guilds" },
     { label: "🛍️ Shop", to: "/shop" },
     { label: "🖊️ Top Up Ink", to: "/topup" },
-    { label: "👑 Go PRO", to: "/pricing" },
+    ...(!isPro ? [{ label: "👑 Go PRO", to: "/pricing", highlight: true }] : []),
     { label: "Translate", to: "/translate", icon: Sparkles },
     { label: "Leaderboard", to: "/leaderboard" },
     { label: "What's New", to: "/updates" },
