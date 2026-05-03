@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Search, Ban, ShieldCheck, Shield } from "lucide-react";
+import { Search, Ban, ShieldCheck, Shield, Coins } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/admin/users")({
   component: AdminUsers,
@@ -14,6 +16,9 @@ export const Route = createFileRoute("/admin/users")({
 
 function AdminUsers() {
   const [q, setQ] = useState("");
+  const [grantUser, setGrantUser] = useState<{ id: string; username: string } | null>(null);
+  const [grantAmount, setGrantAmount] = useState("100");
+  const [grantReason, setGrantReason] = useState("");
 
   const { data: users, refetch } = useQuery({
     queryKey: ["admin-users-list", q],
@@ -40,6 +45,39 @@ function AdminUsers() {
       return map;
     },
   });
+
+  const grantInk = async () => {
+    if (!grantUser) return;
+    const amt = Number(grantAmount);
+    if (!amt || amt <= 0 || amt > 100000) {
+      toast.error("Amount must be between 1 and 100000");
+      return;
+    }
+    const { data: cur } = await supabase
+      .from("user_profiles")
+      .select("ink_balance")
+      .eq("id", grantUser.id)
+      .maybeSingle();
+    const newBal = ((cur as any)?.ink_balance ?? 0) + amt;
+    const { error } = await supabase
+      .from("user_profiles")
+      .update({ ink_balance: newBal } as never)
+      .eq("id", grantUser.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    await supabase.from("daily_ink_log").insert({
+      user_id: grantUser.id,
+      source: `admin_grant${grantReason ? `:${grantReason}` : ""}`,
+      amount: amt,
+    } as never);
+    toast.success(`Granted ${amt} Ink to @${grantUser.username}`);
+    setGrantUser(null);
+    setGrantAmount("100");
+    setGrantReason("");
+    refetch();
+  };
 
   const toggleBan = async (id: string, banned: boolean) => {
     const { error } = await supabase
@@ -95,6 +133,13 @@ function AdminUsers() {
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
+                  variant="outline"
+                  onClick={() => setGrantUser({ id: u.id, username: u.username ?? "user" })}
+                >
+                  <Coins className="mr-1 h-3 w-3" /> Grant Ink
+                </Button>
+                <Button
+                  size="sm"
                   variant={banned ? "outline" : "destructive"}
                   onClick={() => toggleBan(u.id, banned)}
                 >
@@ -109,6 +154,33 @@ function AdminUsers() {
           <p className="py-8 text-center text-sm text-muted-foreground">No users found.</p>
         )}
       </div>
+
+      <Dialog open={!!grantUser} onOpenChange={(o) => !o && setGrantUser(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Grant Ink to @{grantUser?.username}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label>Amount</Label>
+              <Input
+                type="number"
+                min={1}
+                max={100000}
+                value={grantAmount}
+                onChange={(e) => setGrantAmount(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Reason (optional)</Label>
+              <Input value={grantReason} onChange={(e) => setGrantReason(e.target.value)} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={grantInk}>Grant</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
