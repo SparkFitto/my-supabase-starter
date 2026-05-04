@@ -6,9 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addMember, timeRemaining } from "@/lib/guilds";
+
+const REGIONS = [
+  { value: "global", label: "🌍 Global" },
+  { value: "en", label: "🇺🇸 English" },
+  { value: "es", label: "🇪🇸 Español / Latino" },
+  { value: "pt", label: "🇧🇷 Português / Brasil" },
+  { value: "fr", label: "🇫🇷 Français" },
+  { value: "ru", label: "🇷🇺 Русский" },
+  { value: "id", label: "🇮🇩 Indonesian" },
+] as const;
 
 export const Route = createFileRoute("/guilds")({
   head: () => ({
@@ -32,8 +42,10 @@ const POSITION_CROWN = ["text-amber-400", "text-zinc-300", "text-orange-400"];
 
 function GuildsPage() {
   const { user, profile } = useAuth();
+  const qc = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [sort, setSort] = useState<"level" | "members" | "newest">("level");
+  const [regionFilter, setRegionFilter] = useState<string>("all");
 
   const { data: top3 = [] } = useQuery({
     queryKey: ["guilds-top3"],
@@ -56,7 +68,6 @@ function GuildsPage() {
         .eq("status", "active")
         .order("ends_at");
       if (!data) return [];
-      // hydrate guild + series names
       const ids = Array.from(new Set((data as any[]).flatMap((w) => [w.guild_a_id, w.guild_b_id])));
       const seriesIds = Array.from(new Set((data as any[]).map((w) => w.series_id)));
       const [{ data: gs }, { data: ss }] = await Promise.all([
@@ -74,10 +85,34 @@ function GuildsPage() {
     },
   });
 
+  // Realtime: keep wars list/scores live
+  useEffect(() => {
+    const ch = supabase
+      .channel("guilds-wars-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "guild_wars" }, () => {
+        qc.invalidateQueries({ queryKey: ["guilds-active-wars"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
+
+  // Realtime: keep guild list live (member counts, xp)
+  useEffect(() => {
+    const ch = supabase
+      .channel("guilds-list-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "guilds" }, () => {
+        qc.invalidateQueries({ queryKey: ["guilds-all"] });
+        qc.invalidateQueries({ queryKey: ["guilds-top3"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
+
   const { data: allGuilds = [], refetch } = useQuery({
-    queryKey: ["guilds-all", sort],
+    queryKey: ["guilds-all", sort, regionFilter],
     queryFn: async () => {
       let q = supabase.from("guilds").select("*");
+      if (regionFilter !== "all") q = q.eq("region" as any, regionFilter);
       if (sort === "level") q = q.order("level", { ascending: false }).order("member_count", { ascending: false });
       else if (sort === "members") q = q.order("member_count", { ascending: false });
       else q = q.order("created_at", { ascending: false });
@@ -205,6 +240,21 @@ function GuildsPage() {
             </div>
           </div>
 
+          {/* Region filter tabs */}
+          <div className="mb-4 flex flex-wrap gap-1.5">
+            {[{ value: "all", label: "All" }, ...REGIONS].map((r) => (
+              <button
+                key={r.value}
+                onClick={() => setRegionFilter(r.value)}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  regionFilter === r.value
+                    ? "border-primary bg-primary/15 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/40"
+                }`}
+              >{r.label}</button>
+            ))}
+          </div>
+
           {allGuilds.length === 0 ? (
             <div className="rounded-xl border border-border bg-card/40 p-8 text-center text-sm text-muted-foreground">
               No guilds yet.
@@ -298,6 +348,7 @@ function CreateGuildModal({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [joinType, setJoinType] = useState<"open" | "request" | "closed">("open");
+  const [region, setRegion] = useState<string>("global");
   const [avatar, setAvatar] = useState<File | null>(null);
   const [banner, setBanner] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -334,6 +385,7 @@ function CreateGuildModal({
           name: name.trim(),
           description: description.trim() || null,
           join_type: joinType,
+          region,
           leader_id: user.id,
           member_count: 1,
         } as never)
@@ -386,6 +438,19 @@ function CreateGuildModal({
         </div>
       ) : (
         <div className="space-y-3">
+          <div>
+            <label className="text-xs text-muted-foreground">Guild Region</label>
+            <select
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+            >
+              {REGIONS.map((r) => (
+                <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+            </select>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Members can find your guild by region.</div>
+          </div>
           <div>
             <label className="text-xs text-muted-foreground">Guild name</label>
             <Input value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} placeholder="Crimson Wolves" />

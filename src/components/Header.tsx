@@ -168,6 +168,7 @@ export function Header() {
                   unreadCount={unreadCount}
                   isAdmin={isAdmin}
                   isPro={isPro}
+                  guildId={(profile as any)?.guild_id ?? null}
                   onSignOut={handleSignOut}
                   onClose={() => setMenuOpen(false)}
                 />
@@ -189,6 +190,7 @@ export function Header() {
           isLoggedIn={!!user}
           isAdmin={isAdmin}
           isPro={isPro}
+          profileGuildId={(profile as any)?.guild_id ?? null}
           onClose={() => setDrawerOpen(false)}
           onSignOut={handleSignOut}
         />
@@ -205,6 +207,7 @@ function AvatarDropdown({
   unreadCount,
   isAdmin,
   isPro,
+  guildId,
   onSignOut,
   onClose,
 }: {
@@ -215,6 +218,7 @@ function AvatarDropdown({
   unreadCount: number;
   isAdmin: boolean;
   isPro: boolean;
+  guildId: string | null;
   onSignOut: () => void;
   onClose: () => void;
 }) {
@@ -227,9 +231,11 @@ function AvatarDropdown({
     { icon: History, label: "Reading History", to: "/history" },
     { icon: UserIcon, label: "My Profile", to: "/profile" },
     { icon: Spade, label: "My Cards", to: "/my-cards" },
+    { icon: Swords, label: guildId ? "My Guild" : "Guilds", to: guildId ? `/guilds/${guildId}` : "/guilds" },
     { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
     { icon: Package, label: "Open Packs", to: "/packs" },
     { icon: Layers, label: "Decks", to: "/decks" },
+    { icon: ShoppingBag, label: "Shop", to: "/shop" },
     { icon: Coins, label: "Top Up Ink", to: "/topup" },
     ...(!isPro ? [{ icon: Crown, label: "Upgrade to PRO", to: "/pricing" as const, highlight: true }] : []),
     { icon: Settings, label: "Settings", to: "/settings" },
@@ -286,6 +292,7 @@ function Drawer({
   isLoggedIn,
   isAdmin,
   isPro,
+  profileGuildId,
   onClose,
   onSignOut,
 }: {
@@ -294,16 +301,21 @@ function Drawer({
   isLoggedIn: boolean;
   isAdmin: boolean;
   isPro: boolean;
+  profileGuildId: string | null;
   onClose: () => void;
   onSignOut: () => void;
 }) {
+  const guildId = (profileGuildId ?? null) as string | null;
+  const guildLink = guildId ? `/guilds/${guildId}` : "/guilds";
+  const guildLabel = guildId ? "⚔️ My Guild" : "⚔️ Guilds";
+
   const navItems = [
     { label: "Home", to: "/" },
     { label: "Billboard", to: "/billboard" },
     { label: "Catalogue", to: "/catalogue" },
     { label: "Novels", to: "/novels" },
     { label: "Card Catalog", to: "/cards", icon: Spade },
-    { label: "⚔️ Guilds", to: "/guilds" },
+    { label: guildLabel, to: guildLink },
     { label: "🛍️ Shop", to: "/shop" },
     { label: "🃏 Marketplace", to: "/marketplace" },
     { label: "🖊️ Top Up Ink", to: "/topup" },

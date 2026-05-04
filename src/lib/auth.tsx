@@ -31,6 +31,9 @@ export interface Profile {
   x_pity_counter?: number;
   daily_ink_claimed_at?: string | null;
   shard_balance?: Record<string, number>;
+  guild_id?: string | null;
+  has_pro?: boolean;
+  pro_expires_at?: string | null;
 }
 
 interface SignUpResult {
