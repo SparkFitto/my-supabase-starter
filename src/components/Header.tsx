@@ -168,6 +168,7 @@ export function Header() {
                   unreadCount={unreadCount}
                   isAdmin={isAdmin}
                   isPro={isPro}
+                  guildId={(profile as any)?.guild_id ?? null}
                   onSignOut={handleSignOut}
                   onClose={() => setMenuOpen(false)}
                 />
