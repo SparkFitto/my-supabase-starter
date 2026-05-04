@@ -240,6 +240,21 @@ function GuildsPage() {
             </div>
           </div>
 
+          {/* Region filter tabs */}
+          <div className="mb-4 flex flex-wrap gap-1.5">
+            {[{ value: "all", label: "All" }, ...REGIONS].map((r) => (
+              <button
+                key={r.value}
+                onClick={() => setRegionFilter(r.value)}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  regionFilter === r.value
+                    ? "border-primary bg-primary/15 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/40"
+                }`}
+              >{r.label}</button>
+            ))}
+          </div>
+
           {allGuilds.length === 0 ? (
             <div className="rounded-xl border border-border bg-card/40 p-8 text-center text-sm text-muted-foreground">
               No guilds yet.
