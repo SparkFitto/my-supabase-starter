@@ -123,6 +123,15 @@ function PacksPage() {
     if (error) return toast.error(error.message);
     setOpenings((prev) => prev.map((o, i) => (i === openingIdx ? { ...o, chosen: cardId } : o)));
     qc.invalidateQueries({ queryKey: ["my-cards"] });
+    qc.invalidateQueries({ queryKey: ["auth-profile"] });
+    // Award guild XP for pack opening (best-effort, fire-and-forget)
+    const gid = (profile as any)?.guild_id;
+    if (gid && user) {
+      supabase.rpc("award_guild_xp" as any, {
+        _guild_id: gid, _user_id: user.id, _amount: 2,
+        _source: "pack_opened", _description: "Opened a card pack",
+      } as any).then(() => {/* ignore */}, () => {/* ignore */});
+    }
   };
 
   const allChosen = openings.length > 0 && openings.every((o) => !!o.chosen);
