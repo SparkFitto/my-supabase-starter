@@ -348,6 +348,7 @@ function CreateGuildModal({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [joinType, setJoinType] = useState<"open" | "request" | "closed">("open");
+  const [region, setRegion] = useState<string>("global");
   const [avatar, setAvatar] = useState<File | null>(null);
   const [banner, setBanner] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
