@@ -189,6 +189,7 @@ export function Header() {
           isLoggedIn={!!user}
           isAdmin={isAdmin}
           isPro={isPro}
+          profileGuildId={(profile as any)?.guild_id ?? null}
           onClose={() => setDrawerOpen(false)}
           onSignOut={handleSignOut}
         />
