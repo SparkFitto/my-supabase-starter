@@ -439,6 +439,19 @@ function CreateGuildModal({
       ) : (
         <div className="space-y-3">
           <div>
+            <label className="text-xs text-muted-foreground">Guild Region</label>
+            <select
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+            >
+              {REGIONS.map((r) => (
+                <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+            </select>
+            <div className="text-[10px] text-muted-foreground mt-0.5">Members can find your guild by region.</div>
+          </div>
+          <div>
             <label className="text-xs text-muted-foreground">Guild name</label>
             <Input value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} placeholder="Crimson Wolves" />
             <div className="text-[10px] text-muted-foreground mt-0.5">{name.length}/40 · 2-40 chars</div>
