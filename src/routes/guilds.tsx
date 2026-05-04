@@ -385,6 +385,7 @@ function CreateGuildModal({
           name: name.trim(),
           description: description.trim() || null,
           join_type: joinType,
+          region,
           leader_id: user.id,
           member_count: 1,
         } as never)
