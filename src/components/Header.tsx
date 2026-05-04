@@ -287,6 +287,7 @@ function Drawer({
   isLoggedIn,
   isAdmin,
   isPro,
+  profileGuildId,
   onClose,
   onSignOut,
 }: {
@@ -295,6 +296,7 @@ function Drawer({
   isLoggedIn: boolean;
   isAdmin: boolean;
   isPro: boolean;
+  profileGuildId: string | null;
   onClose: () => void;
   onSignOut: () => void;
 }) {
