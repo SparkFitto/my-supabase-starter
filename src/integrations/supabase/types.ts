@@ -640,6 +640,33 @@ export type Database = {
         }
         Relationships: []
       }
+      guild_announcements: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          guild_id: string
+          id: string
+          is_pinned: boolean
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          guild_id: string
+          id?: string
+          is_pinned?: boolean
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          guild_id?: string
+          id?: string
+          is_pinned?: boolean
+        }
+        Relationships: []
+      }
       guild_chest: {
         Row: {
           card_id: string
@@ -682,6 +709,47 @@ export type Database = {
           },
         ]
       }
+      guild_comments: {
+        Row: {
+          content: string
+          created_at: string
+          downvotes: number
+          guild_id: string
+          id: string
+          parent_id: string | null
+          upvotes: number
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          downvotes?: number
+          guild_id: string
+          id?: string
+          parent_id?: string | null
+          upvotes?: number
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          downvotes?: number
+          guild_id?: string
+          id?: string
+          parent_id?: string | null
+          upvotes?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "guild_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guild_join_requests: {
         Row: {
           created_at: string
@@ -716,6 +784,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      guild_member_rewards: {
+        Row: {
+          claimed_thresholds: number[]
+          created_at: string
+          guild_id: string
+          id: string
+          last_reward_threshold: number
+          total_xp_for_rewards: number
+          user_id: string
+        }
+        Insert: {
+          claimed_thresholds?: number[]
+          created_at?: string
+          guild_id: string
+          id?: string
+          last_reward_threshold?: number
+          total_xp_for_rewards?: number
+          user_id: string
+        }
+        Update: {
+          claimed_thresholds?: number[]
+          created_at?: string
+          guild_id?: string
+          id?: string
+          last_reward_threshold?: number
+          total_xp_for_rewards?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       guild_members: {
         Row: {
@@ -916,6 +1014,7 @@ export type Database = {
           level: number
           member_count: number
           name: string
+          region: string
           xp: number
         }
         Insert: {
@@ -930,6 +1029,7 @@ export type Database = {
           level?: number
           member_count?: number
           name: string
+          region?: string
           xp?: number
         }
         Update: {
@@ -944,6 +1044,7 @@ export type Database = {
           level?: number
           member_count?: number
           name?: string
+          region?: string
           xp?: number
         }
         Relationships: [
