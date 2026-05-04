@@ -297,13 +297,17 @@ function Drawer({
   onClose: () => void;
   onSignOut: () => void;
 }) {
+  const guildId = (profileGuildId ?? null) as string | null;
+  const guildLink = guildId ? `/guilds/${guildId}` : "/guilds";
+  const guildLabel = guildId ? "⚔️ My Guild" : "⚔️ Guilds";
+
   const navItems = [
     { label: "Home", to: "/" },
     { label: "Billboard", to: "/billboard" },
     { label: "Catalogue", to: "/catalogue" },
     { label: "Novels", to: "/novels" },
     { label: "Card Catalog", to: "/cards", icon: Spade },
-    { label: "⚔️ Guilds", to: "/guilds" },
+    { label: guildLabel, to: guildLink },
     { label: "🛍️ Shop", to: "/shop" },
     { label: "🃏 Marketplace", to: "/marketplace" },
     { label: "🖊️ Top Up Ink", to: "/topup" },
