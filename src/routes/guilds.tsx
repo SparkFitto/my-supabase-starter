@@ -6,9 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addMember, timeRemaining } from "@/lib/guilds";
+
+const REGIONS = [
+  { value: "global", label: "🌍 Global" },
+  { value: "en", label: "🇺🇸 English" },
+  { value: "es", label: "🇪🇸 Español / Latino" },
+  { value: "pt", label: "🇧🇷 Português / Brasil" },
+  { value: "fr", label: "🇫🇷 Français" },
+  { value: "ru", label: "🇷🇺 Русский" },
+  { value: "id", label: "🇮🇩 Indonesian" },
+] as const;
 
 export const Route = createFileRoute("/guilds")({
   head: () => ({
