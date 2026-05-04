@@ -207,6 +207,7 @@ function AvatarDropdown({
   unreadCount,
   isAdmin,
   isPro,
+  guildId,
   onSignOut,
   onClose,
 }: {
@@ -217,6 +218,7 @@ function AvatarDropdown({
   unreadCount: number;
   isAdmin: boolean;
   isPro: boolean;
+  guildId: string | null;
   onSignOut: () => void;
   onClose: () => void;
 }) {
@@ -229,9 +231,11 @@ function AvatarDropdown({
     { icon: History, label: "Reading History", to: "/history" },
     { icon: UserIcon, label: "My Profile", to: "/profile" },
     { icon: Spade, label: "My Cards", to: "/my-cards" },
+    { icon: Swords, label: guildId ? "My Guild" : "Guilds", to: guildId ? `/guilds/${guildId}` : "/guilds" },
     { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
     { icon: Package, label: "Open Packs", to: "/packs" },
     { icon: Layers, label: "Decks", to: "/decks" },
+    { icon: ShoppingBag, label: "Shop", to: "/shop" },
     { icon: Coins, label: "Top Up Ink", to: "/topup" },
     ...(!isPro ? [{ icon: Crown, label: "Upgrade to PRO", to: "/pricing" as const, highlight: true }] : []),
     { icon: Settings, label: "Settings", to: "/settings" },
