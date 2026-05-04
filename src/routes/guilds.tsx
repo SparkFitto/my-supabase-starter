@@ -42,8 +42,10 @@ const POSITION_CROWN = ["text-amber-400", "text-zinc-300", "text-orange-400"];
 
 function GuildsPage() {
   const { user, profile } = useAuth();
+  const qc = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [sort, setSort] = useState<"level" | "members" | "newest">("level");
+  const [regionFilter, setRegionFilter] = useState<string>("all");
 
   const { data: top3 = [] } = useQuery({
     queryKey: ["guilds-top3"],
@@ -66,7 +68,6 @@ function GuildsPage() {
         .eq("status", "active")
         .order("ends_at");
       if (!data) return [];
-      // hydrate guild + series names
       const ids = Array.from(new Set((data as any[]).flatMap((w) => [w.guild_a_id, w.guild_b_id])));
       const seriesIds = Array.from(new Set((data as any[]).map((w) => w.series_id)));
       const [{ data: gs }, { data: ss }] = await Promise.all([
@@ -84,10 +85,34 @@ function GuildsPage() {
     },
   });
 
+  // Realtime: keep wars list/scores live
+  useEffect(() => {
+    const ch = supabase
+      .channel("guilds-wars-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "guild_wars" }, () => {
+        qc.invalidateQueries({ queryKey: ["guilds-active-wars"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
+
+  // Realtime: keep guild list live (member counts, xp)
+  useEffect(() => {
+    const ch = supabase
+      .channel("guilds-list-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "guilds" }, () => {
+        qc.invalidateQueries({ queryKey: ["guilds-all"] });
+        qc.invalidateQueries({ queryKey: ["guilds-top3"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
+
   const { data: allGuilds = [], refetch } = useQuery({
-    queryKey: ["guilds-all", sort],
+    queryKey: ["guilds-all", sort, regionFilter],
     queryFn: async () => {
       let q = supabase.from("guilds").select("*");
+      if (regionFilter !== "all") q = q.eq("region" as any, regionFilter);
       if (sort === "level") q = q.order("level", { ascending: false }).order("member_count", { ascending: false });
       else if (sort === "members") q = q.order("member_count", { ascending: false });
       else q = q.order("created_at", { ascending: false });
