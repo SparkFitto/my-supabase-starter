@@ -41,6 +41,17 @@ const GROUPS: Record<string, string[]> = {
   Marketplace: ["lot_max_free", "lot_max_pro"],
   "Decks & cards": ["deck_free_slots", "deck_free_slots_pro", "split_free_daily_pro", "split_extra_cost"],
   Limits: ["wishlist_max_free", "wishlist_max_pro", "blocklist_max_free", "blocklist_max_pro"],
+  "Drop rates (%) — must sum to 100": [
+    "drop_rate_x",
+    "drop_rate_s",
+    "drop_rate_a",
+    "drop_rate_b",
+    "drop_rate_c",
+    "drop_rate_d",
+    "drop_rate_e",
+    "drop_rate_f",
+    "drop_rate_g",
+  ],
   Guild: [
     "guild_create_cost",
     "guild_war_duration_days",
@@ -70,6 +81,18 @@ function AdminSettings() {
   const settingsMap = new Map(settings.map((s: any) => [s.key, s]));
 
   const save = async (key: string, value: string) => {
+    if (key.startsWith("drop_rate_")) {
+      const dropKeys = ["drop_rate_x","drop_rate_s","drop_rate_a","drop_rate_b","drop_rate_c","drop_rate_d","drop_rate_e","drop_rate_f","drop_rate_g"];
+      let sum = 0;
+      for (const k of dropKeys) {
+        const v = k === key ? value : (settingsMap.get(k) as any)?.value;
+        sum += Number(v) || 0;
+      }
+      if (Math.round(sum) !== 100) {
+        toast.error(`Drop rates must sum to 100% (got ${sum}%)`);
+        return;
+      }
+    }
     const { error } = await supabase
       .from("platform_settings")
       .update({ value, updated_at: new Date().toISOString() } as never)

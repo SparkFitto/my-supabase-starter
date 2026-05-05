@@ -57,6 +57,12 @@ function ReaderPage() {
         chapter_number: chapterNum ?? null,
       });
       award("reading_chapter", { silent: true });
+      // Award guild XP if user is in a guild
+      const { data: prof } = await supabase.from("user_profiles").select("guild_id").eq("id", user.id).maybeSingle();
+      const gid = (prof as any)?.guild_id;
+      if (gid) {
+        supabase.rpc("award_guild_xp" as any, { _guild_id: gid, _user_id: user.id, _amount: 10, _source: "reading", _description: `Read chapter ${chapterNum ?? ""}` });
+      }
     }, 5000);
     return () => clearTimeout(t);
   }, [user, seriesId, translationId, chapterNum, award]);
