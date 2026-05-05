@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Search } from "lucide-react";
+import { Search, Download } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/admin/series")({
   component: AdminSeries,
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/admin/series")({
 
 function AdminSeries() {
   const [q, setQ] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
   const { data: series, refetch } = useQuery({
     queryKey: ["admin-series-list", q],
     queryFn: async () => {
@@ -58,6 +60,9 @@ function AdminSeries() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Series</h1>
+        <Button size="sm" onClick={() => setImportOpen(true)}>
+          <Download className="h-4 w-4 mr-1" />Import from MangaDex
+        </Button>
       </div>
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -122,6 +127,103 @@ function AdminSeries() {
           <p className="py-8 text-center text-sm text-muted-foreground">No series found.</p>
         )}
       </div>
+      <MangaDexImportModal open={importOpen} onClose={() => setImportOpen(false)} onImported={() => refetch()} />
     </div>
+  );
+}
+
+function slugify(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+}
+
+function MangaDexImportModal({ open, onClose, onImported }: { open: boolean; onClose: () => void; onImported: () => void }) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [importing, setImporting] = useState<string | null>(null);
+
+  const search = async () => {
+    if (!query.trim()) return;
+    setLoading(true);
+    try {
+      const r = await fetch(`https://api.mangadex.org/manga?title=${encodeURIComponent(query)}&limit=15&includes[]=cover_art&order[relevance]=desc`);
+      const j = await r.json();
+      setResults(j.data ?? []);
+    } catch (e: any) {
+      toast.error("MangaDex search failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const importOne = async (m: any) => {
+    setImporting(m.id);
+    try {
+      const attr = m.attributes;
+      const title = attr.title?.en || Object.values(attr.title || {})[0] || "Untitled";
+      const cover = m.relationships?.find((r: any) => r.type === "cover_art");
+      const cover_url = cover?.attributes?.fileName
+        ? `https://uploads.mangadex.org/covers/${m.id}/${cover.attributes.fileName}.512.jpg`
+        : null;
+      const description = attr.description?.en || Object.values(attr.description || {})[0] || null;
+      const tags = (attr.tags || []).map((t: any) => t.attributes?.name?.en).filter(Boolean);
+      const slug = slugify(title) + "-" + m.id.slice(0, 6);
+      const { error } = await supabase.from("series").insert({
+        title,
+        slug,
+        cover_url,
+        description,
+        type: "manga",
+        status: attr.status || "ongoing",
+        source_language: attr.originalLanguage || "ja",
+        release_year: attr.year || null,
+        mangadex_id: m.id,
+        tags,
+        genres: tags,
+      } as never);
+      if (error) throw error;
+      toast.success(`Imported ${title}`);
+      onImported();
+    } catch (e: any) {
+      toast.error(e.message ?? "Import failed");
+    } finally {
+      setImporting(null);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader><DialogTitle>Import series from MangaDex</DialogTitle></DialogHeader>
+        <div className="flex gap-2">
+          <Input placeholder="Search MangaDex…" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && search()} />
+          <Button onClick={search} disabled={loading}>{loading ? "…" : "Search"}</Button>
+        </div>
+        <div className="space-y-2 mt-2">
+          {results.map((m) => {
+            const title = m.attributes?.title?.en || Object.values(m.attributes?.title || {})[0] || "Untitled";
+            const cover = m.relationships?.find((r: any) => r.type === "cover_art");
+            const url = cover?.attributes?.fileName
+              ? `https://uploads.mangadex.org/covers/${m.id}/${cover.attributes.fileName}.256.jpg`
+              : null;
+            return (
+              <div key={m.id} className="flex items-center gap-3 rounded-lg border border-border p-2">
+                <div className="h-16 w-12 bg-muted rounded overflow-hidden shrink-0">
+                  {url && <img src={url} alt="" className="h-full w-full object-cover" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{title}</p>
+                  <p className="text-xs text-muted-foreground">{m.attributes?.status} · {m.attributes?.year ?? "—"}</p>
+                </div>
+                <Button size="sm" onClick={() => importOne(m)} disabled={importing === m.id}>
+                  {importing === m.id ? "…" : "Import"}
+                </Button>
+              </div>
+            );
+          })}
+          {!loading && results.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">No results yet. Search a title above.</p>}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
