@@ -81,6 +81,18 @@ function AdminSettings() {
   const settingsMap = new Map(settings.map((s: any) => [s.key, s]));
 
   const save = async (key: string, value: string) => {
+    if (key.startsWith("drop_rate_")) {
+      const dropKeys = ["drop_rate_x","drop_rate_s","drop_rate_a","drop_rate_b","drop_rate_c","drop_rate_d","drop_rate_e","drop_rate_f","drop_rate_g"];
+      let sum = 0;
+      for (const k of dropKeys) {
+        const v = k === key ? value : (settingsMap.get(k) as any)?.value;
+        sum += Number(v) || 0;
+      }
+      if (Math.round(sum) !== 100) {
+        toast.error(`Drop rates must sum to 100% (got ${sum}%)`);
+        return;
+      }
+    }
     const { error } = await supabase
       .from("platform_settings")
       .update({ value, updated_at: new Date().toISOString() } as never)
