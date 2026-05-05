@@ -16,6 +16,7 @@ export const Route = createFileRoute("/admin/series")({
 
 function AdminSeries() {
   const [q, setQ] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
   const { data: series, refetch } = useQuery({
     queryKey: ["admin-series-list", q],
     queryFn: async () => {
