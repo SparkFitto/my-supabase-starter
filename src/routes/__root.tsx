@@ -1,9 +1,8 @@
-import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, createRootRoute, HeadContent } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/lib/auth";
-import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
@@ -25,38 +24,17 @@ function NotFoundComponent() {
 export const Route = createRootRoute({
   head: () => ({
     meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "RAWL — Read any manga. In any language. Instantly." },
       { name: "description", content: "Upload a raw manga, manhwa, or manhua chapter and get an instant AI translation. English, Spanish, French, Portuguese, German, Russian, Indonesian." },
-      { name: "theme-color", content: "#0d0d10" },
       { property: "og:title", content: "RAWL — AI manga translation" },
       { property: "og:description", content: "Translate any manga, manhwa, or manhua chapter in seconds." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" },
-    ],
   }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });
-
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className="dark">
-      <head>
-        <HeadContent />
-      </head>
-      <body>{children}<Scripts /></body>
-    </html>
-  );
-}
 
 function RootComponent() {
   const [queryClient] = useState(() => new QueryClient({
@@ -65,6 +43,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <HeadContent />
         <Outlet />
         <Toaster position="bottom-right" richColors closeButton />
       </AuthProvider>
