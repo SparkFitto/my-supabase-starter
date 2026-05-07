@@ -12,12 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as TopupRouteImport } from './routes/topup'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -74,11 +72,6 @@ const TopupRoute = TopupRouteImport.update({
   path: '/topup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -97,11 +90,6 @@ const ShopRoute = ShopRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
-  id: '/robots.txt',
-  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -331,12 +319,10 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
-  '/robots.txt': typeof RobotsDottxtRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/topup': typeof TopupRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
@@ -381,12 +367,10 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
-  '/robots.txt': typeof RobotsDottxtRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/topup': typeof TopupRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
@@ -433,12 +417,10 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
-  '/robots.txt': typeof RobotsDottxtRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/topup': typeof TopupRoute
   '/translate': typeof TranslateRouteWithChildren
   '/updates': typeof UpdatesRoute
@@ -486,12 +468,10 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/reset-password'
-    | '/robots.txt'
     | '/settings'
     | '/shop'
     | '/signin'
     | '/signup'
-    | '/sitemap.xml'
     | '/topup'
     | '/translate'
     | '/updates'
@@ -536,12 +516,10 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/reset-password'
-    | '/robots.txt'
     | '/settings'
     | '/shop'
     | '/signin'
     | '/signup'
-    | '/sitemap.xml'
     | '/topup'
     | '/translate'
     | '/updates'
@@ -587,12 +565,10 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/reset-password'
-    | '/robots.txt'
     | '/settings'
     | '/shop'
     | '/signin'
     | '/signup'
-    | '/sitemap.xml'
     | '/topup'
     | '/translate'
     | '/updates'
@@ -639,12 +615,10 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRouteWithChildren
   ResetPasswordRoute: typeof ResetPasswordRoute
-  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TopupRoute: typeof TopupRoute
   TranslateRoute: typeof TranslateRouteWithChildren
   UpdatesRoute: typeof UpdatesRoute
@@ -676,13 +650,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TopupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -709,13 +676,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/robots.txt': {
-      id: '/robots.txt'
-      path: '/robots.txt'
-      fullPath: '/robots.txt'
-      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -1099,12 +1059,10 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRouteWithChildren,
   ResetPasswordRoute: ResetPasswordRoute,
-  RobotsDottxtRoute: RobotsDottxtRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
-  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TopupRoute: TopupRoute,
   TranslateRoute: TranslateRouteWithChildren,
   UpdatesRoute: UpdatesRoute,
@@ -1115,3 +1073,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

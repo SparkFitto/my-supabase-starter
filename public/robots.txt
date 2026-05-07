@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /profile
+Disallow: /signin
+Disallow: /signup
+Disallow: /reset-password
+Disallow: /job/
+
+Sitemap: https://rawl.app/sitemap.xml
