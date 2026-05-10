@@ -122,9 +122,205 @@ function GuildDetailPage() {
 
   const isMember = !!members.find((m: any) => m.user_id === user?.id);
   const myMember = members.find((m: any) => m.user_id === user?.id);
-  const isLeader = guild && user && (guild as any).leader_id === user.id;
+  const isLeader = !!(guild && user && (guild as any).leader_id === user.id);
   const isOfficer = myMember?.role === "officer";
   const inAnotherGuild = !!(profile as any)?.guild_id && (profile as any).guild_id !== guildId;
+
+  // Announcements
+  const { data: announcements = [], refetch: refetchAnnouncements } = useQuery({
+    queryKey: ["guild-announcements", guildId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("guild_announcements")
+        .select("*")
+        .eq("guild_id", guildId)
+        .order("is_pinned", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(5);
+      return data ?? [];
+    },
+  });
+
+  useEffect(() => {
+    const ch = supabase
+      .channel(`guild-ann-${guildId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "guild_announcements", filter: `guild_id=eq.${guildId}` },
+        () => refetchAnnouncements(),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [guildId, refetchAnnouncements]);
+
+  // Member XP for reward strip
+  const { data: memberRow } = useQuery({
+    queryKey: ["guild-member-row", guildId, user?.id],
+    enabled: isMember && !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("guild_members")
+        .select("total_xp_contributed")
+        .eq("guild_id", guildId)
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  const { data: rewardRow, refetch: refetchRewards } = useQuery({
+    queryKey: ["guild-member-rewards", guildId, user?.id],
+    enabled: isMember && !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("guild_member_rewards")
+        .select("last_reward_threshold, total_xp_for_rewards")
+        .eq("guild_id", guildId)
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  const totalXp = (memberRow as any)?.total_xp_contributed ?? 0;
+  const cycleXp = totalXp % CYCLE_LENGTH;
+  const cycleNumber = Math.floor(totalXp / CYCLE_LENGTH);
+  const lastClaimed = (rewardRow as any)?.last_reward_threshold ?? 0;
+
+  const claimReward = async (m: typeof REWARD_MILESTONES[number]) => {
+    if (!user) return;
+    try {
+      if (m.type === "ink" && m.amount) {
+        await supabase.rpc("award_ink" as any, { _amount: m.amount, _source: "guild_reward" } as any);
+      }
+      if (m.type === "card" && m.rank) {
+        const { data: card } = await supabase
+          .from("cards")
+          .select("id")
+          .eq("rank", m.rank)
+          .eq("is_approved", true)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (card) {
+          await grantCardToUser(user.id, (card as any).id);
+        }
+      }
+      await supabase
+        .from("guild_member_rewards")
+        .upsert({
+          guild_id: guildId,
+          user_id: user.id,
+          last_reward_threshold: m.xp,
+          total_xp_for_rewards: totalXp,
+        } as never, { onConflict: "guild_id,user_id" });
+      toast.success(`🎉 Claimed: ${m.label}!`);
+      refetchRewards();
+      queryClient.invalidateQueries({ queryKey: ["my-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["auth-profile"] });
+      refreshProfile();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Claim failed");
+    }
+  };
+
+  // Comments
+  const { data: comments = [], refetch: refetchComments } = useQuery({
+    queryKey: ["guild-comments", guildId, commentSort],
+    queryFn: async () => {
+      let q = supabase
+        .from("guild_comments")
+        .select("*")
+        .eq("guild_id", guildId)
+        .is("parent_id", null);
+      if (commentSort === "new") q = q.order("created_at", { ascending: false });
+      else q = q.order("upvotes", { ascending: false });
+      const { data: topLevel } = await q.limit(20);
+      if (!topLevel?.length) return [];
+      const userIds = Array.from(new Set((topLevel as any[]).map((c) => c.user_id)));
+      const [{ data: profs }, { data: nicks }] = await Promise.all([
+        supabase.from("user_profiles").select("id, username, avatar_url").in("id", userIds),
+        supabase.from("guild_members").select("user_id, guild_nickname").eq("guild_id", guildId).in("user_id", userIds),
+      ]);
+      const pMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
+      const nMap = new Map((nicks ?? []).map((n: any) => [n.user_id, n.guild_nickname]));
+      return (topLevel as any[]).map((c) => ({
+        ...c,
+        profile: pMap.get(c.user_id),
+        displayName: nMap.get(c.user_id) || pMap.get(c.user_id)?.username || "Unknown",
+        realUsername: pMap.get(c.user_id)?.username,
+      }));
+    },
+  });
+
+  useEffect(() => {
+    const ch = supabase
+      .channel(`guild-comments-${guildId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "guild_comments", filter: `guild_id=eq.${guildId}` },
+        () => refetchComments(),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [guildId, refetchComments]);
+
+  const sendComment = async (parentId: string | null = null) => {
+    const text = parentId ? replyText : commentText;
+    if (!text.trim() || !user) return;
+    setSendingComment(true);
+    const { error } = await supabase.from("guild_comments").insert({
+      guild_id: guildId,
+      user_id: user.id,
+      content: text.trim(),
+      parent_id: parentId ?? null,
+    } as never);
+    setSendingComment(false);
+    if (error) { toast.error(error.message); return; }
+    if (parentId) { setReplyText(""); setReplyingTo(null); } else setCommentText("");
+    refetchComments();
+    const gId = (profile as any)?.guild_id;
+    if (gId === guildId && user) {
+      supabase.rpc("award_guild_xp" as any, {
+        _guild_id: gId, _user_id: user.id, _amount: 1,
+        _source: "comment", _description: "Posted a comment",
+      } as any).then(() => {}, () => {});
+    }
+  };
+
+  const voteComment = async (commentId: string, type: "up" | "down") => {
+    const col = type === "up" ? "upvotes" : "downvotes";
+    const { data: row } = await supabase.from("guild_comments").select(`id, ${col}`).eq("id", commentId).maybeSingle();
+    if (!row) return;
+    const next = ((row as any)[col] ?? 0) + 1;
+    await supabase.from("guild_comments").update({ [col]: next } as never).eq("id", commentId);
+    refetchComments();
+  };
+
+  const deleteCommentRow = async (commentId: string) => {
+    await supabase.from("guild_comments").delete().eq("id", commentId);
+    refetchComments();
+  };
+
+  const postAnnouncement = async (content: string, isPinned: boolean) => {
+    if (!user) return;
+    const { error } = await supabase.from("guild_announcements").insert({
+      guild_id: guildId,
+      author_id: user.id,
+      content: content.trim(),
+      is_pinned: isPinned,
+    } as never);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Posted!");
+    setShowAnnouncementModal(false);
+    refetchAnnouncements();
+  };
+
+  const deleteAnnouncement = async (id: string) => {
+    const { error } = await supabase.from("guild_announcements").delete().eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    refetchAnnouncements();
+  };
 
   if (isLoading) {
     return <div className="min-h-screen bg-background"><Header /><div className="p-8 max-w-7xl mx-auto"><Skeleton className="h-[220px]" /></div></div>;
