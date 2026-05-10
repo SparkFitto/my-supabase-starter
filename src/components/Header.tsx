@@ -311,8 +311,6 @@ function Drawer({
   onSignOut: () => void;
 }) {
   const guildId = (profileGuildId ?? null) as string | null;
-  const guildLink = guildId ? `/guilds/${guildId}` : "/guilds";
-  const guildLabel = guildId ? "⚔️ My Guild" : "⚔️ Guilds";
 
   const navItems = [
     { label: "Home", to: "/" },
@@ -320,7 +318,12 @@ function Drawer({
     { label: "Catalogue", to: "/catalogue" },
     { label: "Novels", to: "/novels" },
     { label: "Card Catalog", to: "/cards", icon: Spade },
-    { label: guildLabel, to: guildLink },
+    ...(guildId
+      ? ([
+          { label: "⚔️ My Guild", to: `/guilds/${guildId}` },
+          { label: "🗺️ All Guilds", to: "/guilds" },
+        ] as const)
+      : ([{ label: "⚔️ Guilds", to: "/guilds" }] as const)),
     { label: "🛍️ Shop", to: "/shop" },
     { label: "🃏 Marketplace", to: "/marketplace" },
     { label: "🖊️ Top Up Ink", to: "/topup" },
