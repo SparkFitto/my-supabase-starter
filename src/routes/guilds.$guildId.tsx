@@ -42,9 +42,16 @@ function GuildDetailPage() {
   const { guildId } = Route.useParams();
   const { user, profile, refreshProfile } = useAuth();
   const nav = useNavigate();
+  const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("members");
   const [showSettings, setShowSettings] = useState(false);
   const [showRequest, setShowRequest] = useState(false);
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [commentSort, setCommentSort] = useState<"new" | "popular">("new");
+  const [commentText, setCommentText] = useState("");
+  const [sendingComment, setSendingComment] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
 
   const { data: guild, isLoading, refetch: refetchGuild } = useQuery({
     queryKey: ["guild", guildId],
