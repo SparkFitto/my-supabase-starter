@@ -7,11 +7,23 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addMember, removeMember, levelProgress, timeRemaining, grantCardToUser, removeCardFromUser, notifyGuild } from "@/lib/guilds";
 import { notify } from "@/lib/notify";
 import { CardDisplay } from "@/components/cards/CardDisplay";
+
+const REWARD_MILESTONES = [
+  { xp: 1000,  type: "ink"  as const, amount: 80,   label: "80 Ink",  rank: null as string | null },
+  { xp: 3000,  type: "card" as const, amount: null, label: "C Card",  rank: "C" as string | null },
+  { xp: 5000,  type: "ink"  as const, amount: 80,   label: "80 Ink",  rank: null as string | null },
+  { xp: 7000,  type: "card" as const, amount: null, label: "B Card",  rank: "B" as string | null },
+  { xp: 9000,  type: "ink"  as const, amount: 85,   label: "85 Ink",  rank: null as string | null },
+  { xp: 11000, type: "card" as const, amount: null, label: "A Card",  rank: "A" as string | null },
+  { xp: 13000, type: "ink"  as const, amount: 90,   label: "90 Ink",  rank: null as string | null },
+  { xp: 15000, type: "card" as const, amount: null, label: "S Card",  rank: "S" as string | null },
+];
+const CYCLE_LENGTH = 15000;
 
 export const Route = createFileRoute("/guilds/$guildId")({
   head: ({ params }) => ({
