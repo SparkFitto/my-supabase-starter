@@ -432,6 +432,64 @@ function GuildDetailPage() {
           </button>
         )}
 
+        {/* ANNOUNCEMENTS */}
+        {announcements.length > 0 && (
+          <div className="mx-4 sm:mx-6 mt-4 rounded-lg border-l-4 border-l-primary border border-border bg-card/40 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold">📢 Announcements</h3>
+              {(isLeader || isOfficer) && (
+                <button onClick={() => setShowAnnouncementModal(true)} className="text-xs text-primary hover:underline">+ Post</button>
+              )}
+            </div>
+            <div className="space-y-2">
+              {(announcements as any[]).map((ann) => (
+                <div key={ann.id} className="text-sm">
+                  <span className="whitespace-pre-wrap">{ann.is_pinned ? "📌 " : ""}{ann.content}</span>
+                  <span className="ml-2 text-[10px] text-muted-foreground">{timeAgo(ann.created_at)}</span>
+                  {(isLeader || ann.author_id === user?.id) && (
+                    <button onClick={() => deleteAnnouncement(ann.id)} className="ml-2 text-xs text-destructive hover:underline">Delete</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {(isLeader || isOfficer) && announcements.length === 0 && (
+          <div className="mx-4 sm:mx-6 mt-4 text-right">
+            <button onClick={() => setShowAnnouncementModal(true)} className="text-xs text-primary hover:underline">📢 Post announcement</button>
+          </div>
+        )}
+
+        {/* REWARD STRIP */}
+        {isMember && (
+          <div className="mx-4 sm:mx-6 mt-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold">🎁 Reward Strip</h3>
+              <span className="text-xs text-muted-foreground">Cycle {cycleNumber + 1} · {cycleXp.toLocaleString()} / {CYCLE_LENGTH.toLocaleString()} XP</span>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {REWARD_MILESTONES.map((m) => {
+                const isClaimed = lastClaimed >= m.xp;
+                const isClaimable = cycleXp >= m.xp && !isClaimed;
+                const progress = Math.min((cycleXp / m.xp) * 100, 100);
+                return (
+                  <div key={m.xp} className={`relative shrink-0 w-32 rounded-lg border p-2 ${isClaimed ? "border-emerald-500/40 bg-emerald-500/5" : isClaimable ? "border-primary bg-primary/5" : "border-border bg-card/40"}`}>
+                    {isClaimed && <span className="absolute top-1 right-1 text-emerald-400 text-xs">✅</span>}
+                    <p className="text-[10px] text-muted-foreground tabular-nums">{m.xp.toLocaleString()} XP</p>
+                    <div className="text-xs font-semibold mt-1">{m.type === "ink" ? `🖊️ ${m.label}` : `🎴 ${m.label}`}</div>
+                    <div className="mt-2 h-1 rounded-full bg-secondary overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
+                    </div>
+                    {isClaimable && (
+                      <button onClick={() => claimReward(m)} className="mt-1 w-full text-xs bg-primary text-primary-foreground rounded-md py-1 px-2 font-semibold hover:opacity-90">Claim 🎁</button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* TABS */}
         <div className="mt-6 px-4 sm:px-6 border-b border-border">
           <div className="flex gap-6 overflow-x-auto">
