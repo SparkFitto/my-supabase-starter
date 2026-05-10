@@ -1,1 +1,4 @@
 project_id = "yharszhrdkypfgzcgbqx"
+
+[functions.mangadex-fetch]
+verify_jwt = false

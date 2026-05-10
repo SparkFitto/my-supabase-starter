@@ -231,7 +231,12 @@ function AvatarDropdown({
     { icon: History, label: "Reading History", to: "/history" },
     { icon: UserIcon, label: "My Profile", to: "/profile" },
     { icon: Spade, label: "My Cards", to: "/my-cards" },
-    { icon: Swords, label: guildId ? "My Guild" : "Guilds", to: guildId ? `/guilds/${guildId}` : "/guilds" },
+    ...(guildId
+      ? ([
+          { icon: Swords, label: "⚔️ My Guild", to: `/guilds/${guildId}` },
+          { icon: Swords, label: "🗺️ All Guilds", to: "/guilds" },
+        ] as const)
+      : ([{ icon: Swords, label: "⚔️ Find a Guild", to: "/guilds" }] as const)),
     { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
     { icon: Package, label: "Open Packs", to: "/packs" },
     { icon: Layers, label: "Decks", to: "/decks" },
@@ -306,8 +311,6 @@ function Drawer({
   onSignOut: () => void;
 }) {
   const guildId = (profileGuildId ?? null) as string | null;
-  const guildLink = guildId ? `/guilds/${guildId}` : "/guilds";
-  const guildLabel = guildId ? "⚔️ My Guild" : "⚔️ Guilds";
 
   const navItems = [
     { label: "Home", to: "/" },
@@ -315,7 +318,12 @@ function Drawer({
     { label: "Catalogue", to: "/catalogue" },
     { label: "Novels", to: "/novels" },
     { label: "Card Catalog", to: "/cards", icon: Spade },
-    { label: guildLabel, to: guildLink },
+    ...(guildId
+      ? ([
+          { label: "⚔️ My Guild", to: `/guilds/${guildId}` },
+          { label: "🗺️ All Guilds", to: "/guilds" },
+        ] as const)
+      : ([{ label: "⚔️ Guilds", to: "/guilds" }] as const)),
     { label: "🛍️ Shop", to: "/shop" },
     { label: "🃏 Marketplace", to: "/marketplace" },
     { label: "🖊️ Top Up Ink", to: "/topup" },

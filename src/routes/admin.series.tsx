@@ -146,11 +146,13 @@ function MangaDexImportModal({ open, onClose, onImported }: { open: boolean; onC
     if (!query.trim()) return;
     setLoading(true);
     try {
-      const r = await fetch(`https://api.mangadex.org/manga?title=${encodeURIComponent(query)}&limit=15&includes[]=cover_art&order[relevance]=desc`);
-      const j = await r.json();
-      setResults(j.data ?? []);
+      const { data, error } = await supabase.functions.invoke("mangadex-fetch", {
+        body: { searchQuery: query.trim() },
+      });
+      if (error) throw new Error(error.message);
+      setResults(data?.data ?? []);
     } catch (e: any) {
-      toast.error("MangaDex search failed");
+      toast.error("MangaDex search failed: " + (e?.message || "Check edge function deployment"));
     } finally {
       setLoading(false);
     }

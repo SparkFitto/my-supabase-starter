@@ -7,11 +7,23 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addMember, removeMember, levelProgress, timeRemaining, grantCardToUser, removeCardFromUser, notifyGuild } from "@/lib/guilds";
 import { notify } from "@/lib/notify";
 import { CardDisplay } from "@/components/cards/CardDisplay";
+
+const REWARD_MILESTONES = [
+  { xp: 1000,  type: "ink"  as const, amount: 80,   label: "80 Ink",  rank: null as string | null },
+  { xp: 3000,  type: "card" as const, amount: null, label: "C Card",  rank: "C" as string | null },
+  { xp: 5000,  type: "ink"  as const, amount: 80,   label: "80 Ink",  rank: null as string | null },
+  { xp: 7000,  type: "card" as const, amount: null, label: "B Card",  rank: "B" as string | null },
+  { xp: 9000,  type: "ink"  as const, amount: 85,   label: "85 Ink",  rank: null as string | null },
+  { xp: 11000, type: "card" as const, amount: null, label: "A Card",  rank: "A" as string | null },
+  { xp: 13000, type: "ink"  as const, amount: 90,   label: "90 Ink",  rank: null as string | null },
+  { xp: 15000, type: "card" as const, amount: null, label: "S Card",  rank: "S" as string | null },
+];
+const CYCLE_LENGTH = 15000;
 
 export const Route = createFileRoute("/guilds/$guildId")({
   head: ({ params }) => ({
@@ -30,9 +42,16 @@ function GuildDetailPage() {
   const { guildId } = Route.useParams();
   const { user, profile, refreshProfile } = useAuth();
   const nav = useNavigate();
+  const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("members");
   const [showSettings, setShowSettings] = useState(false);
   const [showRequest, setShowRequest] = useState(false);
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [commentSort, setCommentSort] = useState<"new" | "popular">("new");
+  const [commentText, setCommentText] = useState("");
+  const [sendingComment, setSendingComment] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
 
   const { data: guild, isLoading, refetch: refetchGuild } = useQuery({
     queryKey: ["guild", guildId],
@@ -103,9 +122,205 @@ function GuildDetailPage() {
 
   const isMember = !!members.find((m: any) => m.user_id === user?.id);
   const myMember = members.find((m: any) => m.user_id === user?.id);
-  const isLeader = guild && user && (guild as any).leader_id === user.id;
+  const isLeader = !!(guild && user && (guild as any).leader_id === user.id);
   const isOfficer = myMember?.role === "officer";
   const inAnotherGuild = !!(profile as any)?.guild_id && (profile as any).guild_id !== guildId;
+
+  // Announcements
+  const { data: announcements = [], refetch: refetchAnnouncements } = useQuery({
+    queryKey: ["guild-announcements", guildId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("guild_announcements")
+        .select("*")
+        .eq("guild_id", guildId)
+        .order("is_pinned", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(5);
+      return data ?? [];
+    },
+  });
+
+  useEffect(() => {
+    const ch = supabase
+      .channel(`guild-ann-${guildId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "guild_announcements", filter: `guild_id=eq.${guildId}` },
+        () => refetchAnnouncements(),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [guildId, refetchAnnouncements]);
+
+  // Member XP for reward strip
+  const { data: memberRow } = useQuery({
+    queryKey: ["guild-member-row", guildId, user?.id],
+    enabled: isMember && !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("guild_members")
+        .select("total_xp_contributed")
+        .eq("guild_id", guildId)
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  const { data: rewardRow, refetch: refetchRewards } = useQuery({
+    queryKey: ["guild-member-rewards", guildId, user?.id],
+    enabled: isMember && !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("guild_member_rewards")
+        .select("last_reward_threshold, total_xp_for_rewards")
+        .eq("guild_id", guildId)
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  const totalXp = (memberRow as any)?.total_xp_contributed ?? 0;
+  const cycleXp = totalXp % CYCLE_LENGTH;
+  const cycleNumber = Math.floor(totalXp / CYCLE_LENGTH);
+  const lastClaimed = (rewardRow as any)?.last_reward_threshold ?? 0;
+
+  const claimReward = async (m: typeof REWARD_MILESTONES[number]) => {
+    if (!user) return;
+    try {
+      if (m.type === "ink" && m.amount) {
+        await supabase.rpc("award_ink" as any, { _amount: m.amount, _source: "guild_reward" } as any);
+      }
+      if (m.type === "card" && m.rank) {
+        const { data: card } = await supabase
+          .from("cards")
+          .select("id")
+          .eq("rank", m.rank)
+          .eq("is_approved", true)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (card) {
+          await grantCardToUser(user.id, (card as any).id);
+        }
+      }
+      await supabase
+        .from("guild_member_rewards")
+        .upsert({
+          guild_id: guildId,
+          user_id: user.id,
+          last_reward_threshold: m.xp,
+          total_xp_for_rewards: totalXp,
+        } as never, { onConflict: "guild_id,user_id" });
+      toast.success(`🎉 Claimed: ${m.label}!`);
+      refetchRewards();
+      queryClient.invalidateQueries({ queryKey: ["my-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["auth-profile"] });
+      refreshProfile();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Claim failed");
+    }
+  };
+
+  // Comments
+  const { data: comments = [], refetch: refetchComments } = useQuery({
+    queryKey: ["guild-comments", guildId, commentSort],
+    queryFn: async () => {
+      let q = supabase
+        .from("guild_comments")
+        .select("*")
+        .eq("guild_id", guildId)
+        .is("parent_id", null);
+      if (commentSort === "new") q = q.order("created_at", { ascending: false });
+      else q = q.order("upvotes", { ascending: false });
+      const { data: topLevel } = await q.limit(20);
+      if (!topLevel?.length) return [];
+      const userIds = Array.from(new Set((topLevel as any[]).map((c) => c.user_id)));
+      const [{ data: profs }, { data: nicks }] = await Promise.all([
+        supabase.from("user_profiles").select("id, username, avatar_url").in("id", userIds),
+        supabase.from("guild_members").select("user_id, guild_nickname").eq("guild_id", guildId).in("user_id", userIds),
+      ]);
+      const pMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
+      const nMap = new Map((nicks ?? []).map((n: any) => [n.user_id, n.guild_nickname]));
+      return (topLevel as any[]).map((c) => ({
+        ...c,
+        profile: pMap.get(c.user_id),
+        displayName: nMap.get(c.user_id) || pMap.get(c.user_id)?.username || "Unknown",
+        realUsername: pMap.get(c.user_id)?.username,
+      }));
+    },
+  });
+
+  useEffect(() => {
+    const ch = supabase
+      .channel(`guild-comments-${guildId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "guild_comments", filter: `guild_id=eq.${guildId}` },
+        () => refetchComments(),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [guildId, refetchComments]);
+
+  const sendComment = async (parentId: string | null = null) => {
+    const text = parentId ? replyText : commentText;
+    if (!text.trim() || !user) return;
+    setSendingComment(true);
+    const { error } = await supabase.from("guild_comments").insert({
+      guild_id: guildId,
+      user_id: user.id,
+      content: text.trim(),
+      parent_id: parentId ?? null,
+    } as never);
+    setSendingComment(false);
+    if (error) { toast.error(error.message); return; }
+    if (parentId) { setReplyText(""); setReplyingTo(null); } else setCommentText("");
+    refetchComments();
+    const gId = (profile as any)?.guild_id;
+    if (gId === guildId && user) {
+      supabase.rpc("award_guild_xp" as any, {
+        _guild_id: gId, _user_id: user.id, _amount: 1,
+        _source: "comment", _description: "Posted a comment",
+      } as any).then(() => {}, () => {});
+    }
+  };
+
+  const voteComment = async (commentId: string, type: "up" | "down") => {
+    const col = type === "up" ? "upvotes" : "downvotes";
+    const { data: row } = await supabase.from("guild_comments").select(`id, ${col}`).eq("id", commentId).maybeSingle();
+    if (!row) return;
+    const next = ((row as any)[col] ?? 0) + 1;
+    await supabase.from("guild_comments").update({ [col]: next } as never).eq("id", commentId);
+    refetchComments();
+  };
+
+  const deleteCommentRow = async (commentId: string) => {
+    await supabase.from("guild_comments").delete().eq("id", commentId);
+    refetchComments();
+  };
+
+  const postAnnouncement = async (content: string, isPinned: boolean) => {
+    if (!user) return;
+    const { error } = await supabase.from("guild_announcements").insert({
+      guild_id: guildId,
+      author_id: user.id,
+      content: content.trim(),
+      is_pinned: isPinned,
+    } as never);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Posted!");
+    setShowAnnouncementModal(false);
+    refetchAnnouncements();
+  };
+
+  const deleteAnnouncement = async (id: string) => {
+    const { error } = await supabase.from("guild_announcements").delete().eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    refetchAnnouncements();
+  };
 
   if (isLoading) {
     return <div className="min-h-screen bg-background"><Header /><div className="p-8 max-w-7xl mx-auto"><Skeleton className="h-[220px]" /></div></div>;
@@ -215,6 +430,64 @@ function GuildDetailPage() {
               </div>
             </div>
           </button>
+        )}
+
+        {/* ANNOUNCEMENTS */}
+        {announcements.length > 0 && (
+          <div className="mx-4 sm:mx-6 mt-4 rounded-lg border-l-4 border-l-primary border border-border bg-card/40 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold">📢 Announcements</h3>
+              {(isLeader || isOfficer) && (
+                <button onClick={() => setShowAnnouncementModal(true)} className="text-xs text-primary hover:underline">+ Post</button>
+              )}
+            </div>
+            <div className="space-y-2">
+              {(announcements as any[]).map((ann) => (
+                <div key={ann.id} className="text-sm">
+                  <span className="whitespace-pre-wrap">{ann.is_pinned ? "📌 " : ""}{ann.content}</span>
+                  <span className="ml-2 text-[10px] text-muted-foreground">{timeAgo(ann.created_at)}</span>
+                  {(isLeader || ann.author_id === user?.id) && (
+                    <button onClick={() => deleteAnnouncement(ann.id)} className="ml-2 text-xs text-destructive hover:underline">Delete</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {(isLeader || isOfficer) && announcements.length === 0 && (
+          <div className="mx-4 sm:mx-6 mt-4 text-right">
+            <button onClick={() => setShowAnnouncementModal(true)} className="text-xs text-primary hover:underline">📢 Post announcement</button>
+          </div>
+        )}
+
+        {/* REWARD STRIP */}
+        {isMember && (
+          <div className="mx-4 sm:mx-6 mt-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold">🎁 Reward Strip</h3>
+              <span className="text-xs text-muted-foreground">Cycle {cycleNumber + 1} · {cycleXp.toLocaleString()} / {CYCLE_LENGTH.toLocaleString()} XP</span>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {REWARD_MILESTONES.map((m) => {
+                const isClaimed = lastClaimed >= m.xp;
+                const isClaimable = cycleXp >= m.xp && !isClaimed;
+                const progress = Math.min((cycleXp / m.xp) * 100, 100);
+                return (
+                  <div key={m.xp} className={`relative shrink-0 w-32 rounded-lg border p-2 ${isClaimed ? "border-emerald-500/40 bg-emerald-500/5" : isClaimable ? "border-primary bg-primary/5" : "border-border bg-card/40"}`}>
+                    {isClaimed && <span className="absolute top-1 right-1 text-emerald-400 text-xs">✅</span>}
+                    <p className="text-[10px] text-muted-foreground tabular-nums">{m.xp.toLocaleString()} XP</p>
+                    <div className="text-xs font-semibold mt-1">{m.type === "ink" ? `🖊️ ${m.label}` : `🎴 ${m.label}`}</div>
+                    <div className="mt-2 h-1 rounded-full bg-secondary overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
+                    </div>
+                    {isClaimable && (
+                      <button onClick={() => claimReward(m)} className="mt-1 w-full text-xs bg-primary text-primary-foreground rounded-md py-1 px-2 font-semibold hover:opacity-90">Claim 🎁</button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* TABS */}
