@@ -231,7 +231,12 @@ function AvatarDropdown({
     { icon: History, label: "Reading History", to: "/history" },
     { icon: UserIcon, label: "My Profile", to: "/profile" },
     { icon: Spade, label: "My Cards", to: "/my-cards" },
-    { icon: Swords, label: guildId ? "My Guild" : "Guilds", to: guildId ? `/guilds/${guildId}` : "/guilds" },
+    ...(guildId
+      ? ([
+          { icon: Swords, label: "⚔️ My Guild", to: `/guilds/${guildId}` },
+          { icon: Swords, label: "🗺️ All Guilds", to: "/guilds" },
+        ] as const)
+      : ([{ icon: Swords, label: "⚔️ Find a Guild", to: "/guilds" }] as const)),
     { icon: ArrowLeftRight, label: "Exchanges", to: "/exchanges" },
     { icon: Package, label: "Open Packs", to: "/packs" },
     { icon: Layers, label: "Decks", to: "/decks" },
