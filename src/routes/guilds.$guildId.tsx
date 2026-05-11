@@ -1443,3 +1443,37 @@ function SettingsModal({ guild, onClose, onSaved }: { guild: any; onClose: () =>
     </div>
   );
 }
+
+// ============ ANNOUNCEMENT MODAL ============
+function AnnouncementModal({ isLeader, onClose, onPost }: { isLeader: boolean; onClose: () => void; onPost: (content: string, pinned: boolean) => void }) {
+  const [content, setContent] = useState("");
+  const [pinned, setPinned] = useState(false);
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-card border border-border rounded-lg p-5 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold">📢 Post Announcement</h3>
+          <button onClick={onClose}><X className="h-4 w-4" /></button>
+        </div>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Share an update with the guild…"
+          className="w-full min-h-[120px] rounded-md border border-border bg-background p-2 text-sm"
+          maxLength={500}
+        />
+        <div className="text-[10px] text-muted-foreground text-right mt-1">{content.length}/500</div>
+        {isLeader && (
+          <label className="flex items-center gap-2 mt-2 text-sm">
+            <input type="checkbox" checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
+            📌 Pin this announcement
+          </label>
+        )}
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button onClick={() => onPost(content, pinned)} disabled={!content.trim()}>Post</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
