@@ -535,8 +535,95 @@ function GuildDetailPage() {
           )}
           {tab === "activity" && <ActivityTab guildId={g.id} />}
         </div>
+
+        {/* COMMENTS */}
+        <div className="px-4 sm:px-6 pb-10">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold">💬 Comments ({comments.length})</h3>
+            <div className="flex gap-1 text-xs">
+              <button
+                onClick={() => setCommentSort("new")}
+                className={`px-2 py-1 rounded ${commentSort === "new" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}
+              >New</button>
+              <button
+                onClick={() => setCommentSort("popular")}
+                className={`px-2 py-1 rounded ${commentSort === "popular" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}
+              >Popular</button>
+            </div>
+          </div>
+
+          {user ? (
+            <div className="mb-4 flex gap-2">
+              <Input
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment…"
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendComment(null); } }}
+              />
+              <Button onClick={() => sendComment(null)} disabled={sendingComment || !commentText.trim()}>Post</Button>
+            </div>
+          ) : (
+            <p className="mb-4 text-xs text-muted-foreground">
+              <Link to="/signin" className="text-primary hover:underline">Sign in</Link> to comment.
+            </p>
+          )}
+
+          {comments.length === 0 ? (
+            <p className="text-xs text-muted-foreground py-6 text-center">No comments yet. Be the first!</p>
+          ) : (
+            <div className="space-y-3">
+              {(comments as any[]).map((c) => (
+                <div key={c.id} className="rounded-lg border border-border bg-card/40 p-3">
+                  <div className="flex items-start gap-2">
+                    <div className="h-8 w-8 rounded-full bg-secondary overflow-hidden shrink-0">
+                      {c.profile?.avatar_url && <img src={c.profile.avatar_url} alt="" className="h-full w-full object-cover" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-semibold">{c.displayName}</span>
+                        {c.realUsername && c.displayName !== c.realUsername && (
+                          <span className="text-[10px] text-muted-foreground">@{c.realUsername}</span>
+                        )}
+                        <span className="text-[10px] text-muted-foreground">{timeAgo(c.created_at)}</span>
+                      </div>
+                      <p className="text-sm whitespace-pre-wrap mt-1">{c.content}</p>
+                      <div className="flex items-center gap-3 mt-2 text-xs">
+                        <button onClick={() => voteComment(c.id, "up")} className="text-muted-foreground hover:text-primary">▲ {c.upvotes ?? 0}</button>
+                        <button onClick={() => voteComment(c.id, "down")} className="text-muted-foreground hover:text-destructive">▼ {c.downvotes ?? 0}</button>
+                        {user && (
+                          <button onClick={() => setReplyingTo(replyingTo === c.id ? null : c.id)} className="text-muted-foreground hover:text-foreground">Reply</button>
+                        )}
+                        {(isLeader || c.user_id === user?.id) && (
+                          <button onClick={() => deleteCommentRow(c.id)} className="text-destructive hover:underline ml-auto">Delete</button>
+                        )}
+                      </div>
+                      {replyingTo === c.id && (
+                        <div className="mt-2 flex gap-2">
+                          <Input
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="Write a reply…"
+                            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendComment(c.id); } }}
+                          />
+                          <Button size="sm" onClick={() => sendComment(c.id)} disabled={sendingComment || !replyText.trim()}>Reply</Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
+      {showAnnouncementModal && (isLeader || isOfficer) && (
+        <AnnouncementModal
+          isLeader={!!isLeader}
+          onClose={() => setShowAnnouncementModal(false)}
+          onPost={postAnnouncement}
+        />
+      )}
       {showSettings && isLeader && (
         <SettingsModal
           guild={g}
