@@ -343,7 +343,7 @@ function CreateGuildModal({
   inkBalance: number;
   alreadyInGuild: boolean;
 }) {
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const nav = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
