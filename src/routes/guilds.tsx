@@ -417,6 +417,7 @@ function CreateGuildModal({
       await supabase.from("user_profiles").update({ guild_id: gid } as never).eq("id", user.id);
 
       toast.success("Guild created!");
+      await refreshProfile();
       onCreated();
       nav({ to: "/guilds/$guildId", params: { guildId: gid } });
     } catch (e: any) {
